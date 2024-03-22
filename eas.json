@@ -1,0 +1,25 @@
+{
+  "cli": {
+    "version": ">= 7.3.0",
+    "promptToConfigurePushNotifications": false,
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      },
+      "autoIncrement": true
+    },
+    "development": {
+      "developmentClient": true
+    },
+    "production": {
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "autoIncrement": true
+    }
+  }
+}
