@@ -8,6 +8,11 @@ import Dialog from "react-native-dialog";
 import Toast from "react-native-simple-toast";
 import { Feather } from "@expo/vector-icons";
 import { useExpenseReportContext } from "../context/expenseReportContext";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+
 type ViewExpenseSummaryScreenProp = {
   route: RouteProp<ExpenseRootStackParamList, "ViewExpenseSummaryScreen">;
 };
@@ -52,7 +57,9 @@ const ViewExpenseSummaryScreen = ({ route }: ViewExpenseSummaryScreenProp) => {
     });
   };
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#f7f7f7" }}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: "#f7f7f7", position: "relative" }}
+    >
       <View style={{ marginHorizontal: 10 }}>
         <Text
           style={{
@@ -80,11 +87,9 @@ const ViewExpenseSummaryScreen = ({ route }: ViewExpenseSummaryScreenProp) => {
       </View>
       <View
         style={{
-          flex: 1,
-          justifyContent: "flex-end",
-          alignItems: "flex-end",
-          right: 10,
-          bottom: 10,
+          position: "absolute",
+          right: wp("5%"),
+          bottom: hp("3%"),
         }}
       >
         <TouchableOpacity

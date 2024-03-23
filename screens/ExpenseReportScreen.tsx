@@ -21,6 +21,10 @@ import "firebase/compat/firestore";
 import { auth, db } from "../firebaseconfig";
 import Toast from "react-native-simple-toast";
 import { useFocusEffect } from "@react-navigation/native";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 type Props = NativeStackScreenProps<
   ExpenseRootStackParamList,
@@ -45,6 +49,8 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
   );
   const { expenseList, setExpense } = useExpenseReportContext();
   const [initialFetchExpense, setInitialFetchExpense] = useState(false);
+  const [initialRead, setInitialRead] = useState(false);
+  const [floatingButtonOpacity, setFloatingButtonOpacity] = useState(1);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -88,6 +94,10 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
     }
   };
   const filterData = (start: Date, end: Date, query: string) => {
+    if (end && start) {
+      end.setHours(23);
+      start.setHours(0);
+    }
     const filteredItems = expenseList.filter((item) => {
       const itemDate = item.expenseDate;
       const isDateInRange =
@@ -176,7 +186,11 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
     return total;
   };
   useEffect(() => {
-    readData();
+    if (!initialRead) {
+      readData();
+      setInitialRead(true);
+    }
+    filterData(new Date(), new Date(), "");
   }, []);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f7f7f7" }}>
@@ -187,8 +201,8 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
         <SearchBar
           placeholder="Expense title filter"
           containerStyle={{
-            backgroundColor: "white",
-            borderColor: "white",
+            backgroundColor: "#f7f7f7",
+            borderColor: "#f7f7f7",
             marginHorizontal: 10,
           }}
           inputContainerStyle={{ backgroundColor: "#f7f2f7", borderRadius: 10 }}
@@ -314,6 +328,8 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
       />
 
       <FlatList
+        onScroll={() => setFloatingButtonOpacity(0.1)}
+        onScrollEndDrag={() => setFloatingButtonOpacity(1)}
         data={!filteredData ? expenseList : filteredData}
         renderItem={({ item }) => (
           <View
@@ -363,14 +379,17 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
         onPress={() => navigation.navigate("AddExpenseScreen")}
         style={{
           position: "absolute",
-          bottom: 45,
-          right: 10,
-          backgroundColor: "pink",
-          borderRadius: 20,
-          padding: 5,
+          right: wp("5%"),
+          bottom: hp("6%"),
+          opacity: floatingButtonOpacity,
         }}
       >
-        <MaterialIcons name="post-add" size={30} color="black" />
+        <MaterialIcons
+          name="post-add"
+          size={30}
+          color="black"
+          style={{ backgroundColor: "pink", padding: 6, borderRadius: 22 }}
+        />
       </TouchableOpacity>
       <View
         style={{

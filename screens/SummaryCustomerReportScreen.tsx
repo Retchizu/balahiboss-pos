@@ -35,6 +35,7 @@ const SummaryCustomerReportScreen = ({
   const { salesReports, setSalesReportList } = useSalesReportContext();
   const { products, updateProduct } = useProductContext();
   const navigation = useNavigation();
+  const [floatingButtonOpacity, setFloatingButtonOpacity] = useState(1);
 
   const deleteData = async (reportId: String) => {
     try {
@@ -117,7 +118,13 @@ const SummaryCustomerReportScreen = ({
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "#f7f7f7", position: "relative" }}
     >
-      <View style={{ marginHorizontal: 10 }}>
+      <View
+        style={{
+          marginHorizontal: 10,
+          flex: 1,
+          marginVertical: 5,
+        }}
+      >
         <Text
           style={{
             fontSize: 26,
@@ -178,6 +185,8 @@ const SummaryCustomerReportScreen = ({
           </Text>
         </View>
         <FlatList
+          onScroll={() => setFloatingButtonOpacity(0.1)}
+          onScrollEndDrag={() => setFloatingButtonOpacity(1)}
           data={item.productList}
           renderItem={({ item }) => (
             <View
@@ -191,7 +200,7 @@ const SummaryCustomerReportScreen = ({
                 {item.product.productName}
               </Text>
               <Text style={{ fontSize: 16, flex: 1, color: "blue" }}>
-                ₱{item.product.sellPrice.toFixed(2)}
+                ₱{item.product.sellPrice}
               </Text>
               <Text style={{ fontSize: 16, flex: 1 }}>
                 {item.quantity.toString()}
@@ -200,7 +209,14 @@ const SummaryCustomerReportScreen = ({
           )}
         />
       </View>
-      <View style={{ position: "absolute", right: wp("5%"), bottom: hp("4%") }}>
+      <View
+        style={{
+          position: "absolute",
+          right: wp("5%"),
+          bottom: hp("4%"),
+          opacity: floatingButtonOpacity,
+        }}
+      >
         <TouchableOpacity
           style={{ backgroundColor: "pink", padding: 6, borderRadius: 22 }}
           onPress={() => setIsVisible(true)}
