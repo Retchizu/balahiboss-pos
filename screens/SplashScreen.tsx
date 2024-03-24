@@ -46,6 +46,16 @@ const SplashScreen = ({ navigation }: Props) => {
       } catch (error) {
         Toast.show("Sign in again", Toast.SHORT);
         console.log((error as Error).message);
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: "LogInScreen",
+              },
+            ],
+          })
+        );
       }
     };
     unsubscribe();

@@ -36,13 +36,13 @@ const StockReportScreen = () => {
           onChangeText={(text) => setSearchQuery(text)}
         />
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text style={{ flex: 1, fontSize: 18, fontWeight: "bold" }}>
+          <Text style={{ flex: 2, fontSize: 12, fontWeight: "bold" }}>
             Product Name
           </Text>
-          <Text style={{ flex: 1, fontSize: 18, fontWeight: "bold" }}>
+          <Text style={{ flex: 1, fontSize: 12, fontWeight: "bold" }}>
             Current Stock
           </Text>
-          <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+          <Text style={{ flex: 1, fontSize: 12, fontWeight: "bold" }}>
             Total Stock Sold
           </Text>
         </View>
@@ -56,9 +56,21 @@ const StockReportScreen = () => {
                 borderBottomWidth: 2,
               }}
             >
-              <Text style={{ fontSize: 16, flex: 1 }}>{item.productName}</Text>
-              <Text style={{ fontSize: 16, flex: 2 }}>{item.stock}</Text>
-              <Text style={{ fontSize: 16 }}>{item.totalStockSold}</Text>
+              <Text style={{ fontSize: 12, flex: 2 }}>{item.productName}</Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  flex: 1,
+                  color: "blue",
+                  fontWeight: "bold",
+                  textAlign: "center",
+                }}
+              >
+                {item.stock}
+              </Text>
+              <Text style={{ fontSize: 12, flex: 1, textAlign: "center" }}>
+                {item.totalStockSold}
+              </Text>
             </View>
           )}
         />

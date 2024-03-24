@@ -58,7 +58,14 @@ const LowStockReportScreen = () => {
             }}
           >
             <Text style={{ fontSize: 16 }}>{item.productName}</Text>
-            <Text style={{ fontSize: 16 }}>{item.stock}</Text>
+            <Text
+              style={{
+                fontSize: 16,
+                color: item.stock === 0 ? "red" : "black",
+              }}
+            >
+              {item.stock}
+            </Text>
           </View>
         )}
       />

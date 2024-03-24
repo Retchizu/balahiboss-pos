@@ -266,7 +266,7 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
             <View style={{ flexDirection: "row", marginBottom: 20 }}>
               <Text
                 style={{
-                  flex: 2,
+                  flex: 3,
                   fontWeight: "500",
                   fontSize: 18,
                   marginBottom: 10,
@@ -282,7 +282,7 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
                 <View style={{ flexDirection: "row" }} key={index.toString()}>
                   <Text
                     style={{
-                      flex: 2,
+                      flex: 3,
                       borderBottomWidth: 1,
                       borderBottomColor: "gray",
                       fontSize: 16,
@@ -296,7 +296,9 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
                       item.product.sellPrice * (item.quantity as number)
                     ).toFixed(2)}
                   </Text>
-                  <Text style={styles.item}>{item.quantity.toString()}</Text>
+                  <Text style={[styles.item, { textAlign: "center" }]}>
+                    {item.quantity.toString()}
+                  </Text>
                 </View>
               ))}
             </View>

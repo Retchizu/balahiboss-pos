@@ -174,7 +174,7 @@ const SummaryCustomerReportScreen = ({
           Products Bought:
         </Text>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text style={{ fontSize: 18, fontWeight: "bold", flex: 2 }}>
+          <Text style={{ fontSize: 18, fontWeight: "bold", flex: 3 }}>
             Product name
           </Text>
           <Text style={{ fontSize: 18, fontWeight: "bold", flex: 1 }}>
@@ -196,13 +196,13 @@ const SummaryCustomerReportScreen = ({
                 justifyContent: "space-between",
               }}
             >
-              <Text style={{ fontSize: 16, flex: 2 }}>
+              <Text style={{ fontSize: 16, flex: 3 }}>
                 {item.product.productName}
               </Text>
               <Text style={{ fontSize: 16, flex: 1, color: "blue" }}>
                 ₱{item.product.sellPrice}
               </Text>
-              <Text style={{ fontSize: 16, flex: 1 }}>
+              <Text style={{ fontSize: 16, flex: 1, textAlign: "center" }}>
                 {item.quantity.toString()}
               </Text>
             </View>
