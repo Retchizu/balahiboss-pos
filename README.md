@@ -9,7 +9,7 @@
 <!-- Screenshots -->
 <p align="center">
   <img src="https://github.com/Retchizu/sales-tracker-for-android-ios/blob/main/screenshots/POS.png" width="200" alt="POS Screen">
-  <img src="https://github.com/Retchizu/sales-tracker-for-android-ios/screenshots/Products.png" width="200" alt="Product Screen">
+  <img src="https://github.com/Retchizu/sales-tracker-for-android-ios/blob/main/screenshots/Products.png" width="200" alt="Product Screen">
   <img src="https://github.com/Retchizu/sales-tracker-for-android-ios/blob/main/screenshots/Customers.png" width="200" alt="Customer Screen">
   <img src="https://github.com/Retchizu/sales-tracker-for-android-ios/blob/main/screenshots/Reports.png" width="200" alt="Sales Report Screen">
 </p>
@@ -21,7 +21,7 @@
 - **Receipt Management:** Keep track of receipts for each transaction.
 - **Product Records:** Maintain a comprehensive record of products available in the store.
 - **Expense Tracking:** Monitor and track expenses incurred by the business.
-- **Low Stock Reports:** Receive alerts and reports for products running low on stock.
+- **Low Stock Reports:** view reports for products running low on stock.
 - **Stock Monitoring:** Keep an eye on the inventory levels of products.
 - **Sales Tracking:** View detailed reports on sales performance over time.
 - **Product Preview Summary:** Provide customers with expected prices of inquired products for a smooth purchasing experience.
