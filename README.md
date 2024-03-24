@@ -8,10 +8,10 @@
 
 <!-- Screenshots -->
 <p align="center">
-  <img src="https://github.com/Retchizu/sales-tracker-for-android-ios/screenshots/POS.png" width="200" alt="POS Screen">
+  <img src="https://github.com/Retchizu/sales-tracker-for-android-ios/blob/main/screenshots/POS.png" width="200" alt="POS Screen">
   <img src="https://github.com/Retchizu/sales-tracker-for-android-ios/screenshots/Products.png" width="200" alt="Product Screen">
-  <img src="https://github.com/Retchizu/sales-tracker-for-android-ios/screenshots/Customers.png" width="200" alt="Customer Screen">
-  <img src="https://github.com/Retchizu/sales-tracker-for-android-ios/screenshots/Reports.png" width="200" alt="Sales Report Screen">
+  <img src="https://github.com/Retchizu/sales-tracker-for-android-ios/blob/main/screenshots/Customers.png" width="200" alt="Customer Screen">
+  <img src="https://github.com/Retchizu/sales-tracker-for-android-ios/blob/main/screenshots/Reports.png" width="200" alt="Sales Report Screen">
 </p>
 
 <!-- Features -->
