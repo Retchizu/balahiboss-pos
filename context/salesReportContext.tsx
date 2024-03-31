@@ -27,7 +27,7 @@ export const SalesReportProvider: React.FC<{ children: ReactNode }> = ({
   ) => {
     setSalesReports((prevSalesReport) =>
       prevSalesReport.map((report) =>
-        report.id === reportId ? { ...report, attribute } : report
+        report.id === reportId ? { ...report, ...attribute } : report
       )
     );
   };

@@ -6,11 +6,8 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   TextInput,
-  Modal,
-  TouchableOpacity,
-  FlatList,
 } from "react-native";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import { Customer, PosRootStackParamList, Product } from "../type";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -27,8 +24,7 @@ import Toast from "react-native-simple-toast";
 import { useProductContext } from "../context/productContext";
 import { useCustomerContext } from "../context/customerContext";
 import { useSalesReportContext } from "../context/salesReportContext";
-
-import { Ionicons } from "@expo/vector-icons";
+import SelectCustomerModalComponent from "../components/SelectCustomerModalComponent";
 
 type AddReportScreenProp = {
   route: RouteProp<PosRootStackParamList, "AddReportScreen">;
@@ -52,7 +48,7 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
   const [componentVisible, setComponentVisible] = useState(false);
   const [addComponentVisible, setAddComponentVisible] = useState(false);
   const { customers } = useCustomerContext();
-  const { addSalesReport, salesReports } = useSalesReportContext();
+  const { addSalesReport } = useSalesReportContext();
   const [buttonVisible, setButtonVisible] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const { addCustomer } = useCustomerContext();
@@ -214,8 +210,11 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
   };
 
   const filteredData = () => {
-    return customers.filter((item) =>
+    const filtered = customers.filter((item) =>
       item.customerName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    return filtered.sort((a, b) =>
+      a.customerName.localeCompare(b.customerName.toString())
     );
   };
 
@@ -256,10 +255,14 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1 }}
+      style={{ flex: 1, opacity: componentVisible ? 0.1 : 1 }}
     >
       <SafeAreaView
-        style={{ flex: 1, backgroundColor: "#f7f7f7", paddingHorizontal: 10 }}
+        style={{
+          flex: 1,
+          backgroundColor: "#f7f7f7",
+          paddingHorizontal: 10,
+        }}
       >
         <View style={{ flex: 1 }}>
           <ScrollView style={{ backgroundColor: "white" }}>
@@ -314,177 +317,22 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
             marginBottom: 5,
           }}
         >
-          <Modal
-            visible={componentVisible}
-            transparent
-            animationType="slide"
-            onRequestClose={handleComponentVisibility}
-          >
-            <View
-              style={{
-                backgroundColor: "white",
-                borderRadius: wp("5%"),
-                padding: wp("5%"),
-                shadowColor: "#000",
-                shadowOpacity: 0.2,
-                elevation: wp("2%"),
-                marginHorizontal: wp("2%"),
-                flex: 1,
-              }}
-            >
-              {addComponentVisible ? (
-                <View style={{ justifyContent: "center", flex: 1 }}>
-                  <Text style={styles.textStyle}>Add a Customer</Text>
-                  <Text style={styles.labelStyle}>Customer name:</Text>
-                  <TextInput
-                    placeholder="Customer name"
-                    style={styles.inputContainerStyle}
-                    value={customerName}
-                    onChangeText={(text) => {
-                      setCustomerName(text);
-                    }}
-                  />
-                  <Text style={styles.labelStyle}>Customer Info:</Text>
-                  <TextInput
-                    placeholder="Customer Info"
-                    style={styles.inputContainerStyle}
-                    value={customerInfo}
-                    onChangeText={(text) => setCustomerInfo(text)}
-                    multiline
-                  />
-                  <View
-                    style={{
-                      marginVertical: hp("2%"),
-                      flexDirection: "row",
-                      justifyContent: "space-evenly",
-                    }}
-                  >
-                    <Button
-                      title={"Go back"}
-                      buttonStyle={{ backgroundColor: "pink" }}
-                      containerStyle={{
-                        borderRadius: 10,
-                        width: wp("30%"),
-                      }}
-                      onPress={() => {
-                        setAddComponentVisible(false);
-                      }}
-                    />
-                    <Button
-                      title={"Confirm"}
-                      buttonStyle={{ backgroundColor: "pink" }}
-                      containerStyle={{
-                        borderRadius: 10,
-                        width: wp("30%"),
-                      }}
-                      onPress={addDataCustomer}
-                    />
-                  </View>
-                </View>
-              ) : (
-                <View style={{ flex: 1 }}>
-                  <View
-                    style={{ flexDirection: "row", marginBottom: hp("1%") }}
-                  >
-                    <SearchBar
-                      placeholder={"Search Customer"}
-                      containerStyle={{
-                        backgroundColor: "white",
-                        borderColor: "white",
-                        flex: 1,
-                        height: hp("2.2%"),
-                      }}
-                      inputStyle={{ fontSize: hp("2%") }}
-                      inputContainerStyle={{ backgroundColor: "#f7f2f7" }}
-                      round
-                      autoCapitalize="none"
-                      value={searchQuery}
-                      onChangeText={(text) => setSearchQuery(text)}
-                    />
-
-                    <TouchableOpacity
-                      style={{
-                        padding: wp("2%"),
-                        marginRight: wp("2%"),
-                        backgroundColor: "#f7f2f7",
-                        borderRadius: wp("3%"),
-                      }}
-                      onPress={() => {
-                        setAddComponentVisible(true);
-                      }}
-                    >
-                      <Ionicons
-                        name="person-add-sharp"
-                        size={24}
-                        color="pink"
-                      />
-                    </TouchableOpacity>
-                  </View>
-
-                  <FlatList
-                    style={{ height: hp("90%") }}
-                    data={filteredData()}
-                    renderItem={({ item }) => (
-                      <View
-                        style={{
-                          paddingHorizontal: 10,
-                          paddingVertical: 10,
-                          borderColor: "pink",
-                          borderWidth: 5,
-                          borderRadius: 5,
-                          marginVertical: 5,
-                          marginHorizontal: 10,
-                        }}
-                      >
-                        <View>
-                          <TouchableOpacity
-                            onPress={() => {
-                              setSelected(item);
-                              handleComponentVisibility();
-                              setButtonVisible(true);
-                            }}
-                          >
-                            <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-                              {item.customerName}
-                            </Text>
-
-                            <Text
-                              numberOfLines={1}
-                              style={{ maxWidth: "90%", fontSize: 12 }}
-                            >
-                              {item.customerInfo}
-                            </Text>
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    )}
-                  />
-
-                  <View
-                    style={{
-                      marginBottom: 10,
-                      flexDirection: "row",
-                    }}
-                  >
-                    <Button
-                      title={"Close Customer List"}
-                      buttonStyle={{ backgroundColor: "#fc9db9" }}
-                      containerStyle={{
-                        borderRadius: 10,
-                        flex: 1,
-                        marginHorizontal: 20,
-                      }}
-                      onPress={() => {
-                        handleComponentVisibility();
-                        setButtonVisible(true);
-                      }}
-                    />
-                  </View>
-                </View>
-              )}
-            </View>
-          </Modal>
-
+          <SelectCustomerModalComponent
+            addComponentVisible={addComponentVisible}
+            setAddComponentVisible={setAddComponentVisible}
+            addDataCustomer={addDataCustomer}
+            componentVisible={componentVisible}
+            customerInfo={customerInfo}
+            setCustomerInfo={setCustomerInfo}
+            customerName={customerName}
+            setCustomerName={setCustomerName}
+            filteredData={filteredData}
+            handleComponentVisibility={handleComponentVisibility}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            setButtonVisible={setButtonVisible}
+            setSelected={setSelected}
+          />
           <View>
             <View
               style={{

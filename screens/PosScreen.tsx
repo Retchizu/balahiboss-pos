@@ -7,9 +7,6 @@ import {
   ScrollView,
   TextInput,
   Modal,
-  PermissionsAndroid,
-  Platform,
-  Share,
 } from "react-native";
 import React, {
   useCallback,
