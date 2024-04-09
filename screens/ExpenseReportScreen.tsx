@@ -51,15 +51,16 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
   const [filteredData, setFilteredData] = useState<ExpenseReport[] | undefined>(
     undefined
   );
-  const { expenseList, addExpense } = useExpenseReportContext();
-  const [initialFetchExpense, setInitialFetchExpense] = useState(false);
+  const { expenseList, setExpense } = useExpenseReportContext();
   const [initialRead, setInitialRead] = useState(false);
   const [floatingButtonOpacity, setFloatingButtonOpacity] = useState(1);
+  const [isFetching, setIsFetching] = useState(false);
 
   const readData = async () => {
     try {
       const user = auth.currentUser;
       if (user) {
+        setIsFetching(true);
         const fetched: ExpenseReport[] = [];
         const startDateTimestamp =
           firebase.firestore.Timestamp.fromDate(startDate);
@@ -84,11 +85,9 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
             expenseCost,
           };
           fetched.push(expenseData);
-          if (!expenseList.some((item) => item.id === expenseData.id)) {
-            fetched.push(expenseData);
-          }
         });
-        fetched.forEach((item) => addExpense(item));
+        setExpense(fetched);
+        setIsFetching(false);
       }
     } catch (error) {
       Toast.show("Error getting data", Toast.SHORT);
@@ -191,8 +190,8 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
       readData();
       setInitialRead(true);
     }
-    filterData(new Date(), new Date(), "");
-  }, []);
+    filterData(startDate, endDate, searchQuery);
+  }, [expenseList.length]);
 
   console.log(expenseList);
   return (
@@ -318,6 +317,7 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
       </View>
       <Button
         title={"Confirm Date"}
+        loading={isFetching}
         containerStyle={{
           borderRadius: 10,
           marginHorizontal: 30,
@@ -326,6 +326,7 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
         titleStyle={{ fontSize: 14 }}
         buttonStyle={{ backgroundColor: "#af71bd" }}
         onPress={() => {
+          readData();
           if (startDate && endDate) filterData(startDate, endDate, searchQuery);
         }}
       />

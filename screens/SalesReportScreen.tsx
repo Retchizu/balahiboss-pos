@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Platform,
   StyleSheet,
@@ -33,7 +34,7 @@ type prop = NativeStackScreenProps<
 >;
 const SalesReportScreen = ({ navigation }: prop) => {
   const [initialFetchSales, setInitialFetchSales] = useState(false);
-  const { salesReports, addSalesReport } = useSalesReportContext();
+  const { salesReports, setSalesReportList } = useSalesReportContext();
   const startDateHours = new Date();
   startDateHours.setHours(0);
   const [startDate, setStartDate] = useState<Date>(startDateHours);
@@ -46,11 +47,13 @@ const SalesReportScreen = ({ navigation }: prop) => {
   const [filteredData, setFilteredData] = useState<PosReport[] | undefined>(
     undefined
   );
+  const [isFetching, setIsFetching] = useState(false);
 
   const readData = async () => {
     try {
       const user = auth.currentUser;
       if (user) {
+        setIsFetching(true);
         const fetched: PosReport[] = [];
         const startDateTimestamp =
           firebase.firestore.Timestamp.fromDate(startDate);
@@ -88,12 +91,11 @@ const SalesReportScreen = ({ navigation }: prop) => {
             gateDiscount,
           };
 
-          if (!salesReports.some((item) => item.id === salesReportData.id)) {
-            fetched.push(salesReportData);
-          }
+          fetched.push(salesReportData);
         });
 
-        fetched.forEach((item) => addSalesReport(item));
+        setSalesReportList(fetched);
+        setIsFetching(false);
       }
     } catch (error) {
       Toast.show("Error getting data", Toast.SHORT);
@@ -381,6 +383,7 @@ const SalesReportScreen = ({ navigation }: prop) => {
       </View>
       <Button
         title={"Confirm Date"}
+        loading={isFetching}
         containerStyle={{
           borderRadius: 10,
           marginHorizontal: 30,
