@@ -143,7 +143,7 @@ const ConfigureCustomerScreen: React.FC<ConfigureCustomerProps> = ({
                 }}
               >
                 <Text style={{ fontSize: hp("2.3%"), fontWeight: "500" }}>
-                  Edit Product
+                  Edit Customer
                 </Text>
                 <View
                   style={{
@@ -156,7 +156,7 @@ const ConfigureCustomerScreen: React.FC<ConfigureCustomerProps> = ({
                       flexDirection: "row",
                     }}
                   >
-                    <Text style={{ fontSize: hp("2.3%") }}>Product Name:</Text>
+                    <Text style={{ fontSize: hp("2.3%") }}>Customer Name:</Text>
                     <TextInput
                       style={{
                         width: wp("40%"),
@@ -229,7 +229,7 @@ const ConfigureCustomerScreen: React.FC<ConfigureCustomerProps> = ({
           title={"Go Back"}
           onPress={navigation.goBack}
           buttonStyle={{
-            backgroundColor: "pink",
+            backgroundColor: "#af71bd",
             borderRadius: wp(3),
             width: wp(30),
           }}
@@ -238,7 +238,7 @@ const ConfigureCustomerScreen: React.FC<ConfigureCustomerProps> = ({
           title={"Edit Customer"}
           onPress={handleEditPress}
           buttonStyle={{
-            backgroundColor: "pink",
+            backgroundColor: "#af71bd",
             borderRadius: wp(3),
             width: wp(30),
           }}

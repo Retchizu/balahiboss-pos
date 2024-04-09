@@ -13,7 +13,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Customer, Product, ReportRootStackParamList } from "../type";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 import { auth, db } from "../firebaseconfig";
 import Dialog from "react-native-dialog";
 import { useSalesReportContext } from "../context/salesReportContext";
@@ -29,11 +28,8 @@ import { Button, SearchBar } from "@rneui/base";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import ListComponent from "../components/ListComponent";
 import { useCustomerContext } from "../context/customerContext";
-import { Fontisto } from "@expo/vector-icons";
-import { Entypo } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import SelectCustomerModalComponent from "../components/SelectCustomerModalComponent";
 
 type SummaryCustomerReportSreenProp = {
@@ -794,7 +790,7 @@ const SummaryCustomerReportScreen = ({
                 }
                 containerStyle={{ borderRadius: wp("2%"), flex: 1 }}
                 titleStyle={{ fontSize: hp("1.7%") }}
-                buttonStyle={{ backgroundColor: "pink" }}
+                buttonStyle={{ backgroundColor: "#af71bd" }}
               />
             </View>
             <View
@@ -810,7 +806,7 @@ const SummaryCustomerReportScreen = ({
                 onPress={() => setShow(true)}
                 containerStyle={{ borderRadius: wp("2%"), flex: 1 }}
                 titleStyle={{ fontSize: hp("1.7%") }}
-                buttonStyle={{ backgroundColor: "pink" }}
+                buttonStyle={{ backgroundColor: "#af71bd" }}
               />
               {show && (
                 <DateTimePicker
@@ -835,7 +831,7 @@ const SummaryCustomerReportScreen = ({
                       flex: 1,
                       marginHorizontal: 20,
                     }}
-                    buttonStyle={{ backgroundColor: "pink" }}
+                    buttonStyle={{ backgroundColor: "#af71bd" }}
                     onPress={showDatepicker}
                   />
                   <Button
@@ -845,7 +841,7 @@ const SummaryCustomerReportScreen = ({
                       flex: 1,
                       marginHorizontal: 20,
                     }}
-                    buttonStyle={{ backgroundColor: "pink" }}
+                    buttonStyle={{ backgroundColor: "#af71bd" }}
                     onPress={confirmIosDate}
                   />
                 </View>
@@ -936,7 +932,7 @@ const SummaryCustomerReportScreen = ({
                 marginHorizontal: wp("20%"),
               }}
               titleStyle={{ fontSize: hp("2%") }}
-              buttonStyle={{ backgroundColor: "pink" }}
+              buttonStyle={{ backgroundColor: "#af71bd" }}
               onPress={() => setIsEditCustomerReportConfirmationVisible(true)}
             />
           </View>
@@ -969,7 +965,7 @@ const SummaryCustomerReportScreen = ({
             backgroundColor: "#f7f7f7",
           }}
         >
-          <View style={{ flexDirection: "row" }}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
             <SearchBar
               placeholder={"Search Product"}
               containerStyle={{
@@ -995,7 +991,7 @@ const SummaryCustomerReportScreen = ({
               }}
               onPress={() => setIsDialogProductConfirmationVisible(true)}
             >
-              <Entypo name="check" size={24} color="pink" />
+              <Entypo name="check" size={24} color="#af71bd" />
             </TouchableOpacity>
           </View>
 
@@ -1012,7 +1008,7 @@ const SummaryCustomerReportScreen = ({
                   flex: 1,
                   paddingHorizontal: wp("2%"),
                   paddingVertical: hp("1%"),
-                  borderColor: "#d49fc0",
+                  borderColor: "#af71bd",
                   borderWidth: wp("0.8%"),
                   borderRadius: wp("2%"),
                   marginVertical: hp("0.5%"),
@@ -1057,7 +1053,7 @@ const SummaryCustomerReportScreen = ({
             <View
               style={{
                 flex: 1,
-                borderColor: "lightgreen",
+                borderColor: "black",
                 borderWidth: wp("0.4"),
                 margin: wp("2%"),
               }}
@@ -1235,7 +1231,7 @@ const SummaryCustomerReportScreen = ({
                   justifyContent: "space-between",
                 }}
               >
-                <View>
+                <View style={{ marginLeft: wp("1%") }}>
                   <Text>
                     Total: ₱{handleTotalAmount(selectedProducts).toFixed(2)}
                   </Text>
@@ -1299,7 +1295,7 @@ export default SummaryCustomerReportScreen;
 
 const styles = StyleSheet.create({
   touchableStyle: {
-    backgroundColor: "lightpink",
+    backgroundColor: "#af71bd",
     borderRadius: wp("2%"),
     marginRight: wp("2%"),
   },

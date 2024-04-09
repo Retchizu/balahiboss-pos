@@ -79,7 +79,7 @@ const AnimatedFloatingButton = ({
             { padding: wp("2%") },
           ]}
         >
-          <Feather name="trash-2" size={30} color="black" />
+          <Feather name="trash-2" size={30} color="#e1c3e8" />
         </Animated.View>
       </TouchableWithoutFeedback>
 
@@ -93,13 +93,13 @@ const AnimatedFloatingButton = ({
             { padding: wp("2%") },
           ]}
         >
-          <Entypo name="pencil" size={30} color="black" />
+          <Entypo name="pencil" size={30} color="#e1c3e8" />
         </Animated.View>
       </TouchableWithoutFeedback>
 
       <TouchableWithoutFeedback onPress={toggleMenu}>
         <Animated.View style={[styles.button, styles.menu, rotation]}>
-          <AntDesign name="caretdown" size={30} color="black" />
+          <AntDesign name="caretdown" size={30} color="#e1c3e8" />
         </Animated.View>
       </TouchableWithoutFeedback>
     </View>
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   menu: {
-    backgroundColor: "pink",
+    backgroundColor: "#5f0573",
   },
   secondary: {
     borderRadius: hp("20"),

@@ -93,7 +93,7 @@ const ViewExpenseSummaryScreen = ({ route }: ViewExpenseSummaryScreenProp) => {
         }}
       >
         <TouchableOpacity
-          style={{ backgroundColor: "pink", padding: 5, borderRadius: 20 }}
+          style={{ backgroundColor: "#af71bd", padding: 5, borderRadius: 20 }}
           onPress={() => setIsVisible(true)}
         >
           <Feather name="trash-2" size={30} color="black" />

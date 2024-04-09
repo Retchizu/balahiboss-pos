@@ -44,7 +44,7 @@ const ForgotPasswordScreen = ({ navigation, route }: Prop) => {
           placeholder="Enter your email"
           style={{
             borderWidth: 2,
-            borderColor: "#e66cb9",
+            borderColor: "#af71bd",
             paddingHorizontal: 10,
             marginHorizontal: 40,
             fontSize: 15,

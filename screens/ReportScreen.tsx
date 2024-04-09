@@ -47,7 +47,7 @@ const ReportScreen = ({ navigation }: Props) => {
           <FontAwesome
             name="money"
             size={35}
-            color="pink"
+            color="#5f0573"
             style={{ alignSelf: "center" }}
           />
         );
@@ -56,7 +56,7 @@ const ReportScreen = ({ navigation }: Props) => {
           <MaterialCommunityIcons
             name="hand-coin"
             size={35}
-            color="pink"
+            color="#5f0573"
             style={{ alignSelf: "center" }}
           />
         );
@@ -65,7 +65,7 @@ const ReportScreen = ({ navigation }: Props) => {
           <Entypo
             name="dropbox"
             size={35}
-            color="pink"
+            color="#5f0573"
             style={{ alignSelf: "center" }}
           />
         );
@@ -74,7 +74,7 @@ const ReportScreen = ({ navigation }: Props) => {
           <Foundation
             name="graph-bar"
             size={35}
-            color="pink"
+            color="#5f0573"
             style={{ alignSelf: "center" }}
           />
         );
@@ -113,7 +113,7 @@ const ReportScreen = ({ navigation }: Props) => {
             key={item.key}
             style={{
               marginVertical: 10,
-              borderColor: "pink",
+              borderColor: "#af71bd",
               borderWidth: 3,
               width: "100%",
             }}

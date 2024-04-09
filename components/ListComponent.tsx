@@ -26,11 +26,13 @@ const ListComponent = ({
   const iconSeparator = () => {
     switch (identifier) {
       case "product":
-        return <Fontisto name="shopping-basket-add" size={24} color="pink" />;
+        return (
+          <Fontisto name="shopping-basket-add" size={24} color="#af71bd" />
+        );
       case "customer":
-        return <Ionicons name="person-add-sharp" size={24} color="pink" />;
+        return <Ionicons name="person-add-sharp" size={24} color="#af71bd" />;
       case "pos":
-        return <Fontisto name="shopping-basket" size={24} color="pink" />;
+        return <Fontisto name="shopping-basket" size={24} color="#af71bd" />;
     }
   };
 

@@ -166,13 +166,13 @@ const TabNavigator = () => (
       options={{
         headerShown: true,
         tabBarIcon: () => (
-          <MaterialIcons name="add-to-home-screen" size={24} color="pink" />
+          <MaterialIcons name="add-to-home-screen" size={24} color="#af71bd" />
         ),
         tabBarInactiveTintColor: "black",
-        tabBarActiveTintColor: "pink",
-        tabBarActiveBackgroundColor: "#3b1b37",
+        tabBarActiveTintColor: "black",
+        tabBarActiveBackgroundColor: "#f7d1ff",
         headerStyle: {
-          backgroundColor: "#d49fc0",
+          backgroundColor: "#af71bd",
         },
         headerTitleAlign: "center",
         headerTintColor: "white",
@@ -183,12 +183,12 @@ const TabNavigator = () => (
       component={TabToStackProduct}
       options={{
         headerShown: true,
-        tabBarIcon: () => <Entypo name="dropbox" size={24} color="pink" />,
+        tabBarIcon: () => <Entypo name="dropbox" size={24} color="#af71bd" />,
         tabBarInactiveTintColor: "black",
-        tabBarActiveTintColor: "pink",
-        tabBarActiveBackgroundColor: "#3b1b37",
+        tabBarActiveTintColor: "black",
+        tabBarActiveBackgroundColor: "#f7d1ff",
         headerStyle: {
-          backgroundColor: "#d49fc0",
+          backgroundColor: "#af71bd",
         },
         headerTitleAlign: "center",
         headerTintColor: "white",
@@ -199,12 +199,12 @@ const TabNavigator = () => (
       component={TabToStackCustomer}
       options={{
         headerShown: true,
-        tabBarIcon: () => <Fontisto name="persons" size={24} color="pink" />,
+        tabBarIcon: () => <Fontisto name="persons" size={24} color="#af71bd" />,
         tabBarInactiveTintColor: "black",
-        tabBarActiveTintColor: "pink",
-        tabBarActiveBackgroundColor: "#3b1b37",
+        tabBarActiveTintColor: "black",
+        tabBarActiveBackgroundColor: "#f7d1ff",
         headerStyle: {
-          backgroundColor: "#d49fc0",
+          backgroundColor: "#af71bd",
         },
         headerTitleAlign: "center",
         headerTintColor: "white",
@@ -216,13 +216,13 @@ const TabNavigator = () => (
       options={{
         headerShown: true,
         tabBarIcon: () => (
-          <MaterialIcons name="view-list" size={24} color="pink" />
+          <MaterialIcons name="view-list" size={24} color="#af71bd" />
         ),
         tabBarInactiveTintColor: "black",
-        tabBarActiveTintColor: "pink",
-        tabBarActiveBackgroundColor: "#3b1b37",
+        tabBarActiveTintColor: "black",
+        tabBarActiveBackgroundColor: "#f7d1ff",
         headerStyle: {
-          backgroundColor: "#d49fc0",
+          backgroundColor: "#af71bd",
         },
         headerTitleAlign: "center",
         headerTintColor: "white",
@@ -233,12 +233,12 @@ const TabNavigator = () => (
       component={SettingScreen}
       options={{
         headerShown: true,
-        tabBarIcon: () => <FontAwesome name="cog" size={24} color="pink" />,
+        tabBarIcon: () => <FontAwesome name="cog" size={24} color="#af71bd" />,
         tabBarInactiveTintColor: "black",
-        tabBarActiveTintColor: "pink",
-        tabBarActiveBackgroundColor: "#3b1b37",
+        tabBarActiveTintColor: "black",
+        tabBarActiveBackgroundColor: "#f7d1ff",
         headerStyle: {
-          backgroundColor: "#d49fc0",
+          backgroundColor: "#af71bd",
         },
         headerTitleAlign: "center",
         headerTintColor: "white",
@@ -271,7 +271,7 @@ export default function App() {
                     headerTitleAlign: "center",
                     headerTintColor: "white",
                     headerStyle: {
-                      backgroundColor: "#d49fc0",
+                      backgroundColor: "#af71bd",
                     },
                     headerBackVisible: false,
                     gestureEnabled: false,
@@ -286,7 +286,7 @@ export default function App() {
                     headerTitleAlign: "center",
                     headerTintColor: "white",
                     headerStyle: {
-                      backgroundColor: "#d49fc0",
+                      backgroundColor: "#af71bd",
                     },
                     headerBackVisible: false,
                     statusBarHidden: true,
@@ -300,7 +300,7 @@ export default function App() {
                     headerTitleAlign: "center",
                     headerTintColor: "white",
                     headerStyle: {
-                      backgroundColor: "#d49fc0",
+                      backgroundColor: "#af71bd",
                     },
                     headerBackVisible: false,
                     statusBarHidden: true,
@@ -310,11 +310,11 @@ export default function App() {
                   name="ForgotPasswordScreen"
                   component={ForgotPasswordScreen}
                   options={{
-                    headerTitle: "Sign Up",
+                    headerTitle: "Forgot Password",
                     headerTitleAlign: "center",
                     headerTintColor: "white",
                     headerStyle: {
-                      backgroundColor: "#d49fc0",
+                      backgroundColor: "#af71bd",
                     },
                     headerBackVisible: false,
                     statusBarHidden: true,

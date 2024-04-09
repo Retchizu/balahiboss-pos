@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ExpenseReport, ExpenseRootStackParamList } from "../type";
@@ -39,55 +39,56 @@ const convertTimestampToDate = (
 };
 
 const ExpenseReportScreen = ({ navigation }: Props) => {
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const startDateHours = new Date();
+  startDateHours.setHours(0);
+  const [startDate, setStartDate] = useState<Date>(startDateHours);
+  const endDateHours = new Date();
+  endDateHours.setHours(23);
+  const [endDate, setEndDate] = useState<Date>(endDateHours);
   const [showStartDate, setShowStartDate] = useState(false);
   const [showEndDate, setShowEndDate] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState<ExpenseReport[] | undefined>(
     undefined
   );
-  const { expenseList, setExpense } = useExpenseReportContext();
+  const { expenseList, addExpense } = useExpenseReportContext();
   const [initialFetchExpense, setInitialFetchExpense] = useState(false);
   const [initialRead, setInitialRead] = useState(false);
   const [floatingButtonOpacity, setFloatingButtonOpacity] = useState(1);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      return () => {
-        setStartDate(startDate);
-        setEndDate(endDate);
-        setSearchQuery(searchQuery);
-      };
-    }, [])
-  );
 
   const readData = async () => {
     try {
       const user = auth.currentUser;
       if (user) {
         const fetched: ExpenseReport[] = [];
+        const startDateTimestamp =
+          firebase.firestore.Timestamp.fromDate(startDate);
+        const endDateTimestamp = firebase.firestore.Timestamp.fromDate(endDate);
         const docRef = db
           .collection("users")
           .doc(user.uid)
           .collection("expense")
+          .where("expenseDate", ">=", startDateTimestamp)
+          .where("expenseDate", "<=", endDateTimestamp)
           .orderBy("expenseDate", "desc");
         const querySnapshot = await docRef.get();
         querySnapshot.forEach((doc) => {
           const { expenseTitle, expenseDescription, expenseDate, expenseCost } =
             doc.data();
-          fetched.push({
+
+          const expenseData: ExpenseReport = {
             id: doc.id,
             expenseTitle,
             expenseDescription,
             expenseDate: convertTimestampToDate(expenseDate),
             expenseCost,
-          });
+          };
+          fetched.push(expenseData);
+          if (!expenseList.some((item) => item.id === expenseData.id)) {
+            fetched.push(expenseData);
+          }
         });
-        if (!initialFetchExpense) {
-          setExpense(fetched);
-          setInitialFetchExpense(true);
-        }
+        fetched.forEach((item) => addExpense(item));
       }
     } catch (error) {
       Toast.show("Error getting data", Toast.SHORT);
@@ -192,6 +193,8 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
     }
     filterData(new Date(), new Date(), "");
   }, []);
+
+  console.log(expenseList);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f7f7f7" }}>
       <Text style={{ fontSize: 20, fontWeight: "bold", marginHorizontal: 10 }}>
@@ -223,7 +226,7 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
             onPress={toggleStartDate}
             containerStyle={{ borderRadius: 10 }}
             titleStyle={{ fontSize: 14 }}
-            buttonStyle={{ backgroundColor: "pink" }}
+            buttonStyle={{ backgroundColor: "#af71bd" }}
           />
           <Text style={{ alignSelf: "center" }}> -- </Text>
           <Button
@@ -231,7 +234,7 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
             onPress={toggleEndDate}
             containerStyle={{ borderRadius: 10 }}
             titleStyle={{ fontSize: 14 }}
-            buttonStyle={{ backgroundColor: "pink" }}
+            buttonStyle={{ backgroundColor: "#af71bd" }}
           />
 
           {showStartDate && (
@@ -257,7 +260,7 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
                   flex: 1,
                   marginHorizontal: 20,
                 }}
-                buttonStyle={{ backgroundColor: "pink" }}
+                buttonStyle={{ backgroundColor: "#af71bd" }}
                 onPress={toggleStartDate}
               />
               <Button
@@ -267,7 +270,7 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
                   flex: 1,
                   marginHorizontal: 20,
                 }}
-                buttonStyle={{ backgroundColor: "pink" }}
+                buttonStyle={{ backgroundColor: "#af71bd" }}
                 onPress={confirmIosStartDate}
               />
             </View>
@@ -297,7 +300,7 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
                 flex: 1,
                 marginHorizontal: 20,
               }}
-              buttonStyle={{ backgroundColor: "pink" }}
+              buttonStyle={{ backgroundColor: "#af71bd" }}
               onPress={toggleEndDate}
             />
             <Button
@@ -307,7 +310,7 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
                 flex: 1,
                 marginHorizontal: 20,
               }}
-              buttonStyle={{ backgroundColor: "pink" }}
+              buttonStyle={{ backgroundColor: "#af71bd" }}
               onPress={confirmIosEndDate}
             />
           </View>
@@ -321,60 +324,68 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
           marginTop: 5,
         }}
         titleStyle={{ fontSize: 14 }}
-        buttonStyle={{ backgroundColor: "pink" }}
+        buttonStyle={{ backgroundColor: "#af71bd" }}
         onPress={() => {
           if (startDate && endDate) filterData(startDate, endDate, searchQuery);
         }}
       />
-
-      <FlatList
-        onScroll={() => setFloatingButtonOpacity(0.1)}
-        onScrollEndDrag={() => setFloatingButtonOpacity(1)}
-        data={!filteredData ? expenseList : filteredData}
-        renderItem={({ item }) => (
-          <View
-            style={{
-              flex: 1,
-              paddingHorizontal: 10,
-              paddingVertical: 10,
-              borderColor: "pink",
-              borderWidth: 5,
-              borderRadius: 5,
-              marginVertical: 5,
-              marginHorizontal: 10,
-            }}
-          >
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("ViewExpenseSummaryScreen", {
-                  ...item,
-                  expenseDate:
-                    item.expenseDate instanceof Date
-                      ? item.expenseDate.toISOString()
-                      : item.expenseDate,
-                })
-              }
+      {filteredData?.length !== 0 ? (
+        <FlatList
+          onScroll={() => setFloatingButtonOpacity(0.1)}
+          onScrollEndDrag={() => setFloatingButtonOpacity(1)}
+          data={!filteredData ? expenseList : filteredData}
+          renderItem={({ item }) => (
+            <View
+              style={{
+                flex: 1,
+                paddingHorizontal: 10,
+                paddingVertical: 10,
+                borderColor: "#af71bd",
+                borderWidth: 5,
+                borderRadius: 5,
+                marginVertical: 5,
+                marginHorizontal: 10,
+              }}
             >
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("ViewExpenseSummaryScreen", {
+                    ...item,
+                    expenseDate:
+                      item.expenseDate instanceof Date
+                        ? item.expenseDate.toISOString()
+                        : item.expenseDate,
+                  })
+                }
               >
-                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                  {item.expenseTitle}
-                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                    {item.expenseTitle}
+                  </Text>
 
-                <Text numberOfLines={1} style={{ maxWidth: "90%" }}>
-                  {item.expenseDate instanceof Date
-                    ? formatDateString(item.expenseDate)
-                    : item.expenseDate}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
+                  <Text numberOfLines={1} style={{ maxWidth: "90%" }}>
+                    {item.expenseDate instanceof Date
+                      ? formatDateString(item.expenseDate)
+                      : item.expenseDate}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+      ) : (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Text>Use search bar or date range filter to see data</Text>
+        </View>
+      )}
+
       <TouchableOpacity
         onPress={() => navigation.navigate("AddExpenseScreen")}
         style={{
@@ -387,13 +398,13 @@ const ExpenseReportScreen = ({ navigation }: Props) => {
         <MaterialIcons
           name="post-add"
           size={30}
-          color="black"
-          style={{ backgroundColor: "pink", padding: 6, borderRadius: 22 }}
+          color="white"
+          style={{ backgroundColor: "#af71bd", padding: 6, borderRadius: 22 }}
         />
       </TouchableOpacity>
       <View
         style={{
-          borderColor: "lightgreen",
+          borderColor: "black",
           borderWidth: 2,
           marginHorizontal: 5,
           padding: 5,

@@ -335,7 +335,7 @@ const PosScreen = ({ navigation }: Prop) => {
               flex: 1,
               paddingHorizontal: wp("2%"),
               paddingVertical: hp("1%"),
-              borderColor: "#d49fc0",
+              borderColor: "#af71bd",
               borderWidth: wp("0.8%"),
               borderRadius: wp("2%"),
               marginVertical: hp("0.5%"),
@@ -378,7 +378,7 @@ const PosScreen = ({ navigation }: Prop) => {
         <View
           style={{
             flex: 1,
-            borderColor: "lightgreen",
+            borderColor: "black",
             borderWidth: wp("0.4"),
             margin: wp("2%"),
           }}
@@ -525,7 +525,7 @@ const PosScreen = ({ navigation }: Prop) => {
               justifyContent: "space-between",
             }}
           >
-            <View>
+            <View style={{ marginLeft: wp("1%") }}>
               <Text>
                 Total: ₱{handleTotalAmount(selectedProducts).toFixed(2)}
               </Text>
@@ -537,14 +537,14 @@ const PosScreen = ({ navigation }: Prop) => {
             <TouchableOpacity
               style={{
                 padding: wp("2%"),
-                backgroundColor: "pink",
+                backgroundColor: "#af71bd",
                 borderRadius: wp("5%"),
                 marginRight: wp("5%"),
                 bottom: hp("1%"),
               }}
               onPress={handlePreviewModalVisibility}
             >
-              <Fontisto name="preview" size={20} color="black" />
+              <Fontisto name="preview" size={20} color="white" />
             </TouchableOpacity>
 
             <Modal
@@ -621,14 +621,14 @@ const PosScreen = ({ navigation }: Prop) => {
                     <TouchableOpacity
                       style={{
                         padding: wp("2%"),
-                        backgroundColor: "pink",
+                        backgroundColor: "#af71bd",
                         borderRadius: wp("8%"),
                         marginRight: wp("5%"),
                         bottom: hp("1%"),
                       }}
                       onPress={captureScreen}
                     >
-                      <Entypo name="camera" size={24} color="black" />
+                      <Entypo name="camera" size={24} color="white" />
                     </TouchableOpacity>
                   ) : null}
                 </View>
@@ -650,7 +650,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   touchableStyle: {
-    backgroundColor: "lightpink",
+    backgroundColor: "#af71bd",
     borderRadius: wp("2%"),
     marginRight: wp("2%"),
   },

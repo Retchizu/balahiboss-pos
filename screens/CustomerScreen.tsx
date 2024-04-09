@@ -79,7 +79,7 @@ const CustomerScreen = ({ navigation }: Props) => {
               flex: 1,
               paddingHorizontal: wp("2%"),
               paddingVertical: hp("1%"),
-              borderColor: "pink",
+              borderColor: "#af71bd",
               borderWidth: wp("1%"),
               borderRadius: wp("2%"),
               marginVertical: hp("0.5%"),

@@ -76,7 +76,7 @@ const ProductScreen = ({ navigation }: Props) => {
               flex: 1,
               paddingHorizontal: 10,
               paddingVertical: 10,
-              borderColor: "#d49fc0",
+              borderColor: "#af71bd",
               borderWidth: 5,
               borderRadius: 5,
               marginVertical: 5,

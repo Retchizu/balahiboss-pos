@@ -249,9 +249,16 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
       setComponentVisible(false);
       setButtonVisible(true);
     } catch (error) {
-      console.log("Error adding data: ", error as Error);
+      Toast.show(
+        `Error adding data: please try again later, Error cause: ${
+          (error as Error).message
+        }`,
+        Toast.SHORT
+      );
     }
   };
+
+  console.log(items.length);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -311,7 +318,7 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
           style={{
             borderStyle: "dotted",
             borderWidth: 3,
-            borderColor: "pink",
+            borderColor: "#af71bd",
             padding: 5,
             justifyContent: "flex-end",
             marginBottom: 5,
@@ -350,7 +357,7 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
                   fontSize: hp("2%"),
                   marginLeft: wp("1%"),
                   flex: 1,
-                  borderColor: "pink",
+                  borderColor: "#af71bd",
                   borderWidth: wp("0.5%"),
                   paddingHorizontal: wp("1%"),
                 }}
@@ -390,7 +397,7 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
                 }
                 containerStyle={{ borderRadius: wp("2%"), flex: 1 }}
                 titleStyle={{ fontSize: hp("1.7%") }}
-                buttonStyle={{ backgroundColor: "pink" }}
+                buttonStyle={{ backgroundColor: "#af71bd" }}
               />
             </View>
             <View
@@ -406,7 +413,7 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
                 onPress={() => setShow(true)}
                 containerStyle={{ borderRadius: wp("2%"), flex: 1 }}
                 titleStyle={{ fontSize: hp("1.7%") }}
-                buttonStyle={{ backgroundColor: "pink" }}
+                buttonStyle={{ backgroundColor: "#af71bd" }}
               />
 
               {show && (
@@ -432,7 +439,7 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
                       flex: 1,
                       marginHorizontal: 20,
                     }}
-                    buttonStyle={{ backgroundColor: "pink" }}
+                    buttonStyle={{ backgroundColor: "#af71bd" }}
                     onPress={showDatepicker}
                   />
                   <Button
@@ -442,7 +449,7 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
                       flex: 1,
                       marginHorizontal: 20,
                     }}
-                    buttonStyle={{ backgroundColor: "pink" }}
+                    buttonStyle={{ backgroundColor: "#af71bd" }}
                     onPress={confirmIosDate}
                   />
                 </View>
@@ -543,7 +550,7 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
             >
               <Button
                 title={"Cancel"}
-                buttonStyle={{ backgroundColor: "pink" }}
+                buttonStyle={{ backgroundColor: "#af71bd" }}
                 containerStyle={{
                   borderRadius: wp("2%"),
                   flex: 1,
@@ -553,16 +560,21 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
               />
               <Button
                 title={"Confirm"}
-                buttonStyle={{ backgroundColor: "pink" }}
+                buttonStyle={{ backgroundColor: "#af71bd" }}
                 containerStyle={{
                   borderRadius: wp("2%"),
                   flex: 1,
                   marginHorizontal: wp("5%"),
                 }}
                 onPress={() => {
-                  if (selected) {
+                  if (selected && items.length !== 0) {
                     addData();
-                  } else {
+                  } else if (items.length === 0) {
+                    Toast.show(
+                      "Please select a product from the pos",
+                      Toast.SHORT
+                    );
+                  } else if (!selected) {
                     Toast.show("Customer is empty", Toast.SHORT);
                   }
                 }}
@@ -616,7 +628,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     marginLeft: 5,
-    borderColor: "pink",
+    borderColor: "#af71bd",
     borderWidth: 2,
     paddingHorizontal: 5,
   },

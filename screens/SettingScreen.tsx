@@ -21,6 +21,10 @@ import { Input } from "@rneui/base";
 import { Entypo } from "@expo/vector-icons";
 import firebase from "firebase/compat";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSalesReportContext } from "../context/salesReportContext";
+import { useExpenseReportContext } from "../context/expenseReportContext";
+import { useProductContext } from "../context/productContext";
+import { useCustomerContext } from "../context/customerContext";
 type Props = BottomTabScreenProps<RootStackParamList, "Settings">;
 
 const SettingScreen = ({ navigation }: Props) => {
@@ -31,6 +35,10 @@ const SettingScreen = ({ navigation }: Props) => {
   const [newPassword, setNewPassword] = useState("");
   const [isOldPasswordVisible, setIsOldPasswordVisible] = useState(true);
   const [isNewPasswordVisible, setIsNewPasswordVisible] = useState(true);
+  const { setSalesReportList } = useSalesReportContext();
+  const { setExpense } = useExpenseReportContext();
+  const { setProductList } = useProductContext();
+  const { setCustomerList } = useCustomerContext();
 
   console.log(auth.currentUser?.displayName);
 
@@ -92,6 +100,10 @@ const SettingScreen = ({ navigation }: Props) => {
         .then(() => Toast.show("Sign out successful", Toast.SHORT));
       await AsyncStorage.clear();
       AsyncStorage.clear();
+      setSalesReportList([]);
+      setCustomerList([]);
+      setExpense([]);
+      setProductList([]);
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -115,11 +127,11 @@ const SettingScreen = ({ navigation }: Props) => {
   const iconSeparator = (label: string) => {
     switch (label) {
       case "Sign Out":
-        return <Octicons name="sign-out" size={24} color="black" />;
+        return <Octicons name="sign-out" size={24} color="#5f0573" />;
       case "Change username":
-        return <Ionicons name="person" size={24} color="black" />;
+        return <Ionicons name="person" size={24} color="#5f0573" />;
       case "Change password":
-        return <Entypo name="lock" size={24} color="black" />;
+        return <Entypo name="lock" size={24} color="#5f0573" />;
     }
   };
 
@@ -146,12 +158,12 @@ const SettingScreen = ({ navigation }: Props) => {
                   flexDirection: "row",
                   marginTop: 20,
                   borderBottomWidth: 2,
+                  alignItems: "center",
                 }}
               >
-                {iconSeparator(item.label)}
-                <Text style={{ alignSelf: "center", marginLeft: 10 }}>
-                  {item.label}
-                </Text>
+                <View style={{ flex: 0.06 }}>{iconSeparator(item.label)}</View>
+
+                <Text style={{ marginLeft: 10, flex: 1 }}>{item.label}</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -167,7 +179,7 @@ const SettingScreen = ({ navigation }: Props) => {
               onChangeText={(text) => setUsername(text)}
               containerStyle={{
                 borderWidth: 2,
-                borderColor: "pink",
+                borderColor: "#af71bd",
                 borderRadius: 5,
               }}
               inputContainerStyle={{ borderBottomWidth: 0 }}
@@ -189,7 +201,7 @@ const SettingScreen = ({ navigation }: Props) => {
 
                 borderRadius: 8,
                 paddingHorizontal: 14,
-                borderColor: "pink",
+                borderColor: "#af71bd",
                 borderWidth: 2,
               }}
             >
@@ -223,7 +235,7 @@ const SettingScreen = ({ navigation }: Props) => {
 
                 borderRadius: 8,
                 paddingHorizontal: 14,
-                borderColor: "pink",
+                borderColor: "#af71bd",
                 borderWidth: 2,
               }}
             >

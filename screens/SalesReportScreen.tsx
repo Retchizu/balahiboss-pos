@@ -33,27 +33,37 @@ type prop = NativeStackScreenProps<
 >;
 const SalesReportScreen = ({ navigation }: prop) => {
   const [initialFetchSales, setInitialFetchSales] = useState(false);
-  const { salesReports, setSalesReportList } = useSalesReportContext();
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const { salesReports, addSalesReport } = useSalesReportContext();
+  const startDateHours = new Date();
+  startDateHours.setHours(0);
+  const [startDate, setStartDate] = useState<Date>(startDateHours);
+  const endDateHours = new Date();
+  endDateHours.setHours(23);
+  const [endDate, setEndDate] = useState<Date>(endDateHours);
   const [showStartDate, setShowStartDate] = useState(false);
   const [showEndDate, setShowEndDate] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState<PosReport[] | undefined>(
     undefined
   );
-  const [initialRead, setInitialRead] = useState(false);
 
   const readData = async () => {
     try {
       const user = auth.currentUser;
       if (user) {
         const fetched: PosReport[] = [];
+        const startDateTimestamp =
+          firebase.firestore.Timestamp.fromDate(startDate);
+        const endDateTimestamp = firebase.firestore.Timestamp.fromDate(endDate);
+
         const docRef = db
           .collection("users")
           .doc(user.uid)
           .collection("sales")
+          .where("date", ">=", startDateTimestamp)
+          .where("date", "<=", endDateTimestamp)
           .orderBy("date", "desc");
+
         const querySnapshot = await docRef.get();
         querySnapshot.forEach((doc) => {
           const {
@@ -66,7 +76,7 @@ const SalesReportScreen = ({ navigation }: prop) => {
             catTreatDiscount,
             gateDiscount,
           } = doc.data();
-          fetched.push({
+          const salesReportData = {
             id: doc.id,
             productList,
             date: convertTimestampToDate(date),
@@ -76,18 +86,20 @@ const SalesReportScreen = ({ navigation }: prop) => {
             dogTreatDiscount,
             catTreatDiscount,
             gateDiscount,
-          });
+          };
+
+          if (!salesReports.some((item) => item.id === salesReportData.id)) {
+            fetched.push(salesReportData);
+          }
         });
-        if (!initialFetchSales) {
-          setSalesReportList(fetched);
-          setInitialFetchSales(true);
-        }
+
+        fetched.forEach((item) => addSalesReport(item));
       }
     } catch (error) {
       Toast.show("Error getting data", Toast.SHORT);
+      console.log((error as Error).message);
     }
   };
-
   const formatDateString = (date: Date): string => {
     return date.toLocaleDateString("en-US", {
       year: "numeric",
@@ -235,15 +247,16 @@ const SalesReportScreen = ({ navigation }: prop) => {
 
     setFilteredData(sortedFilteredItems);
   };
+  console.log("length", salesReports.length);
 
   useEffect(() => {
-    if (!initialRead) {
+    if (!initialFetchSales) {
       readData();
-      setInitialRead(true);
+      setInitialFetchSales(true);
       console.log("read");
     }
-    filterData(new Date(), new Date(), "");
-  }, [salesReports]);
+    filterData(startDate, endDate, searchQuery);
+  }, [salesReports.length]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f7f7f7" }}>
@@ -276,7 +289,7 @@ const SalesReportScreen = ({ navigation }: prop) => {
             onPress={toggleStartDate}
             containerStyle={{ borderRadius: 10 }}
             titleStyle={{ fontSize: 14 }}
-            buttonStyle={{ backgroundColor: "pink" }}
+            buttonStyle={{ backgroundColor: "#af71bd" }}
           />
           <Text style={{ alignSelf: "center" }}> -- </Text>
           <Button
@@ -284,7 +297,7 @@ const SalesReportScreen = ({ navigation }: prop) => {
             onPress={toggleEndDate}
             containerStyle={{ borderRadius: 10 }}
             titleStyle={{ fontSize: 14 }}
-            buttonStyle={{ backgroundColor: "pink" }}
+            buttonStyle={{ backgroundColor: "#af71bd" }}
           />
 
           {showStartDate && (
@@ -310,7 +323,7 @@ const SalesReportScreen = ({ navigation }: prop) => {
                   flex: 1,
                   marginHorizontal: 20,
                 }}
-                buttonStyle={{ backgroundColor: "pink" }}
+                buttonStyle={{ backgroundColor: "#af71bd" }}
                 onPress={toggleStartDate}
               />
               <Button
@@ -320,7 +333,7 @@ const SalesReportScreen = ({ navigation }: prop) => {
                   flex: 1,
                   marginHorizontal: 20,
                 }}
-                buttonStyle={{ backgroundColor: "pink" }}
+                buttonStyle={{ backgroundColor: "#af71bd" }}
                 onPress={confirmIosStartDate}
               />
             </View>
@@ -350,7 +363,7 @@ const SalesReportScreen = ({ navigation }: prop) => {
                 flex: 1,
                 marginHorizontal: 20,
               }}
-              buttonStyle={{ backgroundColor: "pink" }}
+              buttonStyle={{ backgroundColor: "#af71bd" }}
               onPress={toggleEndDate}
             />
             <Button
@@ -360,7 +373,7 @@ const SalesReportScreen = ({ navigation }: prop) => {
                 flex: 1,
                 marginHorizontal: 20,
               }}
-              buttonStyle={{ backgroundColor: "pink" }}
+              buttonStyle={{ backgroundColor: "#af71bd" }}
               onPress={confirmIosEndDate}
             />
           </View>
@@ -374,65 +387,78 @@ const SalesReportScreen = ({ navigation }: prop) => {
           marginTop: 5,
         }}
         titleStyle={{ fontSize: 14 }}
-        buttonStyle={{ backgroundColor: "pink" }}
+        buttonStyle={{ backgroundColor: "#af71bd" }}
         onPress={() => {
+          readData();
           if (startDate && endDate) filterData(startDate, endDate, searchQuery);
         }}
       />
-
-      <FlatList
-        keyExtractor={(item) => item.id.toString()}
-        style={{ marginTop: 5 }}
-        data={!filteredData ? salesReports : filteredData}
-        renderItem={({ item }) => (
-          <View
-            style={{
-              flex: 1,
-              paddingHorizontal: 10,
-              paddingVertical: 10,
-              borderColor: "pink",
-              borderWidth: 5,
-              borderRadius: 5,
-              marginVertical: 5,
-              marginHorizontal: 10,
-            }}
-          >
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("SummaryCustomerReportScreen", {
-                  ...item,
-                  date:
-                    item.date instanceof Date
-                      ? item.date.toISOString()
-                      : item.date,
-                })
-              }
+      {filteredData?.length !== 0 ? (
+        <FlatList
+          keyExtractor={(item) => item.id.toString()}
+          style={{ marginTop: 5 }}
+          data={!filteredData ? salesReports : filteredData}
+          renderItem={({ item }) => (
+            <View
+              style={{
+                flex: 1,
+                paddingHorizontal: 10,
+                paddingVertical: 10,
+                borderColor: "#af71bd",
+                borderWidth: 5,
+                borderRadius: 5,
+                marginVertical: 5,
+                marginHorizontal: 10,
+              }}
             >
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("SummaryCustomerReportScreen", {
+                    ...item,
+                    date:
+                      item.date instanceof Date
+                        ? item.date.toISOString()
+                        : item.date,
+                  })
+                }
               >
-                <Text
-                  style={{ fontSize: 18, fontWeight: "bold", maxWidth: "70%" }}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
                 >
-                  {item.customer?.customerName}
-                </Text>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "bold",
+                      maxWidth: "70%",
+                    }}
+                  >
+                    {item.customer?.customerName}
+                  </Text>
 
-                <Text numberOfLines={1} style={{ maxWidth: "90%" }}>
-                  {item.date instanceof Date
-                    ? formatDateString(item.date)
-                    : item.date}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
+                  <Text numberOfLines={1} style={{ maxWidth: "90%" }}>
+                    {item.date instanceof Date
+                      ? formatDateString(item.date)
+                      : item.date}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+      ) : (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Text>Use search bar or date range filter to see data</Text>
+        </View>
+      )}
+
       <View
         style={{
-          borderColor: "lightgreen",
+          borderColor: "black",
           borderWidth: 2,
           marginHorizontal: 5,
           padding: 5,

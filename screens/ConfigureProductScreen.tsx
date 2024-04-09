@@ -323,7 +323,7 @@ const ConfigureProductScreen: React.FC<ConfigureProductScreenProps> = ({
         <Button
           title={"Edit Product"}
           buttonStyle={{
-            backgroundColor: "pink",
+            backgroundColor: "#af71bd",
             borderRadius: wp("3%"),
             width: wp("60%"),
           }}
@@ -341,7 +341,7 @@ const ConfigureProductScreen: React.FC<ConfigureProductScreenProps> = ({
         <Button
           title={"Cancel "}
           buttonStyle={{
-            backgroundColor: "pink",
+            backgroundColor: "#af71bd",
             borderRadius: wp("3%"),
             width: wp("40%"),
           }}
@@ -350,7 +350,7 @@ const ConfigureProductScreen: React.FC<ConfigureProductScreenProps> = ({
         <Button
           title={"Buy Stock"}
           buttonStyle={{
-            backgroundColor: "pink",
+            backgroundColor: "#af71bd",
             borderRadius: wp("3%"),
             width: wp("40%"),
           }}
@@ -441,7 +441,7 @@ const ConfigureProductScreen: React.FC<ConfigureProductScreenProps> = ({
           </View>
         </Modal>
       </View>
-      <Text style={{ margin: 10 }}>
+      <Text style={{ margin: 10, textAlign: "center" }}>
         Modifying stock itself is not recommended, use buy stock instead.
       </Text>
     </SafeAreaView>

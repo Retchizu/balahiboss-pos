@@ -58,6 +58,7 @@ const SelectCustomerModalComponent = ({
       >
         <View
           style={{
+            flex: 1,
             backgroundColor: "white",
             borderRadius: wp("5%"),
             padding: wp("5%"),
@@ -65,7 +66,7 @@ const SelectCustomerModalComponent = ({
             shadowOpacity: 0.2,
             elevation: wp("2%"),
             marginHorizontal: wp("2%"),
-            flex: 1,
+            justifyContent: "center",
           }}
         >
           {addComponentVisible ? (
@@ -97,7 +98,7 @@ const SelectCustomerModalComponent = ({
               >
                 <Button
                   title={"Go back"}
-                  buttonStyle={{ backgroundColor: "pink" }}
+                  buttonStyle={{ backgroundColor: "#af71bd" }}
                   containerStyle={{
                     borderRadius: 10,
                     width: wp("30%"),
@@ -108,7 +109,7 @@ const SelectCustomerModalComponent = ({
                 />
                 <Button
                   title={"Confirm"}
-                  buttonStyle={{ backgroundColor: "pink" }}
+                  buttonStyle={{ backgroundColor: "#af71bd" }}
                   containerStyle={{
                     borderRadius: 10,
                     width: wp("30%"),
@@ -119,14 +120,18 @@ const SelectCustomerModalComponent = ({
             </View>
           ) : (
             <View style={{ flex: 1 }}>
-              <View style={{ flexDirection: "row", marginBottom: hp("1%") }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
                 <SearchBar
                   placeholder={"Search Customer"}
                   containerStyle={{
                     backgroundColor: "white",
                     borderColor: "white",
                     flex: 1,
-                    height: hp("2.2%"),
                   }}
                   inputStyle={{ fontSize: hp("2%") }}
                   inputContainerStyle={{ backgroundColor: "#f7f2f7" }}
@@ -147,7 +152,7 @@ const SelectCustomerModalComponent = ({
                     setAddComponentVisible(true);
                   }}
                 >
-                  <Ionicons name="person-add-sharp" size={24} color="pink" />
+                  <Ionicons name="person-add-sharp" size={24} color="#af71bd" />
                 </TouchableOpacity>
               </View>
 
@@ -159,8 +164,8 @@ const SelectCustomerModalComponent = ({
                     style={{
                       paddingHorizontal: 10,
                       paddingVertical: 10,
-                      borderColor: "pink",
-                      borderWidth: 5,
+                      borderColor: "#af71bd",
+                      borderWidth: 2,
                       borderRadius: 5,
                       marginVertical: 5,
                       marginHorizontal: 10,
@@ -198,7 +203,7 @@ const SelectCustomerModalComponent = ({
               >
                 <Button
                   title={"Close Customer List"}
-                  buttonStyle={{ backgroundColor: "#fc9db9" }}
+                  buttonStyle={{ backgroundColor: "#af71bd" }}
                   containerStyle={{
                     borderRadius: 10,
                     flex: 1,
@@ -226,7 +231,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "500",
     marginTop: 20,
-    color: "pink",
+    color: "#af71bd",
   },
   labelStyle: {
     marginHorizontal: 5,
@@ -235,7 +240,7 @@ const styles = StyleSheet.create({
   },
   inputContainerStyle: {
     borderWidth: 5,
-    borderColor: "pink",
+    borderColor: "#af71bd",
     paddingHorizontal: 20,
     paddingVertical: 10,
     fontSize: 14,

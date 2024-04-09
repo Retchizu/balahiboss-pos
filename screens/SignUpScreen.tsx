@@ -147,7 +147,7 @@ const SignUpScreen = ({ navigation }: Props) => {
               borderRadius: 15,
               paddingHorizontal: 5,
             }}
-            buttonStyle={{ backgroundColor: "#e66cb9" }}
+            buttonStyle={{ backgroundColor: "#af71bd" }}
             titleStyle={{ fontSize: 15 }}
             onPress={handleSignUp}
           />
@@ -197,13 +197,13 @@ const styles = StyleSheet.create({
   },
   credentialChild: {
     borderWidth: 6,
-    borderColor: "#d49fc0",
+    borderColor: "#af71bd",
     borderRadius: 10,
     padding: 20,
   },
   inputDesign: {
     borderWidth: 2,
-    borderColor: "#e66cb9",
+    borderColor: "#af71bd",
     paddingHorizontal: 10,
     fontWeight: "300",
     fontSize: 16,
@@ -225,6 +225,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     marginBottom: 10,
     borderWidth: 2,
-    borderColor: "#e66cb9",
+    borderColor: "#af71bd",
   },
 });

@@ -76,7 +76,7 @@ const AddCustomerScreen = ({ navigation }: Props) => {
 
         <Button
           title={"Confirm"}
-          buttonStyle={{ backgroundColor: "pink" }}
+          buttonStyle={{ backgroundColor: "#af71bd" }}
           containerStyle={{
             marginHorizontal: 10,
             borderRadius: 10,
@@ -85,7 +85,7 @@ const AddCustomerScreen = ({ navigation }: Props) => {
         />
         <Button
           title={"Cancel"}
-          buttonStyle={{ backgroundColor: "pink" }}
+          buttonStyle={{ backgroundColor: "#af71bd" }}
           containerStyle={{
             marginTop: 20,
             marginHorizontal: 10,
@@ -106,12 +106,12 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "500",
     marginTop: 20,
-    color: "pink",
+    color: "#af71bd",
   },
 
   inputContainerStyle: {
     borderWidth: 5,
-    borderColor: "pink",
+    borderColor: "#af71bd",
     paddingHorizontal: 20,
     paddingVertical: 10,
     fontSize: 20,

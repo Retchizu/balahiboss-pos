@@ -128,7 +128,7 @@ const AddExpenseScreen = ({ navigation }: Props) => {
               flex: 1,
             }}
             titleStyle={{ fontSize: 14 }}
-            buttonStyle={{ backgroundColor: "pink" }}
+            buttonStyle={{ backgroundColor: "#af71bd" }}
           />
 
           {show && (
@@ -154,7 +154,7 @@ const AddExpenseScreen = ({ navigation }: Props) => {
                   flex: 1,
                   marginHorizontal: 20,
                 }}
-                buttonStyle={{ backgroundColor: "pink" }}
+                buttonStyle={{ backgroundColor: "#af71bd" }}
                 onPress={showDatepicker}
               />
               <Button
@@ -164,7 +164,7 @@ const AddExpenseScreen = ({ navigation }: Props) => {
                   flex: 1,
                   marginHorizontal: 20,
                 }}
-                buttonStyle={{ backgroundColor: "pink" }}
+                buttonStyle={{ backgroundColor: "#af71bd" }}
                 onPress={confirmIosDate}
               />
             </View>
@@ -172,7 +172,7 @@ const AddExpenseScreen = ({ navigation }: Props) => {
         </View>
         <Button
           title={"Confirm"}
-          buttonStyle={{ backgroundColor: "pink" }}
+          buttonStyle={{ backgroundColor: "#af71bd" }}
           containerStyle={{
             marginTop: 10,
             marginHorizontal: 10,
@@ -182,7 +182,7 @@ const AddExpenseScreen = ({ navigation }: Props) => {
         />
         <Button
           title={"Cancel"}
-          buttonStyle={{ backgroundColor: "pink" }}
+          buttonStyle={{ backgroundColor: "#af71bd" }}
           containerStyle={{
             marginTop: 20,
             marginHorizontal: 10,
@@ -203,12 +203,12 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "500",
     marginTop: 20,
-    color: "pink",
+    color: "#af71bd",
   },
 
   inputContainerStyle: {
     borderWidth: 5,
-    borderColor: "pink",
+    borderColor: "#af71bd",
     paddingHorizontal: 20,
     paddingVertical: 10,
     fontSize: 20,

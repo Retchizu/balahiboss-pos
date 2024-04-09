@@ -72,7 +72,7 @@ const LogInScreen = ({ navigation }: Props) => {
               marginBottom: 10,
               borderRadius: 8,
               paddingHorizontal: 14,
-              borderColor: "#e66cb9",
+              borderColor: "#af71bd",
               borderWidth: 2,
             }}
           >
@@ -97,7 +97,7 @@ const LogInScreen = ({ navigation }: Props) => {
               justifyContent: "center",
               borderRadius: 8,
               paddingHorizontal: 14,
-              borderColor: "#e66cb9",
+              borderColor: "#af71bd",
               borderWidth: 2,
             }}
           >
@@ -131,7 +131,7 @@ const LogInScreen = ({ navigation }: Props) => {
               marginTop: 10,
             }}
             titleStyle={{ fontSize: 15 }}
-            buttonStyle={{ backgroundColor: "#e66cb9" }}
+            buttonStyle={{ backgroundColor: "#af71bd" }}
             onPress={handleSignin}
           />
           <TouchableOpacity
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   },
   credentialChild: {
     borderWidth: 6,
-    borderColor: "#d49fc0",
+    borderColor: "#af71bd",
     borderRadius: 10,
     padding: 20,
   },
