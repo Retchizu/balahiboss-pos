@@ -71,10 +71,8 @@ const AddExpenseScreen = ({ navigation }: Props) => {
       const currentDate = selectedDate;
       setExpenseDate(currentDate);
       if (Platform.OS === "android") {
-        showDatepicker();
         setExpenseDate(currentDate);
       }
-    } else {
       showDatepicker();
     }
   };

@@ -1,6 +1,6 @@
 import {
-  ActivityIndicator,
   FlatList,
+  Modal,
   Platform,
   StyleSheet,
   Text,
@@ -20,6 +20,11 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { AntDesign } from "@expo/vector-icons";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 const convertTimestampToDate = (
   timestamp: firebase.firestore.Timestamp
@@ -48,6 +53,23 @@ const SalesReportScreen = ({ navigation }: prop) => {
     undefined
   );
   const [isFetching, setIsFetching] = useState(false);
+
+  const [isNameFilter, setIsNameFilter] = useState(true);
+  const [isProductFilter, setIsProductFilter] = useState(false);
+  const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
+
+  const filterChoices = [
+    {
+      key: 1,
+      title: "Name",
+      current: isNameFilter,
+    },
+    {
+      key: 2,
+      title: "Products Bought",
+      current: isProductFilter,
+    },
+  ];
 
   const readData = async () => {
     try {
@@ -114,9 +136,9 @@ const SalesReportScreen = ({ navigation }: prop) => {
     let total = 0;
     const nullCheck = !filteredData ? salesReports : filteredData;
     const products: { product: Product; quantity: Number }[] = [];
-    nullCheck?.forEach((item) =>
-      item.productList.forEach((product) => products.push(product))
-    );
+    nullCheck?.forEach((item) => {
+      item.productList.forEach((product) => products.push(product));
+    });
     products.forEach(
       (item) => (total += item.product.sellPrice * (item.quantity as number))
     );
@@ -225,32 +247,72 @@ const SalesReportScreen = ({ navigation }: prop) => {
   };
 
   const filterData = (start: Date, end: Date, query: string) => {
-    if (end && start) {
-      end.setHours(23);
-      start.setHours(0);
+    if (isNameFilter) {
+      if (end && start) {
+        end.setHours(23);
+        start.setHours(0);
+      }
+      const filteredItems = salesReports.filter((item) => {
+        const itemDate = item.date;
+        const isDateInRange =
+          (!start || itemDate >= start) && (!end || itemDate <= end);
+
+        const isCustomerNameMatch = item.customer?.customerName
+          .toLowerCase()
+          .includes(query.toLowerCase());
+
+        return isDateInRange && (!query || isCustomerNameMatch);
+      });
+      const sortedFilteredItems = filteredItems.sort((a, b) => {
+        const dateA = a.date instanceof Date ? a.date : new Date(a.date);
+        const dateB = b.date instanceof Date ? b.date : new Date(b.date);
+
+        return dateB.getTime() - dateA.getTime();
+      });
+
+      setFilteredData(sortedFilteredItems);
+    } else if (isProductFilter) {
+      if (end && start) {
+        end.setHours(23);
+        start.setHours(0);
+      }
+      const filteredItems = salesReports.filter((item) => {
+        const itemDate = item.date;
+        const isDateInRange =
+          (!start || itemDate >= start) && (!end || itemDate <= end);
+
+        const isProductMatch = item.productList.some((product) =>
+          product.product.productName
+            .toLowerCase()
+            .includes(query.toLowerCase())
+        );
+
+        return isDateInRange && (!query || isProductMatch);
+      });
+      const sortedFilteredItems = filteredItems.sort((a, b) => {
+        const dateA = a.date instanceof Date ? a.date : new Date(a.date);
+        const dateB = b.date instanceof Date ? b.date : new Date(b.date);
+
+        return dateB.getTime() - dateA.getTime();
+      });
+
+      setFilteredData(sortedFilteredItems);
     }
-    const filteredItems = salesReports.filter((item) => {
-      const itemDate = item.date;
-      const isDateInRange =
-        (!start || itemDate >= start) && (!end || itemDate <= end);
-
-      const isCustomerNameMatch = item.customer?.customerName
-        .toLowerCase()
-        .includes(query.toLowerCase());
-
-      return isDateInRange && (!query || isCustomerNameMatch);
-    });
-    const sortedFilteredItems = filteredItems.sort((a, b) => {
-      const dateA = a.date instanceof Date ? a.date : new Date(a.date);
-      const dateB = b.date instanceof Date ? b.date : new Date(b.date);
-
-      return dateB.getTime() - dateA.getTime();
-    });
-
-    setFilteredData(sortedFilteredItems);
   };
-  console.log("length", salesReports.length);
+  console.log(isNameFilter);
 
+  const chooseFilter = (key: number) => {
+    switch (key) {
+      case 1:
+        setIsNameFilter(true);
+        setIsProductFilter(false);
+        break;
+      case 2:
+        setIsProductFilter(true);
+        setIsNameFilter(false);
+        break;
+    }
+  };
   useEffect(() => {
     if (!initialFetchSales) {
       readData();
@@ -258,28 +320,55 @@ const SalesReportScreen = ({ navigation }: prop) => {
       console.log("read");
     }
     filterData(startDate, endDate, searchQuery);
-  }, [salesReports.length]);
+  }, [salesReports.length, salesReports]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#f7f7f7" }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: "#f7f7f7",
+        opacity: isFilterModalVisible ? 0.2 : 1,
+      }}
+    >
       <Text style={{ fontSize: 20, fontWeight: "bold", marginHorizontal: 10 }}>
         Fliter by name or date:
       </Text>
       <View>
-        <SearchBar
-          placeholder="Customer name filter"
-          containerStyle={{
-            backgroundColor: "white",
-            borderColor: "white",
-            marginHorizontal: 10,
-          }}
-          inputContainerStyle={{ backgroundColor: "#f7f2f7", borderRadius: 10 }}
-          value={searchQuery}
-          onChangeText={(text) => {
-            setSearchQuery(text);
-            filterData(startDate!, endDate!, text);
-          }}
-        />
+        <View style={{ flexDirection: "row" }}>
+          <SearchBar
+            placeholder={
+              isNameFilter ? "Customer name filter" : "Product bought filter"
+            }
+            containerStyle={{
+              backgroundColor: "#f7f7f7",
+              borderColor: "#f7f7f7",
+              marginHorizontal: 10,
+              flex: 1,
+            }}
+            inputContainerStyle={{
+              backgroundColor: "#f7f2f7",
+              borderRadius: 10,
+            }}
+            value={searchQuery}
+            onChangeText={(text) => {
+              setSearchQuery(text);
+              filterData(startDate!, endDate!, text);
+            }}
+          />
+          <TouchableOpacity
+            style={{
+              alignSelf: "center",
+              marginRight: wp("2%"),
+              backgroundColor: "#f7f2f7",
+              padding: wp("2%"),
+              borderRadius: wp("3%"),
+            }}
+            onPress={() => setIsFilterModalVisible(true)}
+          >
+            <AntDesign name="filter" size={24} color="#af71bd" />
+          </TouchableOpacity>
+        </View>
+
         <View
           style={{
             flexDirection: "row",
@@ -486,6 +575,62 @@ const SalesReportScreen = ({ navigation }: prop) => {
           Total of Gate Discount: ₱{computeTotalGateDiscount().toFixed(2)}
         </Text>
       </View>
+
+      <Modal
+        visible={isFilterModalVisible}
+        transparent
+        onRequestClose={() => setIsFilterModalVisible(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            alignSelf: "center",
+            justifyContent: "center",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              height: hp("20%"),
+              width: wp("70%"),
+              borderRadius: wp("5%"),
+            }}
+          >
+            <Text
+              style={{
+                marginTop: hp("2%"),
+                marginHorizontal: wp("3%"),
+                fontWeight: "bold",
+                fontSize: hp("2%"),
+                marginBottom: hp("2%"),
+              }}
+            >
+              Search bar filters by:
+            </Text>
+            {filterChoices.map((item) => (
+              <View
+                key={item.key}
+                style={{
+                  marginHorizontal: wp("3%"),
+                  marginVertical: hp("1%"),
+                  borderBottomColor: "black",
+                  borderBottomWidth: wp("0.2%"),
+                }}
+              >
+                <TouchableOpacity
+                  style={{ flexDirection: "row" }}
+                  onPress={() => chooseFilter(item.key)}
+                >
+                  <Text style={{ flex: 1 }}>{item.title}</Text>
+                  {item.current ? (
+                    <AntDesign name="check" size={24} color="black" />
+                  ) : null}
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };

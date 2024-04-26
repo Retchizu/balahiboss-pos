@@ -5,7 +5,7 @@ import { SearchBar } from "@rneui/base";
 
 const LowStockReportScreen = () => {
   const { products } = useProductContext();
-  const lowStockList = products.filter((item) => item.stock <= 1);
+  const lowStockList = products.filter((item) => item.stock < 2);
 
   const [searchQuery, setSearchQuery] = useState("");
   const filteredData = useMemo(() => {

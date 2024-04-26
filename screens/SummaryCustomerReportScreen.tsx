@@ -89,7 +89,6 @@ const SummaryCustomerReportScreen = ({
     isDialogProductConfirmationVisible,
     setIsDialogProductConfirmationVisible,
   ] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
   const [IsEditProductsBoughtVisible, setIstEditProductsBoughtVisible] =
     useState(false);
   const [
@@ -103,17 +102,16 @@ const SummaryCustomerReportScreen = ({
   const [customerInfo, setCustomerInfo] = useState("");
   const [buttonVisible, setButtonVisible] = useState(true);
   const { customers, addCustomer } = useCustomerContext();
-  const [draftProductList, setDraftProductList] = useState(products);
-  const [firstInput, setFirstInput] = useState<
-    { productId: String; isFirstInput: boolean }[]
-  >([]);
-  const [haveSave, setHaveSave] = useState(false);
-  const [latestSaved, setLatestSaved] = useState<
-    {
-      product: Product;
-      quantity: number;
-    }[]
-  >();
+  const [draftProductList, setDraftProductList] = useState(
+    products.map((item) => {
+      const selectedProduct = selectedProducts.find(
+        (itemSelected) => itemSelected.product.id === item.id
+      );
+      return selectedProduct
+        ? { ...item, stock: item.stock + selectedProduct.quantity }
+        : item;
+    })
+  );
 
   const deleteData = async (reportId: String) => {
     try {
@@ -164,6 +162,7 @@ const SummaryCustomerReportScreen = ({
       day: "numeric",
     });
   };
+
   const computeProfit = () => {
     let total = 0;
     item.productList.forEach(
@@ -204,7 +203,22 @@ const SummaryCustomerReportScreen = ({
       setEditDogTreatDiscount(item.dogTreatDiscount.toString());
       setEditCatTreatDiscount(item.catTreatDiscount.toString());
       setEditGateDiscount(item.gateDiscount.toString());
+      setEditProductList(item.productList);
+      //come
     }
+
+    const beforeProducts = products.map((before) => {
+      const selectedProduct = item.productList.find(
+        (beforeSelected) => beforeSelected.product.id === before.id
+      );
+      return selectedProduct
+        ? {
+            ...before,
+            stock: before.stock + (selectedProduct.quantity as number),
+          }
+        : before;
+    });
+    setDraftProductList(beforeProducts);
   };
   const handleComponentVisibility = () => {
     setComponentVisible(!componentVisible);
@@ -272,27 +286,11 @@ const SummaryCustomerReportScreen = ({
     const existingSelectedProduct = selectedProducts.find(
       (item) => item.product.id === productId
     );
-    if (selected.includes(productId)) {
-      setSelected(selected.filter((item) => item !== productId));
-      setSelectedProducts((prev) =>
-        prev.filter((item) => item.product.id !== productId)
-      );
-      setFirstInput((prev) =>
-        prev.filter((item) => item.productId !== productId)
-      );
-      setEditProductList((prev) =>
-        prev.filter((item) => item.product.id !== productId)
-      );
-      returnStockToEditStock(
-        selectedProducts.find((item) => item.product.id === productId)!
-      );
-    } else {
+
+    if (!selected.includes(productId)) {
       if (selectedProduct?.stock !== 0) {
-        setFirstInput((prev) => [
-          ...prev,
-          { productId: productId, isFirstInput: true },
-        ]);
         setSelected([...selected, productId]);
+
         setSelectedProducts((prev) =>
           existingSelectedProduct
             ? prev.map((item) =>
@@ -334,146 +332,20 @@ const SummaryCustomerReportScreen = ({
               ...prev,
               { product: selectedProduct, quantity: 0.5 },
             ]);
-          setDraftProductList((prev) => {
-            const updatedItems = prev.map((item) => {
-              if (item.id === selectedProduct?.id) {
-                return {
-                  ...item,
-                  stock: item.stock - 0.5,
-                };
-              }
-              return item;
-            });
-            return updatedItems;
-          });
         }
       } else {
         Toast.show(`${selectedProduct.productName} is sold out`, Toast.SHORT);
       }
+    } else {
+      Toast.show(
+        `${selectedProduct?.productName} is already bought by ${item.customer?.customerName}`,
+        Toast.SHORT
+      );
     }
-  };
-
-  const handleQuantity = (productId: string, action: "add" | "reduce") => {
-    setSelectedProducts((prev) => {
-      const existingSelectedProduct = prev.find(
-        (item) => item.product.id === productId
-      );
-
-      if (existingSelectedProduct) {
-        return prev.map((item) =>
-          item.product.id === productId
-            ? {
-                ...item,
-                quantity:
-                  action === "add"
-                    ? Math.min(
-                        existingSelectedProduct.quantity + 0.5,
-                        item.product.stock
-                      )
-                    : Math.max(existingSelectedProduct.quantity - 0.5, 0.5),
-              }
-            : item
-        );
-      } else {
-        const selectedProduct = draftProductList.find(
-          (item) => item.id === productId
-        ) as Product;
-        return [
-          {
-            product: selectedProduct,
-            quantity: selectedProduct.stock === 0 ? 0 : 0.5,
-          },
-          ...prev,
-        ];
-      }
-    });
-
-    setQuantityInput((prev) => ({
-      ...prev,
-      [productId]:
-        selectedProducts
-          .find((item) => item.product.id === productId)
-          ?.quantity.toString() || "",
-    }));
-
-    setFirstInput((prev) =>
-      prev.map((inputItem) => {
-        if (inputItem.productId === productId) {
-          return {
-            ...inputItem,
-            isFirstInput: false,
-          };
-        }
-        return inputItem;
-      })
-    );
-  };
-
-  useEffect(() => {
-    selectedProducts.forEach((item) => {
-      subtractStockToEditStock(item.product.id);
-    });
-  }, [selectedProducts]);
-
-  console.log("firstInputArray", firstInput);
-  console.log("selectedItemsArray", selectedProducts);
-  console.log("editProductListArray", editProductsList);
-
-  const adjustQuantityFromInput = (productId: string, text: string) => {
-    setSelectedProducts((prev) => {
-      const existingSelectedProduct = prev.find(
-        (item) => item.product.id === productId
-      );
-
-      if (existingSelectedProduct) {
-        const newQuantity = parseFloat(text) || 0;
-        const minQuantity = 0.5;
-        const maxQuantity = existingSelectedProduct.product.stock;
-
-        // Ensure the new quantity is within the specified range
-        const adjustedQuantity = Math.min(
-          Math.max(newQuantity, minQuantity),
-          maxQuantity
-        );
-
-        return prev.map((item) =>
-          item.product.id === productId
-            ? {
-                ...item,
-                quantity: adjustedQuantity,
-              }
-            : item
-        );
-      } else {
-        const selectedProduct = draftProductList.find(
-          (item) => item.id === productId
-        ) as Product;
-        return [
-          {
-            product: selectedProduct,
-            quantity: selectedProduct.stock === 0 ? 0 : 0.5,
-          },
-          ...prev,
-        ];
-      }
-    });
   };
 
   const handleEditProductsBoughtModal = () => {
     setIstEditProductsBoughtVisible(!IsEditProductsBoughtVisible);
-    const mappedSelectedProducts = editProductsList.map((item) => ({
-      product: item.product,
-      quantity: item.quantity as number,
-    }));
-
-    setSelectedProducts(mappedSelectedProducts);
-    setSelected(mappedSelectedProducts.map((item) => item.product.id));
-    setFirstInput(
-      mappedSelectedProducts.map((selectedItem) => ({
-        productId: selectedItem.product.id,
-        isFirstInput: true,
-      }))
-    );
   };
 
   const addDataCustomer = async () => {
@@ -530,57 +402,19 @@ const SummaryCustomerReportScreen = ({
 
   const closeProductListModal = () => {
     setIstEditProductsBoughtVisible(false);
-    if (!haveSave) setEditProductList(item.productList);
-    else setEditProductList(latestSaved!);
-  };
 
-  console.log("havesave", haveSave);
-  console.log("latestSave", latestSaved);
-  const returnStockToEditStock = (element: {
-    product: Product;
-    quantity: number;
-  }) => {
-    setDraftProductList((prevList) => {
-      return prevList.map((item) => {
-        if (item.id === element.product.id) {
-          return {
-            ...item,
-            stock: item.stock + element.quantity,
-          };
-        }
-        return item;
-      });
-    });
-  };
-
-  const subtractStockToEditStock = (productId: String) => {
-    const productItem = editProductsList.find(
-      (item) => item.product.id === productId
-    );
-    const selectedProduct = selectedProducts.find(
-      (item) => item.product.id === productId
-    );
-    if (productItem) {
-      const productStock = productItem.product.stock;
-      const inputCheck = firstInput.find(
-        (item) => item.productId === productId
+    const beforeProducts = products.map((before) => {
+      const selectedProduct = item.productList.find(
+        (itemSelected) => itemSelected.product.id === before.id
       );
-
-      if (inputCheck && !inputCheck.isFirstInput) {
-        setDraftProductList((prev) => {
-          return prev.map((item) => {
-            if (item.id === productId) {
-              return {
-                ...item,
-                stock: productStock - (selectedProduct?.quantity as number),
-              };
-            }
-
-            return item;
-          });
-        });
-      }
-    }
+      return selectedProduct
+        ? {
+            ...before,
+            stock: before.stock + (selectedProduct.quantity as number),
+          }
+        : before;
+    });
+    setDraftProductList(beforeProducts);
   };
 
   const confirmEditCustomerReport = async () => {
@@ -596,11 +430,54 @@ const SummaryCustomerReportScreen = ({
     };
 
     updateSalesReport(item.id, updatedReport);
+    let total = 0;
 
-    editProductsList.forEach((item) => {
-      updateProduct(item.product.id, {
-        stock: item.product.stock - (item.quantity as number),
-      });
+    editProductsList.forEach((editItem) => {
+      const draftProduct = draftProductList.find(
+        (draftItem) => draftItem.id === editItem.product.id
+      );
+
+      const currentItem = item.productList.find(
+        (curr) => curr.product.id === editItem.product.id
+      );
+
+      if (currentItem && currentItem.quantity < editItem.quantity) {
+        const subtractStock =
+          (editItem.quantity as number) - (currentItem.quantity as number);
+        console.log("subtractStock", subtractStock);
+
+        const findProduct = products.find(
+          (product) => editItem.product.id === product.id
+        );
+        if (findProduct) {
+          total = findProduct?.totalStockSold + subtractStock;
+          console.log("origTotalStockSold", findProduct.totalStockSold);
+        }
+
+        updateProduct(editItem.product.id, {
+          totalStockSold: total,
+        });
+      } else if (currentItem && currentItem.quantity > editItem.quantity) {
+        const subtractStock =
+          (currentItem.quantity as number) - (editItem.quantity as number);
+        console.log("subtractStock", subtractStock);
+
+        const findProduct = products.find(
+          (product) => editItem.product.id === product.id
+        );
+        if (findProduct) {
+          total = findProduct.totalStockSold - subtractStock;
+          console.log("origTotalStockSold", findProduct.totalStockSold);
+        }
+
+        updateProduct(editItem.product.id, {
+          totalStockSold: total,
+        });
+      }
+      if (draftProduct)
+        updateProduct(editItem.product.id, {
+          stock: draftProduct?.stock - (editItem.quantity as number),
+        });
     });
 
     if (user) {
@@ -611,19 +488,86 @@ const SummaryCustomerReportScreen = ({
         .doc(item.id.toString());
       await docRefSales.update(updatedReport);
       setItem({ id: item.id, ...updatedReport });
+      updateSalesReport(item.id, {
+        customer: editSelectedCustomer,
+        productList: editProductsList,
+        date: editDate,
+        otherExpense: parseFloat(editDiscount),
+        catTreatDiscount: parseFloat(editCatTreatDiscount),
+        dogTreatDiscount: parseFloat(editDogTreatDiscount),
+        gateDiscount: parseFloat(editGateDiscount),
+        customerPayment: parseFloat(editCustomerPayment),
+      });
 
       const docRefProduct = db
         .collection("users")
         .doc(user.uid)
         .collection("products");
       editProductsList.forEach((item) => {
-        docRefProduct.doc(item.product.id.toString()).update(item.product);
+        const draftProduct = draftProductList.find(
+          (draftItem) => draftItem.id === item.product.id
+        );
+        if (draftProduct)
+          docRefProduct.doc(item.product.id.toString()).update({
+            stock: draftProduct?.stock - (item.quantity as number),
+            totalStockSold: total !== 0 ? total : item.product.totalStockSold,
+          });
       });
     }
-
+    //here
     setIsEditCustomerReportConfirmationVisible(false);
     handleEditModalVisible();
   };
+
+  const adjustQuantityFromInput = (productId: string, text: string) => {
+    setSelectedProducts((prev) => {
+      const existingSelectedProduct = draftProductList.find(
+        (item) => item.id === productId
+      );
+
+      if (existingSelectedProduct) {
+        const newQuantity = parseFloat(text) || 0;
+        const minQuantity = 0.5;
+        const maxQuantity = existingSelectedProduct.stock;
+
+        // Ensure the new quantity is within the specified range
+        const adjustedQuantity = Math.min(
+          Math.max(newQuantity, minQuantity),
+          maxQuantity
+        );
+
+        return prev.map((item) =>
+          item.product.id === productId
+            ? {
+                ...item,
+                quantity: adjustedQuantity,
+              }
+            : item
+        );
+      } else {
+        const selectedProduct = draftProductList.find(
+          (item) => item.id === productId
+        ) as Product;
+        return [
+          {
+            product: selectedProduct,
+            quantity: selectedProduct.stock === 0 ? 0 : 0.5,
+          },
+          ...prev,
+        ];
+      }
+    });
+  };
+
+  useEffect(() => {
+    const mappedSelectedProducts = editProductsList.map((item) => ({
+      product: item.product,
+      quantity: item.quantity as number,
+    }));
+
+    setSelectedProducts(mappedSelectedProducts);
+    setSelected(mappedSelectedProducts.map((item) => item.product.id));
+  }, [isEditModalVisible]);
 
   return (
     <SafeAreaView
@@ -675,7 +619,9 @@ const SummaryCustomerReportScreen = ({
         <Text style={{ fontSize: 18 }}>
           Given Gate Discount: ₱{item.gateDiscount.toFixed(2)}
         </Text>
-        <Text style={{ fontSize: 18 }}>
+        <Text
+          style={{ fontSize: 18, color: computeChange() < 0 ? "red" : "black" }}
+        >
           Customer change w/discount: ₱{computeChange().toFixed(2)}
         </Text>
 
@@ -957,7 +903,15 @@ const SummaryCustomerReportScreen = ({
         visible={IsEditProductsBoughtVisible}
         transparent
         animationType="slide"
-        onRequestClose={closeProductListModal}
+        onRequestClose={() => {
+          closeProductListModal();
+          editProductsList.forEach((item) =>
+            setQuantityInput((prev) => ({
+              ...prev,
+              [item.product.id.toString()]: item.quantity.toString(),
+            }))
+          );
+        }}
       >
         <View
           style={{
@@ -1002,7 +956,6 @@ const SummaryCustomerReportScreen = ({
               <TouchableOpacity
                 onPress={() => {
                   handleSelectItem(item.id);
-                  subtractStockToEditStock(item.id);
                 }}
                 style={{
                   flex: 1,
@@ -1078,16 +1031,13 @@ const SummaryCustomerReportScreen = ({
                   Product name
                 </Text>
 
-                <Text style={[styles.summaryLabel, { flex: 1 }]}>Qty</Text>
                 <Text
-                  style={{
-                    fontWeight: "500",
-                    fontSize: hp("1.8%"),
-                    flex: 2,
-                    textAlign: "right",
-                  }}
+                  style={[
+                    styles.summaryLabel,
+                    { flex: 1, textAlign: "center" },
+                  ]}
                 >
-                  Add and Reduce
+                  Qty
                 </Text>
               </View>
 
@@ -1124,12 +1074,7 @@ const SummaryCustomerReportScreen = ({
                                 element.product.id !== item.product.id
                             )
                           );
-                          setQuantityInput((prevQuantityInput) => ({
-                            ...prevQuantityInput,
-                            [item.product.id.toString()]: "0.5",
-                          }));
                           //come
-                          returnStockToEditStock(item);
                         }}
                       >
                         <Text>{item.product.productName}</Text>
@@ -1137,46 +1082,30 @@ const SummaryCustomerReportScreen = ({
                       <TextInput
                         style={{
                           flex: 1,
+                          textAlign: "center",
                         }}
                         placeholder={`${item.quantity}`}
-                        value={
-                          isEditing
-                            ? quantityInput[item.product.id.toString()] !==
-                              undefined
-                              ? quantityInput[item.product.id.toString()]
-                              : item.quantity.toString()
-                            : item.quantity.toString()
-                        }
-                        onFocus={() => {
-                          setIsEditing(true);
-                          setFirstInput((prev) =>
-                            prev.map((inputItem) => {
-                              if (inputItem.productId === item.product.id) {
-                                return {
-                                  ...inputItem,
-                                  isFirstInput: false,
-                                };
-                              }
-                              return inputItem;
-                            })
-                          );
-                        }}
-                        onBlur={() => {
-                          setIsEditing(false);
-                          subtractStockToEditStock(item.product.id);
-                        }}
                         onChangeText={(text) =>
                           setQuantityInput((prev) => ({
                             ...prev,
                             [item.product.id.toString()]: text,
                           }))
                         }
+                        value={
+                          quantityInput[item.product.id.toString()] !==
+                          undefined
+                            ? quantityInput[item.product.id.toString()]
+                            : item.quantity.toString()
+                        }
                         onSubmitEditing={() => {
+                          const beforeStock = draftProductList.find(
+                            (draft) => draft.id === item.product.id
+                          );
                           const submittedValue =
                             quantityInput[item.product.id.toString()] || "0";
                           const clampedValue = Math.min(
                             Math.max(parseFloat(submittedValue), 0.5),
-                            item.product.stock
+                            beforeStock?.stock!
                           );
                           setQuantityInput((prev) => ({
                             ...prev,
@@ -1187,40 +1116,9 @@ const SummaryCustomerReportScreen = ({
                             item.product.id.toString(),
                             clampedValue.toString()
                           );
-                          subtractStockToEditStock(item.product.id);
-                          setIsEditing(false);
                         }}
                         keyboardType="numeric"
                       />
-                      <View
-                        style={{
-                          flex: 2,
-                          flexDirection: "row",
-                          justifyContent: "flex-end",
-                        }}
-                      >
-                        <TouchableOpacity style={styles.touchableStyle}>
-                          <Ionicons
-                            name="remove"
-                            size={24}
-                            color="white"
-                            onPress={() => {
-                              handleQuantity(
-                                item.product.id.toString(),
-                                "reduce"
-                              );
-                            }}
-                          />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          style={styles.touchableStyle}
-                          onPress={() => {
-                            handleQuantity(item.product.id.toString(), "add");
-                          }}
-                        >
-                          <Ionicons name="add" size={24} color="white" />
-                        </TouchableOpacity>
-                      </View>
                     </View>
                   </ScrollView>
                 )}
@@ -1246,7 +1144,10 @@ const SummaryCustomerReportScreen = ({
         </View>
         <Dialog.Container visible={isDialogProductConfirmationVisible}>
           <Dialog.Title>Save Changes?</Dialog.Title>
-          <Dialog.Description>Confirm changes?</Dialog.Description>
+          <Dialog.Description>
+            Make sure that you pressed the enter key on your keyboard to make
+            changes to the quantity.
+          </Dialog.Description>
           <Dialog.Button
             label={"Cancel"}
             onPress={() => setIsDialogProductConfirmationVisible(false)}
@@ -1264,8 +1165,13 @@ const SummaryCustomerReportScreen = ({
                     )?.quantity || 0,
                 }))
               );
-              setHaveSave(true);
-              setLatestSaved(selectedProducts);
+              selectedProducts.forEach((item) =>
+                setQuantityInput((prev) => ({
+                  ...prev,
+                  [item.product.id.toString()]: item.quantity.toString(),
+                }))
+              );
+
               setIstEditProductsBoughtVisible(false);
             }}
           />
