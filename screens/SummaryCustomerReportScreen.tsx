@@ -1,3 +1,4 @@
+import React, { useEffect, useMemo, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,30 +8,32 @@ import {
   Platform,
   TouchableOpacity,
   TextInput,
-  ScrollView,
 } from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
-import { Customer, Product, ReportRootStackParamList } from "../type";
-import { RouteProp, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { auth, db } from "../firebaseconfig";
-import Dialog from "react-native-dialog";
-import { useSalesReportContext } from "../context/salesReportContext";
-import Toast from "react-native-simple-toast";
-import { useProductContext } from "../context/productContext";
+import { RouteProp, useNavigation } from "@react-navigation/native";
+import { Button, SearchBar } from "@rneui/base";
+import { Entypo } from "@expo/vector-icons";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import AnimatedFloatingButton from "../components/AnimatedFloatingButton";
-import EditTextComponent from "../components/EditTextComponent";
-import { Button, SearchBar } from "@rneui/base";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import Dialog from "react-native-dialog";
+import Toast from "react-native-simple-toast";
+
+import { auth, db } from "../firebaseconfig";
+import { Customer, Product, ReportRootStackParamList } from "../type";
+import { useSalesReportContext } from "../context/salesReportContext";
+import { useProductContext } from "../context/productContext";
 import { useCustomerContext } from "../context/customerContext";
-import { Entypo, Ionicons } from "@expo/vector-icons";
+
+import AnimatedFloatingButton from "../components/AnimatedFloatingButton";
+import EditTextComponent from "../components/EditTextComponent";
 import SelectCustomerModalComponent from "../components/SelectCustomerModalComponent";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { ScrollView } from "react-native-virtualized-view";
 
 type SummaryCustomerReportSreenProp = {
   route: RouteProp<ReportRootStackParamList, "SummaryCustomerReportScreen">;
@@ -39,9 +42,9 @@ const SummaryCustomerReportScreen = ({
   route,
 }: SummaryCustomerReportSreenProp) => {
   const [item, setItem] = useState(route.params);
-  const [itemDate, setItemDate] = useState(
-    typeof item.date === "string" ? new Date(item.date) : item.date
-  );
+  const itemDate =
+    typeof item.date === "string" ? new Date(item.date) : item.date;
+
   const user = auth.currentUser;
   const userName = auth.currentUser?.displayName;
   const [isVisible, setIsVisible] = useState(false);
@@ -102,6 +105,8 @@ const SummaryCustomerReportScreen = ({
   const [customerInfo, setCustomerInfo] = useState("");
   const [buttonVisible, setButtonVisible] = useState(true);
   const { customers, addCustomer } = useCustomerContext();
+  const [editTotalProfit, setEditTotalProfit] = useState(0);
+  const [editTotalAmount, setEditTotalAmount] = useState(0);
   const [draftProductList, setDraftProductList] = useState(
     products.map((item) => {
       const selectedProduct = selectedProducts.find(
@@ -113,6 +118,7 @@ const SummaryCustomerReportScreen = ({
     })
   );
 
+  const [isScrolling, setIsScrolling] = useState(false);
   const deleteData = async (reportId: String) => {
     try {
       const user = auth.currentUser;
@@ -204,7 +210,6 @@ const SummaryCustomerReportScreen = ({
       setEditCatTreatDiscount(item.catTreatDiscount.toString());
       setEditGateDiscount(item.gateDiscount.toString());
       setEditProductList(item.productList);
-      //come
     }
 
     const beforeProducts = products.map((before) => {
@@ -279,6 +284,217 @@ const SummaryCustomerReportScreen = ({
     return sortedFilteredItems;
   }, [draftProductList, searchQuery]);
 
+  const handleEditProductsBoughtModal = () => {
+    setIstEditProductsBoughtVisible(!IsEditProductsBoughtVisible);
+  };
+
+  const addDataCustomer = async () => {
+    try {
+      if (customerName) {
+        const user = auth.currentUser;
+        if (user) {
+          const docRef = await db
+            .collection("users")
+            .doc(user.uid)
+            .collection("customers")
+            .add({
+              customerName,
+              customerInfo,
+            });
+
+          const newCustomer: Customer = {
+            id: docRef.id,
+            customerName,
+            customerInfo,
+          };
+
+          addCustomer(newCustomer);
+          setEditSelectedCustomer(newCustomer);
+        } else {
+          Toast.show("Customer name should not be empty", Toast.SHORT);
+        }
+        Toast.show("Added successfully", Toast.SHORT);
+      }
+      setAddComponentVisible(false);
+      setComponentVisible(false);
+      setButtonVisible(true);
+    } catch (error) {
+      console.log("Error adding data: ", error as Error);
+    }
+  };
+  const filteredDataForCustomer = () => {
+    const filtered = customers.filter((item) =>
+      item.customerName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    return filtered.sort((a, b) =>
+      a.customerName.localeCompare(b.customerName.toString())
+    );
+  };
+
+  const totalAmountForEdit = () => {
+    let total = 0;
+    editProductsList.forEach(
+      (items) => (total += items.product.sellPrice * (items.quantity as number))
+    );
+    total = total - parseFloat(editDiscount);
+    return total;
+  };
+
+  const closeProductListModal = () => {
+    setIstEditProductsBoughtVisible(false);
+
+    const mappedSelectedProducts = editProductsList.map((item) => ({
+      product: item.product,
+      quantity: item.quantity as number,
+    }));
+
+    const getProduct: { product: Product; quantity: number }[] =
+      mappedSelectedProducts
+        .map((item) => {
+          const fetched = products.find(
+            (product) => product.id === item.product.id
+          );
+          return fetched ? { product: fetched, quantity: item.quantity } : null;
+        })
+        .filter((item) => item !== null) as {
+        product: Product;
+        quantity: number;
+      }[];
+
+    setSelectedProducts(getProduct);
+    setEditProductList(item.productList);
+
+    const beforeProducts = products.map((before) => {
+      const selectedProduct = item.productList.find(
+        (itemSelected) => itemSelected.product.id === before.id
+      );
+      return selectedProduct
+        ? {
+            ...before,
+            stock: before.stock + (selectedProduct.quantity as number),
+          }
+        : before;
+    });
+    setDraftProductList(beforeProducts);
+  };
+
+  const confirmEditCustomerReport = async () => {
+    const updatedReport = {
+      customer: editSelectedCustomer,
+      productList: editProductsList,
+      date: editDate,
+      otherExpense: parseFloat(editDiscount),
+      catTreatDiscount: parseFloat(editCatTreatDiscount),
+      dogTreatDiscount: parseFloat(editDogTreatDiscount),
+      gateDiscount: parseFloat(editGateDiscount),
+      customerPayment: parseFloat(editCustomerPayment),
+    };
+
+    updateSalesReport(item.id, updatedReport);
+
+    editProductsList.forEach((editItem) => {
+      const draftProduct = draftProductList.find(
+        (draftItem) => draftItem.id === editItem.product.id
+      );
+
+      const currentItem = item.productList.find(
+        (curr) => curr.product.id === editItem.product.id
+      );
+
+      if (currentItem && currentItem.quantity < editItem.quantity) {
+        const subtractStock =
+          (editItem.quantity as number) - (currentItem.quantity as number);
+        console.log("subtractStock", subtractStock);
+      } else if (currentItem && currentItem.quantity > editItem.quantity) {
+        const subtractStock =
+          (currentItem.quantity as number) - (editItem.quantity as number);
+        console.log("subtractStock", subtractStock);
+      }
+      if (draftProduct)
+        updateProduct(editItem.product.id, {
+          stock: draftProduct?.stock - (editItem.quantity as number),
+        });
+    });
+
+    if (user) {
+      const docRefSales = db
+        .collection("users")
+        .doc(user.uid)
+        .collection("sales")
+        .doc(item.id.toString());
+      await docRefSales.update(updatedReport);
+      setItem({ id: item.id, ...updatedReport });
+      updateSalesReport(item.id, {
+        customer: editSelectedCustomer,
+        productList: editProductsList,
+        date: editDate,
+        otherExpense: parseFloat(editDiscount),
+        catTreatDiscount: parseFloat(editCatTreatDiscount),
+        dogTreatDiscount: parseFloat(editDogTreatDiscount),
+        gateDiscount: parseFloat(editGateDiscount),
+        customerPayment: parseFloat(editCustomerPayment),
+      });
+
+      const docRefProduct = db
+        .collection("users")
+        .doc(user.uid)
+        .collection("products");
+      editProductsList.forEach((item) => {
+        const draftProduct = draftProductList.find(
+          (draftItem) => draftItem.id === item.product.id
+        );
+        if (draftProduct)
+          docRefProduct.doc(item.product.id.toString()).update({
+            stock: draftProduct?.stock - (item.quantity as number),
+            //totalStockSold: total !== 0 ? total : item.product.totalStockSold, come back later
+          });
+      });
+    }
+    //here
+    setIsEditCustomerReportConfirmationVisible(false);
+    handleEditModalVisible();
+  };
+
+  const adjustQuantityFromInput = (productId: string, text: string) => {
+    setSelectedProducts((prev) => {
+      const existingSelectedProduct = draftProductList.find(
+        (item) => item.id === productId
+      );
+
+      if (existingSelectedProduct) {
+        const newQuantity = parseFloat(text) || 0;
+        const minQuantity = 0.5;
+        const maxQuantity = existingSelectedProduct.stock;
+
+        // Ensure the new quantity is within the specified range
+        const adjustedQuantity = Math.min(
+          Math.max(newQuantity, minQuantity),
+          maxQuantity
+        );
+
+        return prev.map((item) =>
+          item.product.id === productId
+            ? {
+                ...item,
+                quantity: adjustedQuantity,
+              }
+            : item
+        );
+      } else {
+        const selectedProduct = draftProductList.find(
+          (item) => item.id === productId
+        ) as Product;
+        return [
+          {
+            product: selectedProduct,
+            quantity: selectedProduct.stock === 0 ? 0 : 0.5,
+          },
+          ...prev,
+        ];
+      }
+    });
+  };
+
   const handleSelectItem = (productId: String) => {
     const selectedProduct = draftProductList.find(
       (item) => item.id === productId
@@ -344,230 +560,35 @@ const SummaryCustomerReportScreen = ({
     }
   };
 
-  const handleEditProductsBoughtModal = () => {
-    setIstEditProductsBoughtVisible(!IsEditProductsBoughtVisible);
-  };
-
-  const addDataCustomer = async () => {
-    try {
-      if (customerName) {
-        const user = auth.currentUser;
-        if (user) {
-          const docRef = await db
-            .collection("users")
-            .doc(user.uid)
-            .collection("customers")
-            .add({
-              customerName,
-              customerInfo,
-            });
-
-          const newCustomer: Customer = {
-            id: docRef.id,
-            customerName,
-            customerInfo,
-          };
-
-          addCustomer(newCustomer);
-          setEditSelectedCustomer(newCustomer);
-        } else {
-          Toast.show("Customer name should not be empty", Toast.SHORT);
-        }
-        Toast.show("Added successfully", Toast.SHORT);
-      }
-      setAddComponentVisible(false);
-      setComponentVisible(false);
-      setButtonVisible(true);
-    } catch (error) {
-      console.log("Error adding data: ", error as Error);
-    }
-  };
-  const filteredDataForCustomer = () => {
-    const filtered = customers.filter((item) =>
-      item.customerName.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    return filtered.sort((a, b) =>
-      a.customerName.localeCompare(b.customerName.toString())
-    );
-  };
-
-  const totalAmountForEdit = () => {
-    let total = 0;
-    editProductsList.forEach(
-      (items) => (total += items.product.sellPrice * (items.quantity as number))
-    );
-    total = total - parseFloat(editDiscount);
-    return total;
-  };
-
-  const closeProductListModal = () => {
-    setIstEditProductsBoughtVisible(false);
-
-    const beforeProducts = products.map((before) => {
-      const selectedProduct = item.productList.find(
-        (itemSelected) => itemSelected.product.id === before.id
-      );
-      return selectedProduct
-        ? {
-            ...before,
-            stock: before.stock + (selectedProduct.quantity as number),
-          }
-        : before;
-    });
-    setDraftProductList(beforeProducts);
-  };
-
-  const confirmEditCustomerReport = async () => {
-    const updatedReport = {
-      customer: editSelectedCustomer,
-      productList: editProductsList,
-      date: editDate,
-      otherExpense: parseFloat(editDiscount),
-      catTreatDiscount: parseFloat(editCatTreatDiscount),
-      dogTreatDiscount: parseFloat(editDogTreatDiscount),
-      gateDiscount: parseFloat(editGateDiscount),
-      customerPayment: parseFloat(editCustomerPayment),
-    };
-
-    updateSalesReport(item.id, updatedReport);
-    let total = 0;
-
-    editProductsList.forEach((editItem) => {
-      const draftProduct = draftProductList.find(
-        (draftItem) => draftItem.id === editItem.product.id
-      );
-
-      const currentItem = item.productList.find(
-        (curr) => curr.product.id === editItem.product.id
-      );
-
-      if (currentItem && currentItem.quantity < editItem.quantity) {
-        const subtractStock =
-          (editItem.quantity as number) - (currentItem.quantity as number);
-        console.log("subtractStock", subtractStock);
-
-        const findProduct = products.find(
-          (product) => editItem.product.id === product.id
-        );
-        if (findProduct) {
-          total = findProduct?.totalStockSold + subtractStock;
-          console.log("origTotalStockSold", findProduct.totalStockSold);
-        }
-
-        updateProduct(editItem.product.id, {
-          totalStockSold: total,
-        });
-      } else if (currentItem && currentItem.quantity > editItem.quantity) {
-        const subtractStock =
-          (currentItem.quantity as number) - (editItem.quantity as number);
-        console.log("subtractStock", subtractStock);
-
-        const findProduct = products.find(
-          (product) => editItem.product.id === product.id
-        );
-        if (findProduct) {
-          total = findProduct.totalStockSold - subtractStock;
-          console.log("origTotalStockSold", findProduct.totalStockSold);
-        }
-
-        updateProduct(editItem.product.id, {
-          totalStockSold: total,
-        });
-      }
-      if (draftProduct)
-        updateProduct(editItem.product.id, {
-          stock: draftProduct?.stock - (editItem.quantity as number),
-        });
-    });
-
-    if (user) {
-      const docRefSales = db
-        .collection("users")
-        .doc(user.uid)
-        .collection("sales")
-        .doc(item.id.toString());
-      await docRefSales.update(updatedReport);
-      setItem({ id: item.id, ...updatedReport });
-      updateSalesReport(item.id, {
-        customer: editSelectedCustomer,
-        productList: editProductsList,
-        date: editDate,
-        otherExpense: parseFloat(editDiscount),
-        catTreatDiscount: parseFloat(editCatTreatDiscount),
-        dogTreatDiscount: parseFloat(editDogTreatDiscount),
-        gateDiscount: parseFloat(editGateDiscount),
-        customerPayment: parseFloat(editCustomerPayment),
-      });
-
-      const docRefProduct = db
-        .collection("users")
-        .doc(user.uid)
-        .collection("products");
-      editProductsList.forEach((item) => {
-        const draftProduct = draftProductList.find(
-          (draftItem) => draftItem.id === item.product.id
-        );
-        if (draftProduct)
-          docRefProduct.doc(item.product.id.toString()).update({
-            stock: draftProduct?.stock - (item.quantity as number),
-            totalStockSold: total !== 0 ? total : item.product.totalStockSold,
-          });
-      });
-    }
-    //here
-    setIsEditCustomerReportConfirmationVisible(false);
-    handleEditModalVisible();
-  };
-
-  const adjustQuantityFromInput = (productId: string, text: string) => {
-    setSelectedProducts((prev) => {
-      const existingSelectedProduct = draftProductList.find(
-        (item) => item.id === productId
-      );
-
-      if (existingSelectedProduct) {
-        const newQuantity = parseFloat(text) || 0;
-        const minQuantity = 0.5;
-        const maxQuantity = existingSelectedProduct.stock;
-
-        // Ensure the new quantity is within the specified range
-        const adjustedQuantity = Math.min(
-          Math.max(newQuantity, minQuantity),
-          maxQuantity
-        );
-
-        return prev.map((item) =>
-          item.product.id === productId
-            ? {
-                ...item,
-                quantity: adjustedQuantity,
-              }
-            : item
-        );
-      } else {
-        const selectedProduct = draftProductList.find(
-          (item) => item.id === productId
-        ) as Product;
-        return [
-          {
-            product: selectedProduct,
-            quantity: selectedProduct.stock === 0 ? 0 : 0.5,
-          },
-          ...prev,
-        ];
-      }
-    });
-  };
-
   useEffect(() => {
     const mappedSelectedProducts = editProductsList.map((item) => ({
       product: item.product,
       quantity: item.quantity as number,
     }));
 
-    setSelectedProducts(mappedSelectedProducts);
+    const getProduct: { product: Product; quantity: number }[] =
+      mappedSelectedProducts
+        .map((item) => {
+          const fetched = products.find(
+            (product) => product.id === item.product.id
+          );
+          return fetched ? { product: fetched, quantity: item.quantity } : null;
+        })
+        .filter((item) => item !== null) as {
+        product: Product;
+        quantity: number;
+      }[];
+
+    setSelectedProducts(getProduct);
     setSelected(mappedSelectedProducts.map((item) => item.product.id));
-  }, [isEditModalVisible]);
+    setEditTotalProfit(handleTotalProfit(selectedProducts));
+    setEditTotalAmount(handleTotalAmount(selectedProducts));
+  }, [isEditModalVisible, editProductsList]);
+
+  useEffect(() => {
+    setEditTotalProfit(handleTotalProfit(selectedProducts));
+    setEditTotalAmount(handleTotalAmount(selectedProducts));
+  }, [quantityInput, IsEditProductsBoughtVisible, selected, selectedProducts]);
 
   return (
     <SafeAreaView
@@ -886,7 +907,8 @@ const SummaryCustomerReportScreen = ({
         <Dialog.Container visible={isEditCustomerReportConfirmationVisible}>
           <Dialog.Title>Save changes</Dialog.Title>
           <Dialog.Description>
-            Are you sure you want to make these changes?
+            If you changed the products bought, also check for the customer
+            payment field, are you sure you want to make these changes?
           </Dialog.Description>
           <Dialog.Button
             label={"Cancel"}
@@ -920,21 +942,23 @@ const SummaryCustomerReportScreen = ({
           }}
         >
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <SearchBar
-              placeholder={"Search Product"}
-              containerStyle={{
-                backgroundColor: "#f7f7f7",
-                borderColor: "#f7f7f7",
-                flex: 1,
-              }}
-              inputContainerStyle={{
-                backgroundColor: "#f7f2f7",
-              }}
-              round
-              autoCapitalize="none"
-              value={searchQuery}
-              onChangeText={(text) => setSearchQuery(text)}
-            />
+            <KeyboardAwareScrollView>
+              <SearchBar
+                placeholder={"Search Product"}
+                containerStyle={{
+                  backgroundColor: "#f7f7f7",
+                  borderColor: "#f7f7f7",
+                  flex: 1,
+                }}
+                inputContainerStyle={{
+                  backgroundColor: "#f7f2f7",
+                }}
+                round
+                autoCapitalize="none"
+                value={searchQuery}
+                onChangeText={(text) => setSearchQuery(text)}
+              />
+            </KeyboardAwareScrollView>
             <TouchableOpacity
               style={{
                 padding: 10,
@@ -1040,11 +1064,10 @@ const SummaryCustomerReportScreen = ({
                   Qty
                 </Text>
               </View>
-
-              <FlatList
-                data={selectedProducts}
-                renderItem={({ item }) => (
-                  <ScrollView style={{ marginVertical: 5 }}>
+              <ScrollView>
+                <FlatList
+                  data={selectedProducts}
+                  renderItem={({ item }) => (
                     <View
                       style={{
                         flexDirection: "row",
@@ -1074,11 +1097,11 @@ const SummaryCustomerReportScreen = ({
                                 element.product.id !== item.product.id
                             )
                           );
-                          //come
                         }}
                       >
                         <Text>{item.product.productName}</Text>
                       </TouchableOpacity>
+
                       <TextInput
                         style={{
                           flex: 1,
@@ -1116,13 +1139,45 @@ const SummaryCustomerReportScreen = ({
                             item.product.id.toString(),
                             clampedValue.toString()
                           );
+                          setEditTotalProfit(
+                            handleTotalProfit(selectedProducts)
+                          );
+                          setEditTotalAmount(
+                            handleTotalAmount(selectedProducts)
+                          );
+                        }}
+                        onBlur={() => {
+                          const beforeStock = draftProductList.find(
+                            (draft) => draft.id === item.product.id
+                          );
+                          const submittedValue =
+                            quantityInput[item.product.id.toString()] || "0";
+                          const clampedValue = Math.min(
+                            Math.max(parseFloat(submittedValue), 0.5),
+                            beforeStock?.stock!
+                          );
+                          setQuantityInput((prev) => ({
+                            ...prev,
+                            [item.product.id.toString()]:
+                              clampedValue.toString(),
+                          }));
+                          adjustQuantityFromInput(
+                            item.product.id.toString(),
+                            clampedValue.toString()
+                          );
+                          setEditTotalProfit(
+                            handleTotalProfit(selectedProducts)
+                          );
+                          setEditTotalAmount(
+                            handleTotalAmount(selectedProducts)
+                          );
                         }}
                         keyboardType="numeric"
                       />
                     </View>
-                  </ScrollView>
-                )}
-              />
+                  )}
+                />
+              </ScrollView>
               <View
                 style={{
                   flexDirection: "row",
@@ -1130,23 +1185,19 @@ const SummaryCustomerReportScreen = ({
                 }}
               >
                 <View style={{ marginLeft: wp("1%") }}>
-                  <Text>
-                    Total: ₱{handleTotalAmount(selectedProducts).toFixed(2)}
-                  </Text>
-                  <Text>
-                    Total profit: ₱
-                    {handleTotalProfit(selectedProducts).toFixed(2)}
-                  </Text>
+                  <Text>Total: ₱{editTotalAmount.toFixed(2)}</Text>
+                  <Text>Total profit: ₱{editTotalProfit.toFixed(2)}</Text>
                 </View>
               </View>
             </View>
           )}
         </View>
+
         <Dialog.Container visible={isDialogProductConfirmationVisible}>
           <Dialog.Title>Save Changes?</Dialog.Title>
           <Dialog.Description>
-            Make sure that you pressed the enter key on your keyboard to make
-            changes to the quantity.
+            Make sure you pressed the enter key on your keyboard to make changes
+            to the quantity and that the value you change was correct.
           </Dialog.Description>
           <Dialog.Button
             label={"Cancel"}

@@ -1,19 +1,18 @@
-import {
-  StyleSheet,
-  Text,
-  FlatList,
-  View,
-  TouchableOpacity,
-} from "react-native";
 import React from "react";
-
+import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FontAwesome } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Entypo } from "@expo/vector-icons";
+import {
+  FontAwesome,
+  MaterialCommunityIcons,
+  Entypo,
+  Ionicons,
+} from "@expo/vector-icons";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { ReportRootStackParamList } from "../type";
-import { Foundation } from "@expo/vector-icons";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 type Props = BottomTabScreenProps<ReportRootStackParamList, "ReportScreen">;
 const ReportScreen = ({ navigation }: Props) => {
@@ -64,15 +63,15 @@ const ReportScreen = ({ navigation }: Props) => {
         return (
           <Entypo
             name="dropbox"
-            size={35}
+            size={wp(10)}
             color="#5f0573"
             style={{ alignSelf: "center" }}
           />
         );
       case "low":
         return (
-          <Foundation
-            name="graph-bar"
+          <Ionicons
+            name="trending-down-outline"
             size={35}
             color="#5f0573"
             style={{ alignSelf: "center" }}
@@ -103,11 +102,13 @@ const ReportScreen = ({ navigation }: Props) => {
         style={{
           flex: 1,
           justifyContent: "center",
-          alignItems: "center",
-          marginVertical: "50%",
-          marginHorizontal: 10,
+          marginHorizontal: wp(1),
         }}
       >
+        <Image
+          source={require("../assets/buybuysassitransparent.png")}
+          style={{ height: hp(25), width: wp(70), alignSelf: "center" }}
+        />
         {reportMenu.map((item) => (
           <View
             key={item.key}
@@ -115,7 +116,7 @@ const ReportScreen = ({ navigation }: Props) => {
               marginVertical: 10,
               borderColor: "#af71bd",
               borderWidth: 3,
-              width: "100%",
+              borderRadius: wp(3),
             }}
           >
             <TouchableOpacity
@@ -125,9 +126,9 @@ const ReportScreen = ({ navigation }: Props) => {
               <View
                 style={{
                   flexDirection: "row",
-                  marginVertical: 10,
-                  paddingVertical: 20,
-                  paddingHorizontal: 10,
+                  paddingVertical: hp(2),
+                  paddingHorizontal: wp(2),
+                  alignItems: "center",
                 }}
               >
                 {handleIcon(item.icon)}
@@ -136,7 +137,7 @@ const ReportScreen = ({ navigation }: Props) => {
                     marginLeft: 5,
                     backgroundColor: "#f7f7f7",
                     textAlign: "center",
-                    fontSize: 25,
+                    fontSize: 20,
                     fontWeight: "600",
                   }}
                 >

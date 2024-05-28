@@ -70,11 +70,13 @@ const SplashScreen = ({ navigation }: Props) => {
       }}
     >
       <Image
-        style={{ height: hp("30%"), width: wp("50%") }}
+        style={{ height: hp(20), width: wp(40) }}
         source={require("../assets/icon.png")}
       />
-      <Text style={{ fontSize: hp("5%"), color: "pink", fontWeight: "bold" }}>
-        Retchi
+      <Text
+        style={{ fontSize: hp("5%"), color: "#af71bd", fontWeight: "bold" }}
+      >
+        RETCHI
       </Text>
     </View>
   );

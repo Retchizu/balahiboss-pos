@@ -66,7 +66,15 @@ export type PosReport = {
   id: String;
   customer: Customer | undefined;
   customerPayment: Number;
-  productList: { product: Product; quantity: Number }[];
+  productList: {
+    product: {
+      id: String;
+      productName: String;
+      stockPrice: number;
+      sellPrice: number;
+    };
+    quantity: Number;
+  }[];
   date: Date | string;
   otherExpense: Number;
   dogTreatDiscount: Number;

@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   Modal,
@@ -7,24 +8,24 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import { auth, db } from "../firebaseconfig";
-import { PosReport, Product, ReportRootStackParamList } from "../type";
-import { useSalesReportContext } from "../context/salesReportContext";
-import Toast from "react-native-simple-toast";
 import { SafeAreaView } from "react-native-safe-area-context";
-import firebase from "firebase/compat/app";
-import "firebase/compat/firestore";
 import { Button, SearchBar } from "@rneui/base";
+import { AntDesign } from "@expo/vector-icons";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { AntDesign } from "@expo/vector-icons";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import Toast from "react-native-simple-toast";
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
+import { auth, db } from "../firebaseconfig";
+import { PosReport, Product, ReportRootStackParamList } from "../type";
+import { useSalesReportContext } from "../context/salesReportContext";
 
 const convertTimestampToDate = (
   timestamp: firebase.firestore.Timestamp
@@ -124,6 +125,7 @@ const SalesReportScreen = ({ navigation }: prop) => {
       console.log((error as Error).message);
     }
   };
+
   const formatDateString = (date: Date): string => {
     return date.toLocaleDateString("en-US", {
       year: "numeric",
@@ -135,8 +137,16 @@ const SalesReportScreen = ({ navigation }: prop) => {
   const computeTotalPrice = () => {
     let total = 0;
     const nullCheck = !filteredData ? salesReports : filteredData;
-    const products: { product: Product; quantity: Number }[] = [];
-    nullCheck?.forEach((item) => {
+    const products: {
+      product: {
+        id: String;
+        productName: String;
+        stockPrice: number;
+        sellPrice: number;
+      };
+      quantity: Number;
+    }[] = [];
+    nullCheck.forEach((item) => {
       item.productList.forEach((product) => products.push(product));
     });
     products.forEach(

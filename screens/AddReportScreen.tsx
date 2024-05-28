@@ -55,6 +55,7 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
   const [customerName, setCustomerName] = useState("");
   const [customerInfo, setCustomerInfo] = useState("");
 
+  console.log(buttonVisible);
   const addData = async () => {
     try {
       const user = auth.currentUser;
@@ -65,7 +66,15 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
           .collection("sales")
           .add({
             customer: selected,
-            productList: items,
+            productList: items.map((productAttribute) => ({
+              product: {
+                id: productAttribute.product.id,
+                productName: productAttribute.product.productName,
+                stockPrice: productAttribute.product.stockPrice,
+                sellPrice: productAttribute.product.sellPrice,
+              },
+              quantity: productAttribute.quantity,
+            })),
             date,
             otherExpense: !additionalExpense
               ? 0
@@ -84,8 +93,6 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
         if (docRef.id) {
           await Promise.all(
             findObjectMatch(items, products).map(async (item) => {
-              const newTotalStockSold =
-                item.product.totalStockSold + (item.quantity as number);
               const stockReduce =
                 item.product.stock - (item.quantity as number);
               const productRef = db
@@ -93,14 +100,11 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
                 .doc(user.uid)
                 .collection("products")
                 .doc(item.product.id.toString());
-
+              //remove total stock calculation
               await productRef.update({
-                totalStockSold: newTotalStockSold,
                 stock: stockReduce,
               });
-
               updateProduct(item.product.id, {
-                totalStockSold: newTotalStockSold,
                 stock: stockReduce,
               });
             })

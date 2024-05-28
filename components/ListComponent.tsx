@@ -3,6 +3,7 @@ import React from "react";
 import { SearchBar } from "@rneui/base";
 import { Fontisto } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 type Props = {
   searchQuery: string;
@@ -38,36 +39,38 @@ const ListComponent = ({
 
   return (
     <View>
-      <View style={styles.header}>
-        <SearchBar
-          placeholder={placeholder}
-          containerStyle={{
-            backgroundColor: "#f7f7f7",
-            borderColor: "#f7f7f7",
-            flex: 1,
-          }}
-          inputContainerStyle={{ backgroundColor: "#f7f2f7", flex: 1 }}
-          round
-          autoCapitalize="none"
-          value={searchQuery}
-          onChangeText={(text) => setSearchQuery(text)}
-        />
-        <View
-          style={{
-            padding: 10,
-            marginTop: 5,
-            marginRight: 5,
-            backgroundColor: "#f7f2f7",
-            borderRadius: 10,
-          }}
-        >
-          <TouchableOpacity
-            onPress={() => navigation.navigate(navigateTo, params)}
+      <KeyboardAwareScrollView>
+        <View style={styles.header}>
+          <SearchBar
+            placeholder={placeholder}
+            containerStyle={{
+              backgroundColor: "#f7f7f7",
+              borderColor: "#f7f7f7",
+              flex: 1,
+            }}
+            inputContainerStyle={{ backgroundColor: "#f7f2f7", flex: 1 }}
+            round
+            autoCapitalize="none"
+            value={searchQuery}
+            onChangeText={(text) => setSearchQuery(text)}
+          />
+          <View
+            style={{
+              padding: 10,
+              marginTop: 5,
+              marginRight: 5,
+              backgroundColor: "#f7f2f7",
+              borderRadius: 10,
+            }}
           >
-            {iconSeparator()}
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate(navigateTo, params)}
+            >
+              {iconSeparator()}
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </KeyboardAwareScrollView>
     </View>
   );
 };

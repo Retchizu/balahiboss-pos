@@ -1,3 +1,10 @@
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   FlatList,
   StyleSheet,
@@ -7,33 +14,33 @@ import {
   ScrollView,
   TextInput,
   Modal,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Platform,
+  Keyboard,
 } from "react-native";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ListComponent from "../components/ListComponent";
-import { useProductContext } from "../context/productContext";
-import { Customer, PosRootStackParamList, Product } from "../type";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import Toast from "react-native-simple-toast";
-import { auth, db } from "../firebaseconfig";
-import { useCustomerContext } from "../context/customerContext";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { Fontisto } from "@expo/vector-icons";
-import { Entypo } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
-
-import { captureRef } from "react-native-view-shot";
+import { Fontisto, Entypo, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import * as MediaLibrary from "expo-media-library";
+import { captureRef } from "react-native-view-shot";
+
+import ListComponent from "../components/ListComponent";
+import { useProductContext } from "../context/productContext";
+import { useCustomerContext } from "../context/customerContext";
+import { Customer, PosRootStackParamList, Product } from "../type";
+import Toast from "react-native-simple-toast";
+import { auth, db } from "../firebaseconfig";
+import { Button } from "@rneui/base";
+import {
+  KeyboardAwareFlatList,
+  KeyboardAwareScrollView,
+} from "react-native-keyboard-aware-scroll-view";
 
 type Prop = BottomTabScreenProps<PosRootStackParamList, "PosScreen">;
 
@@ -56,6 +63,10 @@ const PosScreen = ({ navigation }: Prop) => {
   const modalContentRef = useRef<View>(null);
   const [status, requestPermission] = MediaLibrary.usePermissions();
   const [snapButtonVisible, setSnapButtonVisible] = useState(true);
+  const [showDeliveryFeeModal, setShowDeliveryFeeModal] = useState(false);
+  const [editDeliverFee, setEditDeliveryFee] = useState("");
+
+  const deliveryFee = useRef(0);
 
   if (status === null) {
     requestPermission();
@@ -225,7 +236,7 @@ const PosScreen = ({ navigation }: Prop) => {
     summary.forEach(
       (item) => (total += item.product.sellPrice * item.quantity)
     );
-    return total;
+    return deliveryFee.current !== 0 ? total + deliveryFee.current : total;
   };
 
   const handleTotalProfit = (
@@ -281,6 +292,12 @@ const PosScreen = ({ navigation }: Prop) => {
   };
 
   const handlePreviewModalVisibility = () => {
+    if (deliveryFee.current !== 0 && previewModalVisible) {
+      Toast.show(
+        "Delivery fee will not be removed. Edit it again when you want to make changes",
+        Toast.SHORT
+      );
+    }
     setPreviewModaVisible(!previewModalVisible);
   };
   const captureScreen = async () => {
@@ -325,6 +342,7 @@ const PosScreen = ({ navigation }: Prop) => {
         navigation={navigation}
         params={selectedProducts}
       />
+
       <FlatList
         style={{ flex: 1 }}
         data={filteredData}
@@ -417,107 +435,110 @@ const PosScreen = ({ navigation }: Prop) => {
           <FlatList
             data={selectedProducts}
             renderItem={({ item }) => (
-              <ScrollView style={{ marginVertical: 5 }}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    paddingHorizontal: wp("3%"),
-                    borderBottomWidth: 1,
-                    borderBottomColor: "lightgray",
-                    alignItems: "center",
-                  }}
-                >
-                  <TouchableOpacity
-                    style={{ flex: 3 }}
-                    onPress={() => {
-                      setSelectedProducts(
-                        selectedProducts.filter(
-                          (element) => element.product.id !== item.product.id
-                        )
-                      );
-                      setSelected(
-                        selected.filter(
-                          (element) => element !== item.product.id
-                        )
-                      );
-                      setQuantityInput((prevQuantityInput) => ({
-                        ...prevQuantityInput,
-                        [item.product.id.toString()]: "0.5",
-                      }));
-                    }}
-                  >
-                    <Text>{item.product.productName}</Text>
-                  </TouchableOpacity>
-                  <TextInput
-                    style={{
-                      flex: 1,
-                    }}
-                    placeholder={`${item.quantity}`}
-                    value={
-                      isEditing
-                        ? quantityInput[item.product.id.toString()] !==
-                          undefined
-                          ? quantityInput[item.product.id.toString()]
-                          : item.quantity.toString()
-                        : item.quantity.toString()
-                    }
-                    onFocus={() => setIsEditing(true)}
-                    onBlur={() => setIsEditing(false)}
-                    onChangeText={(text) =>
-                      setQuantityInput((prev) => ({
-                        ...prev,
-                        [item.product.id.toString()]: text,
-                      }))
-                    }
-                    onSubmitEditing={() => {
-                      const submittedValue =
-                        quantityInput[item.product.id.toString()] || "0";
-                      const clampedValue = Math.min(
-                        Math.max(parseFloat(submittedValue), 0.5),
-                        item.product.stock
-                      );
-                      setQuantityInput((prev) => ({
-                        ...prev,
-                        [item.product.id.toString()]: clampedValue.toString(),
-                      }));
-                      adjustQuantityFromInput(
-                        item.product.id.toString(),
-                        clampedValue.toString()
-                      );
-                      setIsEditing(false);
-                    }}
-                    keyboardType="numeric"
-                  />
+              <View style={{ marginVertical: 5 }}>
+                <KeyboardAwareScrollView>
                   <View
                     style={{
-                      flex: 2,
                       flexDirection: "row",
-                      justifyContent: "flex-end",
+                      paddingHorizontal: wp("3%"),
+                      borderBottomWidth: 1,
+                      borderBottomColor: "lightgray",
+                      alignItems: "center",
                     }}
                   >
-                    <TouchableOpacity style={styles.touchableStyle}>
-                      <Ionicons
-                        name="remove"
-                        size={24}
-                        color="white"
-                        onPress={() =>
-                          handleQuantity(item.product.id.toString(), "reduce")
-                        }
-                      />
-                    </TouchableOpacity>
                     <TouchableOpacity
-                      style={styles.touchableStyle}
-                      onPress={() =>
-                        handleQuantity(item.product.id.toString(), "add")
-                      }
+                      style={{ flex: 3 }}
+                      onPress={() => {
+                        setSelectedProducts(
+                          selectedProducts.filter(
+                            (element) => element.product.id !== item.product.id
+                          )
+                        );
+                        setSelected(
+                          selected.filter(
+                            (element) => element !== item.product.id
+                          )
+                        );
+                        setQuantityInput((prevQuantityInput) => ({
+                          ...prevQuantityInput,
+                          [item.product.id.toString()]: "0.5",
+                        }));
+                      }}
                     >
-                      <Ionicons name="add" size={24} color="white" />
+                      <Text>{item.product.productName}</Text>
                     </TouchableOpacity>
+                    <TextInput
+                      style={{
+                        flex: 1,
+                      }}
+                      placeholder={`${item.quantity}`}
+                      value={
+                        isEditing
+                          ? quantityInput[item.product.id.toString()] !==
+                            undefined
+                            ? quantityInput[item.product.id.toString()]
+                            : item.quantity.toString()
+                          : item.quantity.toString()
+                      }
+                      onFocus={() => setIsEditing(true)}
+                      onBlur={() => setIsEditing(false)}
+                      onChangeText={(text) =>
+                        setQuantityInput((prev) => ({
+                          ...prev,
+                          [item.product.id.toString()]: text,
+                        }))
+                      }
+                      onSubmitEditing={() => {
+                        const submittedValue =
+                          quantityInput[item.product.id.toString()] || "0";
+                        const clampedValue = Math.min(
+                          Math.max(parseFloat(submittedValue), 0.5),
+                          item.product.stock
+                        );
+                        setQuantityInput((prev) => ({
+                          ...prev,
+                          [item.product.id.toString()]: clampedValue.toString(),
+                        }));
+                        adjustQuantityFromInput(
+                          item.product.id.toString(),
+                          clampedValue.toString()
+                        );
+                        setIsEditing(false);
+                      }}
+                      keyboardType="numeric"
+                    />
+                    <View
+                      style={{
+                        flex: 2,
+                        flexDirection: "row",
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <TouchableOpacity style={styles.touchableStyle}>
+                        <Ionicons
+                          name="remove"
+                          size={24}
+                          color="white"
+                          onPress={() =>
+                            handleQuantity(item.product.id.toString(), "reduce")
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.touchableStyle}
+                        onPress={() =>
+                          handleQuantity(item.product.id.toString(), "add")
+                        }
+                      >
+                        <Ionicons name="add" size={24} color="white" />
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                </View>
-              </ScrollView>
+                </KeyboardAwareScrollView>
+              </View>
             )}
           />
+
           <View
             style={{
               flexDirection: "row",
@@ -562,6 +583,7 @@ const PosScreen = ({ navigation }: Prop) => {
                   shadowOpacity: 0.2,
                   elevation: wp("2%"),
                   flex: 1,
+                  opacity: showDeliveryFeeModal ? 0.5 : 1,
                 }}
                 ref={modalContentRef}
               >
@@ -608,6 +630,13 @@ const PosScreen = ({ navigation }: Prop) => {
                     </View>
                   )}
                 />
+
+                {deliveryFee.current !== 0 ? (
+                  <Text style={{ fontSize: hp(3), fontWeight: "bold" }}>
+                    Delivery Fee: ₱{deliveryFee.current.toFixed(2)}
+                  </Text>
+                ) : null}
+
                 <View
                   style={{
                     flexDirection: "row",
@@ -618,23 +647,85 @@ const PosScreen = ({ navigation }: Prop) => {
                     Total: ₱{handleTotalAmount(selectedProducts).toFixed(2)}
                   </Text>
                   {snapButtonVisible ? (
-                    <TouchableOpacity
+                    <View
                       style={{
-                        padding: wp("2%"),
-                        backgroundColor: "#af71bd",
-                        borderRadius: wp("8%"),
-                        marginRight: wp("5%"),
-                        bottom: hp("1%"),
+                        flexDirection: "row",
+                        flex: 1,
+                        justifyContent: "space-evenly",
                       }}
-                      onPress={captureScreen}
                     >
-                      <Entypo name="camera" size={24} color="white" />
-                    </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{
+                          padding: wp("2%"),
+                          backgroundColor: "#af71bd",
+                          borderRadius: wp(12 / 2),
+                        }}
+                        onPress={() => setShowDeliveryFeeModal(true)}
+                      >
+                        <MaterialIcons
+                          name="delivery-dining"
+                          size={24}
+                          color="white"
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{
+                          padding: wp("2%"),
+                          backgroundColor: "#af71bd",
+                          borderRadius: wp(12 / 2),
+                        }}
+                        onPress={captureScreen}
+                      >
+                        <Entypo name="camera" size={24} color="white" />
+                      </TouchableOpacity>
+                    </View>
                   ) : null}
                 </View>
               </View>
             </Modal>
           </View>
+
+          <Modal
+            visible={showDeliveryFeeModal}
+            transparent
+            animationType="fade"
+            onRequestClose={() => setShowDeliveryFeeModal(false)}
+          >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <View style={styles.modalOverlay}>
+                <KeyboardAvoidingView
+                  behavior={Platform.OS === "ios" ? "padding" : "height"}
+                  style={styles.modalContainer}
+                >
+                  <View style={styles.modalContent}>
+                    <View style={styles.inputContainer}>
+                      <Text>Add Delivery Fee:</Text>
+                      <TextInput
+                        style={styles.textInput}
+                        keyboardType="numeric"
+                        value={editDeliverFee}
+                        onChangeText={(text) => setEditDeliveryFee(text)}
+                        placeholder="Enter delivery fee"
+                      />
+                    </View>
+                    <TouchableOpacity
+                      style={{ alignItems: "center", marginTop: hp(3) }}
+                      onPress={() => {
+                        setShowDeliveryFeeModal(false);
+                        deliveryFee.current = !editDeliverFee.trim()
+                          ? 0
+                          : parseFloat(editDeliverFee);
+                      }}
+                    >
+                      <Text style={{ color: "blue", fontSize: hp(2) }}>
+                        Confirm
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </KeyboardAvoidingView>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
         </View>
       )}
     </SafeAreaView>
@@ -653,5 +744,33 @@ const styles = StyleSheet.create({
     backgroundColor: "#af71bd",
     borderRadius: wp("2%"),
     marginRight: wp("2%"),
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContainer: {
+    justifyContent: "center",
+    marginVertical: hp(10),
+    marginHorizontal: wp(10),
+  },
+  modalContent: {
+    backgroundColor: "white",
+    borderRadius: wp(5),
+    padding: wp(5),
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    elevation: wp(2),
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: wp(2),
+  },
+  textInput: {
+    borderBottomWidth: wp(0.1),
+    flex: 1,
+    marginLeft: wp(2),
   },
 });

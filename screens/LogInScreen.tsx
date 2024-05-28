@@ -1,10 +1,10 @@
 import {
-  ActivityIndicator,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
+  Image,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,6 +17,11 @@ import Toast from "react-native-simple-toast";
 import { Entypo } from "@expo/vector-icons";
 import { CommonActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+
 type Props = NativeStackScreenProps<RootStackParamList, "LogInScreen">;
 
 const LogInScreen = ({ navigation }: Props) => {
@@ -61,6 +66,10 @@ const LogInScreen = ({ navigation }: Props) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.credentialContainer}>
+        <Image
+          source={require("../assets/transparent balahiboss.png")}
+          style={{ height: hp(10), width: wp(35), alignSelf: "center" }}
+        />
         <Text style={styles.welcomeMessage}>Welcome to Retchi!</Text>
         <View style={styles.credentialChild}>
           <Text style={styles.inputLabel}>Enter your email:</Text>
@@ -182,7 +191,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   container: {
-    backgroundColor: "#f7f7f7",
+    backgroundColor: "white",
     flex: 1,
   },
   credentialContainer: {

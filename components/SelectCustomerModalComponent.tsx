@@ -15,6 +15,7 @@ import {
 } from "react-native-responsive-screen";
 import { Ionicons } from "@expo/vector-icons";
 import { Customer } from "../type";
+import Toast from "react-native-simple-toast";
 
 type Props = {
   componentVisible: boolean;
@@ -54,7 +55,9 @@ const SelectCustomerModalComponent = ({
         visible={componentVisible}
         transparent
         animationType="slide"
-        onRequestClose={handleComponentVisibility}
+        onRequestClose={
+          addComponentVisible ? () => {} : handleComponentVisibility
+        }
       >
         <View
           style={{
@@ -70,9 +73,13 @@ const SelectCustomerModalComponent = ({
           }}
         >
           {addComponentVisible ? (
-            <View style={{ justifyContent: "center", flex: 1 }}>
+            <View
+              style={{
+                justifyContent: "center",
+                flex: 1,
+              }}
+            >
               <Text style={styles.textStyle}>Add a Customer</Text>
-              <Text style={styles.labelStyle}>Customer name:</Text>
               <TextInput
                 placeholder="Customer name"
                 style={styles.inputContainerStyle}
@@ -81,10 +88,12 @@ const SelectCustomerModalComponent = ({
                   setCustomerName(text);
                 }}
               />
-              <Text style={styles.labelStyle}>Customer Info:</Text>
               <TextInput
-                placeholder="Customer Info"
-                style={styles.inputContainerStyle}
+                placeholder="Customer Info..."
+                style={[
+                  styles.inputContainerStyle,
+                  { height: hp(10), textAlignVertical: "top" },
+                ]}
                 value={customerInfo}
                 onChangeText={(text) => setCustomerInfo(text)}
                 multiline
@@ -114,7 +123,14 @@ const SelectCustomerModalComponent = ({
                     borderRadius: 10,
                     width: wp("30%"),
                   }}
-                  onPress={() => addDataCustomer()}
+                  onPress={() => {
+                    if (customerName) {
+                      addDataCustomer();
+                    }
+                    if (!customerName.trim()) {
+                      Toast.show("Customer name is empty", Toast.SHORT);
+                    }
+                  }}
                 />
               </View>
             </View>
@@ -234,16 +250,15 @@ const styles = StyleSheet.create({
     color: "#af71bd",
   },
   labelStyle: {
-    marginHorizontal: 5,
-    paddingHorizontal: 20,
     fontSize: 14,
   },
   inputContainerStyle: {
-    borderWidth: 5,
+    borderWidth: wp(1),
+    marginVertical: hp(1),
     borderColor: "#af71bd",
     paddingHorizontal: 20,
     paddingVertical: 10,
     fontSize: 14,
-    maxHeight: 50,
+    borderRadius: wp(2),
   },
 });

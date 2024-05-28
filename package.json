@@ -32,13 +32,15 @@
     "react-dom": "18.2.0",
     "react-native": "0.73.6",
     "react-native-dialog": "^9.3.0",
-    "react-native-gesture-handler": "~2.14.0",
+    "react-native-gesture-handler": "^2.16.2",
+    "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-reanimated": "~3.6.2",
     "react-native-responsive-screen": "^1.4.2",
     "react-native-safe-area-context": "4.8.2",
     "react-native-screens": "~3.29.0",
     "react-native-simple-toast": "^3.2.0",
     "react-native-view-shot": "3.8.0",
+    "react-native-virtualized-view": "^1.0.0",
     "react-native-web": "~0.19.6"
   },
   "devDependencies": {
