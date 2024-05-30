@@ -79,7 +79,6 @@ export type PosReport = {
   otherExpense: Number;
   dogTreatDiscount: Number;
   catTreatDiscount: Number;
-  gateDiscount: Number;
 };
 
 export type ExpenseReport = {

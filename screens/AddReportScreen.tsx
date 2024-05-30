@@ -41,7 +41,6 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
   const [additionalExpense, setAdditionalExpense] = useState("");
   const [dogTreatDiscount, setDogTreatDiscount] = useState("");
   const [catTreatDiscount, setCatTreatDiscount] = useState("");
-  const [gateDiscount, setGateDiscount] = useState("");
   const [selected, setSelected] = useState<Customer | undefined>(undefined);
   const [customerPayment, setCustomerPayment] = useState("");
   const { products, updateProduct } = useProductContext();
@@ -85,7 +84,6 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
             dogTreatDiscount: !dogTreatDiscount
               ? 0
               : parseFloat(dogTreatDiscount),
-            gateDiscount: !gateDiscount ? 0 : parseFloat(gateDiscount),
             customerPayment: !customerPayment
               ? totalAmount()
               : parseFloat(customerPayment),
@@ -123,7 +121,6 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
             dogTreatDiscount: !dogTreatDiscount
               ? 0
               : parseFloat(dogTreatDiscount),
-            gateDiscount: !gateDiscount ? 0 : parseFloat(gateDiscount),
             customerPayment: !customerPayment
               ? totalAmount()
               : parseFloat(customerPayment),
@@ -190,8 +187,7 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
       total -
       (!additionalExpense ? 0 : parseFloat(additionalExpense)) -
       (!dogTreatDiscount ? 0 : parseFloat(dogTreatDiscount)) -
-      (!catTreatDiscount ? 0 : parseFloat(catTreatDiscount)) -
-      (!gateDiscount ? 0 : parseFloat(gateDiscount));
+      (!catTreatDiscount ? 0 : parseFloat(catTreatDiscount));
     return total;
   };
 
@@ -526,23 +522,7 @@ const AddReportScreen: React.FC<AddReportScreenProp> = ({
                 flexDirection: "row",
                 marginVertical: hp("0.5%"),
               }}
-            >
-              <Text
-                style={{
-                  fontSize: hp("2%"),
-                  alignSelf: "center",
-                }}
-              >
-                Gate Discount:
-              </Text>
-              <TextInput
-                placeholder="gate discount"
-                style={styles.discount}
-                keyboardType="number-pad"
-                value={gateDiscount}
-                onChangeText={(text) => setGateDiscount(text)}
-              />
-            </View>
+            ></View>
           </View>
 
           {buttonVisible ? (

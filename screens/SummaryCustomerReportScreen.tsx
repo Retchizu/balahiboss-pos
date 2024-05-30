@@ -69,9 +69,6 @@ const SummaryCustomerReportScreen = ({
   const [editCatTreatDiscount, setEditCatTreatDiscount] = useState(
     item.catTreatDiscount.toString()
   );
-  const [editGateDiscount, setEditGateDiscount] = useState(
-    item.gateDiscount.toString()
-  );
   const [editProductsList, setEditProductList] = useState(item.productList);
   const [editSelectedCustomer, setEditSelectedCustomer] = useState<
     Customer | undefined
@@ -180,9 +177,7 @@ const SummaryCustomerReportScreen = ({
     return (
       total -
       (item.otherExpense as number) -
-      ((item.catTreatDiscount as number) +
-        (item.dogTreatDiscount as number) +
-        (item.gateDiscount as number))
+      ((item.catTreatDiscount as number) + (item.dogTreatDiscount as number))
     );
   };
   const totalAmount = () => {
@@ -208,7 +203,6 @@ const SummaryCustomerReportScreen = ({
       setEditDiscount(item.otherExpense.toString());
       setEditDogTreatDiscount(item.dogTreatDiscount.toString());
       setEditCatTreatDiscount(item.catTreatDiscount.toString());
-      setEditGateDiscount(item.gateDiscount.toString());
       setEditProductList(item.productList);
     }
 
@@ -386,7 +380,6 @@ const SummaryCustomerReportScreen = ({
       otherExpense: parseFloat(editDiscount),
       catTreatDiscount: parseFloat(editCatTreatDiscount),
       dogTreatDiscount: parseFloat(editDogTreatDiscount),
-      gateDiscount: parseFloat(editGateDiscount),
       customerPayment: parseFloat(editCustomerPayment),
     };
 
@@ -431,7 +424,6 @@ const SummaryCustomerReportScreen = ({
         otherExpense: parseFloat(editDiscount),
         catTreatDiscount: parseFloat(editCatTreatDiscount),
         dogTreatDiscount: parseFloat(editDogTreatDiscount),
-        gateDiscount: parseFloat(editGateDiscount),
         customerPayment: parseFloat(editCustomerPayment),
       });
 
@@ -637,9 +629,6 @@ const SummaryCustomerReportScreen = ({
         <Text style={{ fontSize: 18 }}>
           Given Cat Treat Discount: ₱{item.catTreatDiscount.toFixed(2)}
         </Text>
-        <Text style={{ fontSize: 18 }}>
-          Given Gate Discount: ₱{item.gateDiscount.toFixed(2)}
-        </Text>
         <Text
           style={{ fontSize: 18, color: computeChange() < 0 ? "red" : "black" }}
         >
@@ -842,13 +831,7 @@ const SummaryCustomerReportScreen = ({
               setValue={setEditCatTreatDiscount}
               keyboardType="numeric"
             />
-            <EditTextComponent
-              inputLabel="Edit Gate Discount: "
-              placeholder="Gate Discount"
-              value={editGateDiscount}
-              setValue={setEditGateDiscount}
-              keyboardType="numeric"
-            />
+
             <TouchableOpacity onPress={handleEditProductsBoughtModal}>
               <Text
                 style={{

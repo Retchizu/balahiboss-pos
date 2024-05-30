@@ -27,6 +27,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "LogInScreen">;
 const LogInScreen = ({ navigation }: Props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(true);
 
@@ -35,6 +36,7 @@ const LogInScreen = ({ navigation }: Props) => {
   };
 
   const handleSignin = async () => {
+    setIsLoading(true);
     try {
       const userCredential = await auth.signInWithEmailAndPassword(
         email,
@@ -57,9 +59,11 @@ const LogInScreen = ({ navigation }: Props) => {
       } else {
         navigation.navigate("VerifyEmailScreen", email);
       }
+      setIsLoading(false);
     } catch (error) {
       Toast.show("Invalid credentials", Toast.SHORT);
       console.log((error as Error).message);
+      setIsLoading(false);
     }
   };
 
@@ -142,6 +146,7 @@ const LogInScreen = ({ navigation }: Props) => {
             titleStyle={{ fontSize: 15 }}
             buttonStyle={{ backgroundColor: "#af71bd" }}
             onPress={handleSignin}
+            loading={isLoading}
           />
           <TouchableOpacity
             onPress={() => {

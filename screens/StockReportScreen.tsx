@@ -20,7 +20,7 @@ const convertTimestampToDate = (
 };
 
 const StockReportScreen = () => {
-  const { products, updateProduct } = useProductContext();
+  const { products, updateProduct, setProductList } = useProductContext();
   const [searchQuery, setSearchQuery] = useState("");
   const [isFetching, setIsFetching] = useState(false);
   const startDateHours = new Date();
@@ -46,17 +46,20 @@ const StockReportScreen = () => {
   }, [products, searchQuery]);
 
   useEffect(() => {
-    products.forEach((item) => {
-      updateProduct(item.id, { totalStockSold: 0 });
-    });
-  }, []);
-  useEffect(() => {
     if (!initialFetchSales) {
       readData();
       setInitialFetchSales(true);
       console.log("read");
     }
+    resetTotalStockSold();
+    computeTotalStockSold();
   }, [salesReports.length, salesReports]);
+
+  const resetTotalStockSold = () => {
+    products.forEach((product) => {
+      updateProduct(product.id, { totalStockSold: 0 });
+    });
+  };
   const readData = async () => {
     try {
       const user = auth.currentUser;
@@ -110,8 +113,6 @@ const StockReportScreen = () => {
       console.log((error as Error).message);
     }
   };
-
-  console.log(salesReports);
 
   const toggleStartDate = () => {
     if (!startDate) {
@@ -174,16 +175,27 @@ const StockReportScreen = () => {
   };
 
   const computeTotalStockSold = () => {
+    const productMap = new Map();
     salesReports.forEach((sale) => {
       sale.productList.forEach((boughtItem) => {
         const product = products.find((p) => p.id === boughtItem.product.id);
         if (product) {
-          updateProduct(product.id, {
-            totalStockSold:
-              product.totalStockSold + (boughtItem.quantity as number),
-          });
+          const productId = product.id;
+          if (productMap.has(productId)) {
+            const currentTotalStockSold = productMap.get(productId);
+            productMap.set(
+              productId,
+              currentTotalStockSold + boughtItem.quantity
+            );
+          } else {
+            productMap.set(productId, boughtItem.quantity);
+          }
         }
       });
+    });
+
+    productMap.forEach((totalStockSold, productId) => {
+      updateProduct(productId, { totalStockSold });
     });
   };
   return (
@@ -325,7 +337,6 @@ const StockReportScreen = () => {
           buttonStyle={{ backgroundColor: "#af71bd" }}
           onPress={() => {
             readData();
-            computeTotalStockSold();
           }}
         />
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
