@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, FlatList, Platform } from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, memo } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useProductContext } from "../context/productContext";
 import { Button, SearchBar } from "@rneui/base";
@@ -48,6 +48,7 @@ const StockReportScreen = () => {
   useEffect(() => {
     if (!initialFetchSales) {
       readData();
+      computeTotalStockSold();
       setInitialFetchSales(true);
       console.log("read");
     }
@@ -198,6 +199,35 @@ const StockReportScreen = () => {
       updateProduct(productId, { totalStockSold });
     });
   };
+
+  const ProductName = memo(({ productName }: { productName: String }) => (
+    <View style={{ flex: 2 }}>
+      <Text style={{ fontSize: 12 }}>{productName}</Text>
+    </View>
+  ));
+  const StockText = memo(({ stock }: { stock: number }) => (
+    <View style={{ flex: 1 }}>
+      <Text
+        style={{
+          fontSize: 12,
+          color: "blue",
+          fontWeight: "bold",
+          textAlign: "center",
+        }}
+      >
+        {stock}
+      </Text>
+    </View>
+  ));
+  const TotalStockSold = memo(
+    ({ totalStockSold }: { totalStockSold: number }) => (
+      <View style={{ flex: 1 }}>
+        <Text style={{ fontSize: 12, textAlign: "center" }}>
+          {totalStockSold}
+        </Text>
+      </View>
+    )
+  );
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f7f7f7" }}>
       <View style={{ marginHorizontal: 10, flex: 1 }}>
@@ -352,6 +382,7 @@ const StockReportScreen = () => {
         </View>
         <FlatList
           data={filteredData}
+          initialNumToRender={15}
           renderItem={({ item }) => (
             <View
               style={{
@@ -360,21 +391,9 @@ const StockReportScreen = () => {
                 borderBottomWidth: 2,
               }}
             >
-              <Text style={{ fontSize: 12, flex: 2 }}>{item.productName}</Text>
-              <Text
-                style={{
-                  fontSize: 12,
-                  flex: 1,
-                  color: "blue",
-                  fontWeight: "bold",
-                  textAlign: "center",
-                }}
-              >
-                {item.stock}
-              </Text>
-              <Text style={{ fontSize: 12, flex: 1, textAlign: "center" }}>
-                {item.totalStockSold}
-              </Text>
+              <ProductName productName={item.productName} />
+              <StockText stock={item.stock} />
+              <TotalStockSold totalStockSold={item.totalStockSold} />
             </View>
           )}
         />

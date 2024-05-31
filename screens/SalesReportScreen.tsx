@@ -168,8 +168,7 @@ const SalesReportScreen = ({ navigation }: prop) => {
       total -=
         (parentItem.otherExpense as number) +
         (parentItem.catTreatDiscount as number) +
-        (parentItem.dogTreatDiscount as number) +
-        (parentItem.gateDiscount as number);
+        (parentItem.dogTreatDiscount as number);
     });
     return total;
   };
@@ -193,13 +192,6 @@ const SalesReportScreen = ({ navigation }: prop) => {
     let total = 0;
     const nullCheck = !filteredData ? salesReports : filteredData;
     nullCheck.forEach((item) => (total += item.dogTreatDiscount as number));
-
-    return total;
-  };
-  const computeTotalGateDiscount = () => {
-    let total = 0;
-    const nullCheck = !filteredData ? salesReports : filteredData;
-    nullCheck.forEach((item) => (total += item.gateDiscount as number));
 
     return total;
   };
@@ -580,9 +572,6 @@ const SalesReportScreen = ({ navigation }: prop) => {
         </Text>
         <Text style={{ fontSize: 16 }}>
           Total of Cat Treat Discount: ₱{computeTotalCatTreat().toFixed(2)}
-        </Text>
-        <Text style={{ fontSize: 16 }}>
-          Total of Gate Discount: ₱{computeTotalGateDiscount().toFixed(2)}
         </Text>
       </View>
 
