@@ -25,3 +25,8 @@
 - **Stock Monitoring:** Keep an eye on the inventory levels of products.
 - **Sales Tracking:** View detailed reports on sales performance over time.
 - **Product Preview Summary:** Provide customers with expected prices of inquired products for a smooth purchasing experience.
+## Tools Used
+
+- **React Native** with **Expo**
+- **React Navigation**
+- **Firebase** for database and authentication
