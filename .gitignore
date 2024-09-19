@@ -3,6 +3,8 @@
 # dependencies
 node_modules/
 
+firebase
+
 # Expo
 .expo/
 dist/
@@ -34,7 +36,4 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-# Local Netlify folder
-.netlify
-# Ignore Firebase configuration file
-firebaseconfig.ts
+firebaseConfig.ts

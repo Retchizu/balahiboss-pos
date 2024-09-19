@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from "react";
-import { Product } from "../type";
+import { Product } from "../types/type";
 
 type ProductContextType = {
   products: Product[];

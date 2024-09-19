@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Retchi",
-    "slug": "retAuth",
-    "version": "1.11.2",
+    "name": "sales-tracker-for-android-ios",
+    "slug": "sales-tracker-for-android-ios",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -11,32 +11,26 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true,
-      "userInterfaceStyle": "light"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "userInterfaceStyle": "light",
-      "softwareKeyboardLayoutMode": "pan",
-      "package": "com.anonymous.retAuth",
-      "versionCode": 6,
-      "permissions": [
-        "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.READ_EXTERNAL_STORAGE"
-      ]
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "extra": {
-      "eas": {
-        "projectId": "cfcd2c25-4a04-4d49-9510-2f1520142325"
-      }
-    }
+    "plugins": [
+      "expo-font",
+      [
+        "expo-media-library",
+        {
+          "isAccessMediaLocationEnabled": true
+        }
+      ]
+    ]
   }
 }

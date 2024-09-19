@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from "react";
-import { Customer } from "../type";
+import { Customer } from "../types/type";
 
 type CustomerContextType = {
   customers: Customer[];

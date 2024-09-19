@@ -1,11 +1,14 @@
 import { createContext, useContext, useState, ReactNode } from "react";
-import { PosReport } from "../type";
+import { SalesReport } from "../types/type";
 
 type SalesReportContextType = {
-  salesReports: PosReport[];
-  addSalesReport: (newReport: PosReport) => void;
-  updateSalesReport: (reportId: String, attribute: Partial<PosReport>) => void;
-  setSalesReportList: (newReportList: PosReport[]) => void;
+  salesReports: SalesReport[];
+  addSalesReport: (newReport: SalesReport) => void;
+  updateSalesReport: (
+    reportId: String,
+    attribute: Partial<SalesReport>
+  ) => void;
+  setSalesReportList: (newReportList: SalesReport[]) => void;
 };
 
 const SalesReportContext = createContext<SalesReportContextType | undefined>(
@@ -15,15 +18,15 @@ const SalesReportContext = createContext<SalesReportContextType | undefined>(
 export const SalesReportProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [salesReports, setSalesReports] = useState<PosReport[]>([]);
+  const [salesReports, setSalesReports] = useState<SalesReport[]>([]);
 
-  const addSalesReport = (newReport: PosReport) => {
+  const addSalesReport = (newReport: SalesReport) => {
     setSalesReports((prevSalesReport) => [...prevSalesReport, newReport]);
   };
 
   const updateSalesReport = (
     reportId: String,
-    attribute: Partial<PosReport>
+    attribute: Partial<SalesReport>
   ) => {
     setSalesReports((prevSalesReport) =>
       prevSalesReport.map((report) =>
@@ -32,7 +35,7 @@ export const SalesReportProvider: React.FC<{ children: ReactNode }> = ({
     );
   };
 
-  const setSalesReportList = (newReportList: PosReport[]) => {
+  const setSalesReportList = (newReportList: SalesReport[]) => {
     setSalesReports(newReportList);
   };
 
