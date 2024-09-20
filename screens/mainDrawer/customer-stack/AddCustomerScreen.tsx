@@ -10,6 +10,8 @@ import { useCustomerContext } from "../../../context/CustomerContext";
 import { handleInputChange } from "../../../methods/handleInputChange";
 import { AddCustomerScreenProp } from "../../../types/type";
 import { CommonActions } from "@react-navigation/native";
+import { useToastContext } from "../../../context/ToastContext";
+import Toast from "react-native-toast-message";
 
 const AddCustomerScreen = ({ navigation, route }: AddCustomerScreenProp) => {
   const params = route.params;
@@ -18,9 +20,13 @@ const AddCustomerScreen = ({ navigation, route }: AddCustomerScreenProp) => {
     customerInfo: "",
   });
   const { addCustomer } = useCustomerContext();
-
+  const { showToast } = useToastContext();
   const handleCustomerAddSubmit = async () => {
-    const customerData = await addCustomerData(customer, addCustomer);
+    const customerData = await addCustomerData(
+      customer,
+      addCustomer,
+      showToast
+    );
     handleInputChange("customerName", "", setCustomer);
     handleInputChange("customerInfo", "", setCustomer);
     if (params) {
@@ -48,6 +54,7 @@ const AddCustomerScreen = ({ navigation, route }: AddCustomerScreenProp) => {
         formTitle="Add a customer"
         submit={handleCustomerAddSubmit}
       />
+      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

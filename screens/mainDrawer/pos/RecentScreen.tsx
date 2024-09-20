@@ -21,9 +21,7 @@ const RecentScreen = ({ navigation }: RecentScreenProp) => {
   let endDate = new Date();
 
   useEffect(() => {
-    if (!salesReports.length) {
-      getSalesReportData(startDate, endDate, setSalesReportList);
-    }
+    getSalesReportData(startDate, endDate, setSalesReportList);
   }, []);
 
   const filterData = useMemo(() => {
@@ -59,6 +57,7 @@ const RecentScreen = ({ navigation }: RecentScreenProp) => {
                 discount: item.invoiceForm.discount,
                 freebies: item.invoiceForm.freebies,
                 selectedProducts: item.selectedProduct,
+                fromSales: false,
               })
             }
           >

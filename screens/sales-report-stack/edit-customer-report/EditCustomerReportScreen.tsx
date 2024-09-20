@@ -17,6 +17,7 @@ import { useProductContext } from "../../../context/ProductContext";
 import { updateSalesReportData } from "../../../methods/data-methods/updateSalesReportData";
 import { useSalesReportContext } from "../../../context/SalesReportContext";
 import { CommonActions } from "@react-navigation/native";
+import { useToastContext } from "../../../context/ToastContext";
 
 const EditCustomerReportScreen = ({
   route,
@@ -45,6 +46,8 @@ const EditCustomerReportScreen = ({
   //date
   const [isDateVisible, setIsDateVisible] = useState(false);
   const [mode, setMode] = useState<"date" | "time">("date");
+
+  const { showToast } = useToastContext();
 
   useEffect(() => {
     setProductListInEditScreen(
@@ -83,7 +86,8 @@ const EditCustomerReportScreen = ({
             productsInEdit,
             updateProduct,
             updateSalesReport,
-            invoiceForm.selectedProducts
+            invoiceForm.selectedProducts,
+            showToast
           );
           setSelectedProductListInEdit([]);
           navigation.dispatch(
@@ -103,6 +107,7 @@ const EditCustomerReportScreen = ({
                     freebies: invoiceFormInfoEdit.freebies,
                     deliveryFee: invoiceFormInfoEdit.deliveryFee,
                     selectedProducts: selectedProductsInEdit,
+                    fromSales: true,
                   },
                 },
               ],

@@ -7,6 +7,8 @@ import {
 import InputFormWithLabelHorizontal from "./InputFormWithLabelHorizontal";
 import { handleInputChange } from "../methods/handleInputChange";
 import { Button } from "@rneui/base";
+import Toast, { ToastType } from "react-native-toast-message";
+import { useToastContext } from "../context/ToastContext";
 
 type AddProductFormProps = {
   productInfo: {
@@ -33,6 +35,7 @@ const AddProductForm = ({
   submit,
   productInfo,
 }: AddProductFormProps) => {
+  const { showToast } = useToastContext();
   return (
     <View style={styles.container}>
       <Text style={styles.AddProductFormTitle}>Add a product</Text>
@@ -78,8 +81,23 @@ const AddProductForm = ({
         title={buttonLabel}
         buttonStyle={styles.buttonStyle}
         titleStyle={styles.titleStyle}
-        onPress={() => submit()}
+        onPress={() => {
+          if (
+            productInfo.productName &&
+            productInfo.sellPrice &&
+            productInfo.sellPrice
+          ) {
+            submit();
+          } else {
+            showToast(
+              "error",
+              "Incomplete Fields",
+              "Please complete the missing fields"
+            );
+          }
+        }}
       />
+      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

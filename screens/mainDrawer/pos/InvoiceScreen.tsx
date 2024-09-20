@@ -18,6 +18,8 @@ import { useSalesReportContext } from "../../../context/SalesReportContext";
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
 import * as Print from "expo-print";
+import Toast from "react-native-toast-message";
+import { useToastContext } from "../../../context/ToastContext";
 
 const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
   const params = route.params;
@@ -51,34 +53,12 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
         customer: params,
       }));
   }, [params]);
-
-  const viewRef = useRef<View>(null);
-  const [imageUri, setImageUri] = useState<string | null>(null);
-  const [snapshotVisible, setSnapshotVisible] = useState(true);
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   if (permissionResponse === null) {
     requestPermission();
   }
+  const { showToast } = useToastContext();
 
-  const captureAndHandle = async (action: "save" | "print") => {
-    try {
-      setSnapshotVisible(false);
-      // Capture the view;
-      const uri = await captureRef(viewRef, {
-        format: "png",
-        quality: 1,
-      });
-      console.log(uri);
-      await MediaLibrary.saveToLibraryAsync(uri);
-
-      console.log("Success", "Image saved to gallery!");
-
-      setSnapshotVisible(true);
-    } catch (error) {
-      console.error("Failed to capture and handle image:", error);
-      setSnapshotVisible(true);
-    }
-  };
   return (
     <View
       style={[
@@ -127,8 +107,13 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
               freebies: "",
               deliveryFee: "",
             });
+            showToast("success", "Invoice added successfully");
           } else {
-            //show error
+            showToast(
+              "error",
+              "Incomplete Field",
+              "Please fill the missing fields"
+            );
           }
         }}
       />
@@ -138,6 +123,7 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
         setIsVisible={setIsInvoiceVisible}
         selectedProducts={selectedProducts}
         deliveryFee={invoiceFormInfo.deliveryFee}
+        discount={invoiceFormInfo.discount}
       />
       <CustomerListModal
         isVisible={isCustomerListVisible}
@@ -161,6 +147,7 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
           )}
         />
       )}
+      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

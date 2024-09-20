@@ -1,4 +1,4 @@
-import { StyleSheet, Image, View, Text } from "react-native";
+import { StyleSheet, Image, View } from "react-native";
 import React, { useState } from "react";
 import InputForm from "../../components/InputForm";
 import {
@@ -10,6 +10,8 @@ import { handleInputChange } from "../../methods/handleInputChange";
 import { Button } from "@rneui/base";
 import { signIn } from "../../methods/auth-methods/signIn";
 import { SignInScreenProp } from "../../types/type";
+import Toast from "react-native-toast-message";
+import { useToastContext } from "../../context/ToastContext";
 
 const SignInScreen = ({ navigation }: SignInScreenProp) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -17,7 +19,7 @@ const SignInScreen = ({ navigation }: SignInScreenProp) => {
     email: "",
     password: "",
   });
-
+  const { showToast } = useToastContext();
   return (
     <View style={styles.container}>
       <Image
@@ -43,8 +45,9 @@ const SignInScreen = ({ navigation }: SignInScreenProp) => {
         title={"Sign In"}
         buttonStyle={styles.buttonStyle}
         titleStyle={styles.titleStyle}
-        onPress={() => signIn(userCredential, navigation)}
+        onPress={() => signIn(userCredential, navigation, showToast)}
       />
+      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

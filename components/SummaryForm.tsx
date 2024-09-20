@@ -138,9 +138,15 @@ const SummaryForm = ({
         <View style={{ flexDirection: "row" }}>
           <Text style={[styles.label, { flex: 1.5 }]}>Total Price:</Text>
           <Text style={[styles.label, { flex: 2.5 }]}>
-            ₱ {calculateTotalPrice(selectedProducts).toFixed(2)}
+            ₱{" "}
+            {calculateTotalPrice(
+              selectedProducts,
+              undefined,
+              parseFloat(invoiceFormInfo.discount)
+            ).toFixed(2)}
           </Text>
         </View>
+
         <View style={{ flexDirection: "row" }}>
           <Text style={[styles.label, { flex: 1.5 }]}>Total Profit:</Text>
           <Text style={[styles.label, { flex: 2.5 }]}>

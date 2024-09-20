@@ -10,11 +10,14 @@ import Entypo from "@expo/vector-icons/Entypo";
 import ConfirmationModal from "../../../components/ConfirmationModal";
 import { deleteCustomerData } from "../../../methods/data-methods/deleteCustomerData";
 import { useCustomerContext } from "../../../context/CustomerContext";
+import Toast from "react-native-toast-message";
+import { useToastContext } from "../../../context/ToastContext";
 
 const CustomerInfoScreen = ({ navigation, route }: CustomerInfoScreenProp) => {
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
     useState(false);
   const { customers, setCustomerList } = useCustomerContext();
+  const { showToast } = useToastContext();
   const params = route.params;
   return (
     <View
@@ -50,12 +53,13 @@ const CustomerInfoScreen = ({ navigation, route }: CustomerInfoScreenProp) => {
         confirmationDescription="Are you sure you want to delete this customer?"
         cancelFn={() => setIsConfirmationModalVisible(false)}
         confirmFn={() => {
-          deleteCustomerData(params.id, customers, setCustomerList);
+          deleteCustomerData(params.id, customers, setCustomerList, showToast);
           setIsConfirmationModalVisible(false);
           navigation.goBack();
         }}
         setIsVisible={setIsConfirmationModalVisible}
       />
+      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };
@@ -74,11 +78,11 @@ const styles = StyleSheet.create({
   },
   labelStyle: {
     fontFamily: "SoraSemiBold",
-    fontSize: wp(4),
+    fontSize: wp(4.5),
   },
   valueStyle: {
     fontFamily: "SoraRegular",
-    fontSize: wp(4),
+    fontSize: wp(4.5),
     maxWidth: wp(70),
   },
   infoBox: {

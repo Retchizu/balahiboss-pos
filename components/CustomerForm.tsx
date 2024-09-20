@@ -14,6 +14,7 @@ import {
 import { handleInputChange } from "../methods/handleInputChange";
 import { Button } from "@rneui/base";
 import { Customer } from "../types/type";
+import Toast from "react-native-toast-message";
 
 type CustomerFormProps = {
   customer: {
@@ -86,6 +87,7 @@ const CustomerForm = ({
           onPress={() => submit()}
         />
       </View>
+      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

@@ -11,13 +11,16 @@ import { Button } from "@rneui/base";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import { deleteProductData } from "../../methods/data-methods/deleteProductData";
 import { useProductContext } from "../../context/ProductContext";
+import Toast from "react-native-toast-message";
+import { useToastContext } from "../../context/ToastContext";
 
 const ProductInfoScreen = ({ route, navigation }: ProductInfoScreenProp) => {
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
     useState(false);
   const { setProductList, products } = useProductContext();
   const params = route.params;
-  const currentState = navigation.getState();
+
+  const { showToast } = useToastContext();
 
   return (
     <View
@@ -48,6 +51,18 @@ const ProductInfoScreen = ({ route, navigation }: ProductInfoScreenProp) => {
           params.lowStockThreshold ? params.lowStockThreshold.toString() : "2"
         }
       />
+
+      <ConfirmationModal
+        isVisible={isConfirmationModalVisible}
+        setIsVisible={setIsConfirmationModalVisible}
+        cancelFn={() => setIsConfirmationModalVisible(false)}
+        confirmFn={() => {
+          deleteProductData(params.id, setProductList, products, showToast);
+          navigation.goBack();
+        }}
+        confirmationTitle={`Delete product "${params.productName}"`}
+        confirmationDescription="Do you want to delete this product?"
+      />
       <View style={styles.buttonContainer}>
         <Button
           icon={<Entypo name="trash" size={24} color="#F3F0E9" />}
@@ -60,17 +75,7 @@ const ProductInfoScreen = ({ route, navigation }: ProductInfoScreenProp) => {
           onPress={() => navigation.navigate("EditProductScreen", params)}
         />
       </View>
-      <ConfirmationModal
-        isVisible={isConfirmationModalVisible}
-        setIsVisible={setIsConfirmationModalVisible}
-        cancelFn={() => setIsConfirmationModalVisible(false)}
-        confirmFn={() => {
-          deleteProductData(params.id, setProductList, products);
-          navigation.goBack();
-        }}
-        confirmationTitle={`Delete product "${params.productName}"`}
-        confirmationDescription="Do you want to delete this product?"
-      />
+      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

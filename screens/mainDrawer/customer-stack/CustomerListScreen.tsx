@@ -11,6 +11,7 @@ import { getCustomerData } from "../../../methods/data-methods/getCustomerData";
 import { filterSearchForCustomer } from "../../../methods/search-filters/fitlerSearchForCustomer";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { CustomerListScreenProp } from "../../../types/type";
+import Toast from "react-native-toast-message";
 
 const CustomerListScreen = ({ navigation }: CustomerListScreenProp) => {
   const { customers, setCustomerList } = useCustomerContext();
@@ -31,13 +32,14 @@ const CustomerListScreen = ({ navigation }: CustomerListScreenProp) => {
         />
         <TouchableOpacity
           style={{ padding: wp(2) }}
-          onPress={() => navigation.navigate("AddCustomerScreen")}
+          onPress={() => navigation.navigate("AddCustomerScreen", false)}
         >
           <AntDesign name="adduser" size={24} color="#634F40" />
         </TouchableOpacity>
       </View>
 
       <CustomerList data={filteredData} navigation={navigation} />
+      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

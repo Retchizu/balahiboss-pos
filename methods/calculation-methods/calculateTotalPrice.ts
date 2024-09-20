@@ -2,7 +2,8 @@ import { SelectedProduct } from "../../types/type";
 
 export const calculateTotalPrice = (
   selectedProducts: SelectedProduct[],
-  deliveryFee?: number
+  deliveryFee?: number,
+  discount?: number
 ) => {
   let total = 0;
   selectedProducts.forEach((selectedProduct) => {
@@ -10,6 +11,7 @@ export const calculateTotalPrice = (
     total += calculatePrice;
   });
   if (deliveryFee) total += deliveryFee;
+  if (discount) total -= discount;
 
   return total;
 };

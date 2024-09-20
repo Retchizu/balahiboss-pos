@@ -1,3 +1,4 @@
+import { ToastType } from "react-native-toast-message";
 import { auth, db } from "../../firebaseConfig";
 import { Product } from "../../types/type";
 
@@ -8,7 +9,8 @@ export const addProductData = async (
     stockPrice: string;
     lowStockThreshold: string;
   },
-  addProduct: (newProduct: Product) => void
+  addProduct: (newProduct: Product) => void,
+  showToast: (type: ToastType, text1: string, text2?: string) => void
 ) => {
   try {
     if (
@@ -41,10 +43,16 @@ export const addProductData = async (
       };
 
       addProduct(newProduct);
-      console.log("Document written with ID: ", productRef.id);
+      showToast(
+        "success",
+        "Product Added",
+        `Successfully added product "${productInfo.productName}"`
+      );
     } else {
-      //display message
+      showToast("error", "Please Complete Missing Fields");
       return;
     }
-  } catch (error) {}
+  } catch (error) {
+    showToast("error", "Error Occured", "Try again later");
+  }
 };

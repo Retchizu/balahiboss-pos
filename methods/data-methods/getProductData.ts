@@ -14,14 +14,15 @@ export const getProductData = async (
         .collection("products");
       const productData = await productRef.get();
       productData.forEach((doc) => {
-        const { productName, stockPrice, sellPrice, stock } = doc.data();
+        const { productName, stockPrice, sellPrice, stock, lowStockThreshold } =
+          doc.data();
         fetched.push({
           id: doc.id,
           productName,
           stockPrice,
           sellPrice,
           stock,
-          totalStockSold: 0,
+          lowStockThreshold,
         });
       });
 

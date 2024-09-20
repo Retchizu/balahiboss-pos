@@ -3,6 +3,7 @@ import { Product, ProductStackParamList } from "../../types/type";
 import { updateProductData } from "../data-methods/updateProductData";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { auth, db } from "../../firebaseConfig";
+import { ToastType } from "react-native-toast-message";
 
 export const handleSameProductData = (
   products: Product[],
@@ -20,7 +21,8 @@ export const handleSameProductData = (
     lowStockThreshold: string;
     buyStock: string;
     editStock: string;
-  }
+  },
+  showToast: (type: ToastType, text1: string, text2?: string) => void
 ) => {
   const previousProductData = products.find(
     (previousProduct) => previousProduct.id === id
@@ -43,7 +45,7 @@ export const handleSameProductData = (
     previousProductData.stock === updatedProduct.stock &&
     previousProductData.lowStockThreshold === updatedProduct.lowStockThreshold;
   if (!isSameData) {
-    updateProductData(updatedProduct, updateProduct);
+    updateProductData(updatedProduct, updateProduct, showToast);
     navigation.dispatch(
       CommonActions.reset({
         index: 1,
@@ -53,7 +55,16 @@ export const handleSameProductData = (
         ],
       })
     );
-    console.log("Product updated successfully");
+  } else {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 1,
+        routes: [
+          { name: "ProductListScreen" },
+          { name: "ProductInfoScreen", params: updatedProduct },
+        ],
+      })
+    );
   }
 };
 
@@ -66,9 +77,14 @@ export const handleBuyStock = async (
     ProductStackParamList,
     "EditProductScreen",
     undefined
-  >
+  >,
+  showToast: (type: ToastType, text1: string, text2?: string) => void
 ) => {
   try {
+    if (isNaN(stockToBuy)) {
+      showToast("error", "Stock value required", "Can not buy stock");
+      return;
+    }
     const getProductToUpdate = products.find((product) => product.id === id);
     if (getProductToUpdate) {
       const user = auth.currentUser;
@@ -90,6 +106,7 @@ export const handleBuyStock = async (
         stock: getProductToUpdate.stock + stockToBuy,
         lowStockThreshold: getProductToUpdate.lowStockThreshold,
       };
+      showToast("success", "Stocks added successfully");
       navigation.dispatch(
         CommonActions.reset({
           index: 1,
@@ -101,6 +118,6 @@ export const handleBuyStock = async (
       );
     }
   } catch (error) {
-    //display error
+    showToast("error", "Error occured", "Try again later");
   }
 };

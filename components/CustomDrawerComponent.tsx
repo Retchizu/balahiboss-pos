@@ -15,15 +15,18 @@ import { auth } from "../firebaseConfig";
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useToastContext } from "../context/ToastContext";
+import Toast from "react-native-toast-message";
 
 const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
   const navigation = useNavigation();
+  const { showToast } = useToastContext();
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Text style={styles.drawerHeaderTitle}>Retchi POS</Text>
       <Image
         source={require("../assets/icon-transparent.png")}
-        style={{ width: wp(35), height: wp(35), alignSelf: "center" }}
+        style={{ width: wp(30), height: wp(30), alignSelf: "center" }}
       />
       <DrawerContentScrollView scrollEnabled={false}>
         <DrawerItemList {...props} />
@@ -31,10 +34,10 @@ const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
 
       <View style={{ marginBottom: hp(3) }}>
         <DrawerItem
-          label={() => <Text style={styles.drawerLabelStyle}>Log Out</Text>}
+          style={{ borderTopWidth: wp(0.1) }}
+          label={() => <Text style={styles.drawerLabelStyle}>Sign out</Text>}
           onPress={async () => {
             await auth.signOut();
-            console.log("User signed out");
             await AsyncStorage.removeItem("email");
             await AsyncStorage.removeItem("password");
             navigation.dispatch(
@@ -43,6 +46,7 @@ const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
                 routes: [{ name: "Auth Screen" }],
               })
             );
+            showToast("info", "Signed out successfully");
           }}
           icon={() => (
             <Ionicons
@@ -54,6 +58,7 @@ const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
           )}
         />
       </View>
+      <Toast position="bottom" autoHide visibilityTime={2000} />
     </SafeAreaView>
   );
 };

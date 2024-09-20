@@ -17,19 +17,20 @@ import { calculateTotalPrice } from "../methods/calculation-methods/calculateTot
 import Entypo from "@expo/vector-icons/Entypo";
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
-import * as Sharing from "expo-sharing";
 
 type InvoiceFormProps = {
   isVisible: boolean;
   setIsVisible: React.Dispatch<SetStateAction<boolean>>;
   selectedProducts: SelectedProduct[];
   deliveryFee: string;
+  discount: string;
 };
 const InvoiceModal = ({
   isVisible,
   setIsVisible,
   selectedProducts,
   deliveryFee,
+  discount,
 }: InvoiceFormProps) => {
   const viewRef = useRef<View>(null);
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -42,18 +43,14 @@ const InvoiceModal = ({
   const captureAndHandle = async () => {
     try {
       setSnapshotVisible(false);
-      // Capture the view;
       const localUri = await captureRef(viewRef, {
-        format: "jpg",
+        format: "png",
         quality: 1,
+        height: 4080,
+        width: 2080,
       });
 
       await MediaLibrary.saveToLibraryAsync(localUri);
-
-      const canShare = await Sharing.isAvailableAsync();
-      if (canShare) {
-        await Sharing.shareAsync(localUri);
-      }
 
       console.log("Success", "Image saved to gallery!");
 
@@ -75,11 +72,15 @@ const InvoiceModal = ({
           <View style={styles.rowFormat}>
             <Text style={[styles.invoiceLabel, { flex: 2 }]}>Description</Text>
             <Text
-              style={[styles.invoiceLabel, { flex: 1, textAlign: "center" }]}
+              style={[styles.invoiceLabel, { flex: 1.5, textAlign: "center" }]}
             >
               Qty
             </Text>
-            <Text style={[styles.invoiceLabel, { flex: 0.5 }]}>Price</Text>
+            <Text
+              style={[styles.invoiceLabel, { flex: 1.5, textAlign: "center" }]}
+            >
+              Price
+            </Text>
           </View>
           <FlatList
             data={selectedProducts}
@@ -91,17 +92,39 @@ const InvoiceModal = ({
                 <Text
                   style={[
                     styles.invoiceValue,
-                    { flex: 1, textAlign: "center" },
+                    { flex: 2, textAlign: "center" },
                   ]}
                 >
                   {item.quantity}
                 </Text>
-                <Text style={[styles.invoiceValue, { flex: 0.5 }]}>
-                  ₱ {calculatePrice(item)}
+                <Text
+                  style={[
+                    styles.invoiceValue,
+                    { flex: 1.5, textAlign: "center" },
+                  ]}
+                >
+                  ₱ {calculatePrice(item).toFixed(2)}
                 </Text>
               </View>
             )}
           />
+          {discount.trim() && (
+            <View style={styles.footerStyle}>
+              <Text
+                style={[styles.invoiceValue, { flex: 2.5, fontSize: wp(4) }]}
+              >
+                Discount
+              </Text>
+              <Text
+                style={[
+                  styles.invoiceValue,
+                  { flex: 0.5, textAlign: "center", fontSize: wp(4) },
+                ]}
+              >
+                ₱ {discount}
+              </Text>
+            </View>
+          )}
           {deliveryFee.trim() && (
             <View style={styles.footerStyle}>
               <Text
@@ -120,9 +143,14 @@ const InvoiceModal = ({
             </View>
           )}
           <View style={styles.footerStyle}>
-            <Text style={styles.footerFontStyle}>Total</Text>
+            <Text style={styles.footerFontStyle}>TOTAL</Text>
             <Text style={styles.footerFontStyle}>
-              ₱ {calculateTotalPrice(selectedProducts, parseFloat(deliveryFee))}
+              ₱{" "}
+              {calculateTotalPrice(
+                selectedProducts,
+                parseFloat(deliveryFee),
+                parseFloat(discount)
+              ).toFixed(2)}
             </Text>
           </View>
 
@@ -180,11 +208,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   invoiceLabel: {
-    fontSize: wp(4.5),
+    fontSize: wp(5),
     fontFamily: "SoraSemiBold",
   },
   invoiceValue: {
-    fontSize: wp(3.5),
+    fontSize: wp(3),
     fontFamily: "SoraMedium",
   },
   rowFormat: {
@@ -195,6 +223,7 @@ const styles = StyleSheet.create({
   footerStyle: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginVertical: hp(1),
   },
   footerFontStyle: {
     fontSize: wp(6),

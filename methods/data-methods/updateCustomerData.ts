@@ -1,10 +1,12 @@
+import { ToastType } from "react-native-toast-message";
 import { auth, db } from "../../firebaseConfig";
 import { Customer } from "../../types/type";
 
 export const updateCustomerData = async (
   customerId: String,
   customerInfo: { customerName: string; customerInfo: string },
-  updateCustomer: (customerId: String, attribute: Partial<Customer>) => void
+  updateCustomer: (customerId: String, attribute: Partial<Customer>) => void,
+  showToast: (type: ToastType, text1: string, text2?: string) => void
 ) => {
   try {
     const user = auth.currentUser;
@@ -23,5 +25,8 @@ export const updateCustomerData = async (
         customerInfo: customerInfo.customerInfo,
       });
     }
-  } catch (error) {}
+    showToast("success", "Customer updated successfully");
+  } catch (error) {
+    showToast("error", "Error occured", "Try again later");
+  }
 };

@@ -27,15 +27,15 @@ export default InfoContainerHorizontal;
 const styles = StyleSheet.create({
   infoStyle: {
     flexDirection: "row",
-    alignItems: "center",
+    marginVertical: hp(1),
   },
   labelStyle: {
     fontFamily: "SoraSemiBold",
-    fontSize: wp(4),
+    fontSize: wp(4.5),
   },
   valueStyle: {
     fontFamily: "SoraRegular",
-    fontSize: wp(4),
+    fontSize: wp(4.5),
     maxWidth: wp(70),
   },
 });

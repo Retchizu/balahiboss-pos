@@ -23,7 +23,7 @@ export type DrawerParamList = {
 };
 
 export type CustomerStackParamList = {
-  AddCustomerScreen: undefined;
+  AddCustomerScreen: Boolean;
   CustomerInfoScreen: Customer;
   CustomerListScreen: undefined;
   EditCustomerScreen: Customer;
@@ -43,17 +43,7 @@ export type InvoiceStackParamList = {
 
 export type RecentStackParamList = {
   RecentScreen: undefined;
-  CustomerReportScreen: {
-    id: string;
-    cashPayment: string;
-    onlinePayment: string;
-    customer: Customer | null;
-    date: string | null;
-    discount: string;
-    freebies: string;
-    deliveryFee: string;
-    selectedProducts: SelectedProduct[];
-  };
+  CustomerReportScreen: CustomerReportParams & { fromSales: boolean };
 };
 
 export type CustomerReportParams = {
@@ -76,7 +66,7 @@ export type EditCustomerReportTabParamList = {
 
 export type SalesReportStackParamList = {
   SalesReportScreen: undefined;
-  CustomerReportScreen: CustomerReportParams;
+  CustomerReportScreen: CustomerReportParams & { fromSales: boolean };
   EditCustomerReportTabScreen: CustomerReportParams;
 };
 

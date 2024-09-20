@@ -17,6 +17,7 @@ import { deleteSalesReportData } from "../../methods/data-methods/deleteSalesRep
 import { useSalesReportContext } from "../../context/SalesReportContext";
 import { useProductContext } from "../../context/ProductContext";
 import { useSelectedProductInEditContext } from "../../context/SelectedProductInEditContext";
+import Toast from "react-native-toast-message";
 
 const CustomerReportScreen = ({
   route,
@@ -106,14 +107,16 @@ const CustomerReportScreen = ({
           buttonStyle={styles.buttonStyle}
           onPress={() => setIsConfirmationModalVisible(true)}
         />
-        <Button
-          icon={<Entypo name="edit" size={24} color="#F3F0E9" />}
-          buttonStyle={styles.buttonStyle}
-          onPress={() => {
-            navigation.navigate("EditCustomerReportTabScreen", params);
-            setSelectedProductListInEdit(params.selectedProducts);
-          }}
-        />
+        {params.fromSales && (
+          <Button
+            icon={<Entypo name="edit" size={24} color="#F3F0E9" />}
+            buttonStyle={styles.buttonStyle}
+            onPress={() => {
+              navigation.navigate("EditCustomerReportTabScreen", params);
+              setSelectedProductListInEdit(params.selectedProducts);
+            }}
+          />
+        )}
       </View>
       <ConfirmationModal
         isVisible={isConfirmationModalVisible}
@@ -133,6 +136,7 @@ const CustomerReportScreen = ({
         confirmationTitle="Delete this report?"
         confirmationDescription={`Delete purchase info of ${params.customer?.customerName}`}
       />
+      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

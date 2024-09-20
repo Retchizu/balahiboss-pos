@@ -17,6 +17,8 @@ import {
   handleBuyStock,
   handleSameProductData,
 } from "../../methods/product-manipulation-methods/editProductMethod";
+import { useToastContext } from "../../context/ToastContext";
+import Toast from "react-native-toast-message";
 
 const EditProductScreen = ({
   route,
@@ -34,7 +36,7 @@ const EditProductScreen = ({
     editStock: params.stock.toString(),
   });
   const { updateProduct, products } = useProductContext();
-
+  const { showToast } = useToastContext();
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.formContainer}>
@@ -91,10 +93,10 @@ const EditProductScreen = ({
             />
 
             <Button
-              containerStyle={{ alignSelf: "flex-end" }}
+              containerStyle={{ alignSelf: "flex-end", top: wp(1.5) }}
               buttonStyle={[
                 styles.buttonStyle,
-                { marginVertical: wp(1), width: wp(15) },
+                { marginVertical: wp(1), width: wp(20) },
               ]}
               titleStyle={[styles.titleStyle, { fontSize: wp(3.5) }]}
               title={"Buy"}
@@ -104,9 +106,19 @@ const EditProductScreen = ({
                   updateProduct,
                   products,
                   params.id,
-                  navigation
+                  navigation,
+                  showToast
                 );
-                setProductInfo((prev) => ({ ...prev, buyStock: "" }));
+                if (productInfo.buyStock.trim()) {
+                  setProductInfo((prev) => ({ ...prev, buyStock: "" }));
+                }
+                if (!productInfo.buyStock.trim()) {
+                  showToast(
+                    "error",
+                    "Stock value required",
+                    "Can not buy stock"
+                  );
+                }
               }}
             />
           </View>
@@ -132,11 +144,13 @@ const EditProductScreen = ({
               params.id,
               updateProduct,
               navigation,
-              productInfo
+              productInfo,
+              showToast
             );
           }}
         />
       </View>
+      <Toast position="bottom" autoHide visibilityTime={2000} />
     </SafeAreaView>
   );
 };

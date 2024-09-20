@@ -30,6 +30,7 @@ const PreviewEditCustomerReportScreen = () => {
       }
     });
   }, [selectedProductsInEdit]);
+  console.log(quantityInput);
   return (
     <View style={[styles.container]}>
       <SelectedProductList

@@ -18,14 +18,15 @@ const PreviewScreen = () => {
   }>({});
 
   useEffect(() => {
+    let initialQuantityInput: {
+      [productId: string]: string;
+    } = { ...quantityInput };
     selectedProducts.forEach((item) => {
-      let initialQuantityInput: {
-        [productId: string]: string;
-      } = { ...quantityInput, [item.id]: "1" };
-
-      setQuantityInput(initialQuantityInput);
+      if (!quantityInput[item.id]) initialQuantityInput[item.id] = "1";
     });
-  }, [selectedProducts.length]);
+    setQuantityInput(initialQuantityInput);
+  }, [selectedProducts]);
+
   return (
     <View style={[styles.container]}>
       <SelectedProductList
@@ -41,7 +42,10 @@ const PreviewScreen = () => {
         </Text>
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={() => deleteSelectedProduct(setSelectedProductList)}
+          onPress={() => {
+            deleteSelectedProduct(setSelectedProductList);
+            setQuantityInput({});
+          }}
         >
           <Entypo name="trash" size={26} color="#634F40" />
         </TouchableOpacity>

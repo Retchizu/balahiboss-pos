@@ -7,6 +7,8 @@ import {
 } from "react-native-responsive-screen";
 import { addProductData } from "../../methods/data-methods/addProductData";
 import { useProductContext } from "../../context/ProductContext";
+import { useToastContext } from "../../context/ToastContext";
+import Toast from "react-native-toast-message";
 
 const AddProductScreen = () => {
   const [productInfo, setProductInfo] = useState({
@@ -16,9 +18,10 @@ const AddProductScreen = () => {
     lowStockThreshold: "2",
   });
   const { addProduct } = useProductContext();
+  const { showToast } = useToastContext();
 
   const handleAddProductSubmit = () => {
-    addProductData(productInfo, addProduct);
+    addProductData(productInfo, addProduct, showToast);
     setProductInfo({
       productName: "",
       sellPrice: "",

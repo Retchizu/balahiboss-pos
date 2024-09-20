@@ -12,6 +12,8 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { selectProduct } from "../methods/product-select-methods/selectProduct";
+import { useToastContext } from "../context/ToastContext";
+import Toast from "react-native-toast-message";
 
 type ProductPOSListProps = {
   data: Product[];
@@ -25,8 +27,9 @@ const ProductPOSList: React.FC<ProductPOSListProps> = ({
   selectedProducts,
   setSelectedProductList,
 }) => {
+  const { showToast } = useToastContext();
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <View style={styles.labelContainer}>
         <Text style={[styles.labelText, { flex: 3 }]}>Product name</Text>
         <Text style={[styles.labelText, { flex: 1, textAlign: "center" }]}>
@@ -66,6 +69,11 @@ const ProductPOSList: React.FC<ProductPOSListProps> = ({
                     )
                 : () => {
                     console.log(`${item.productName} is out of stock`);
+                    showToast(
+                      "info",
+                      "Out of Stock",
+                      `${item.productName} is out of stock`
+                    );
                   }
             }
           >
@@ -81,6 +89,7 @@ const ProductPOSList: React.FC<ProductPOSListProps> = ({
           </TouchableOpacity>
         )}
       />
+      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

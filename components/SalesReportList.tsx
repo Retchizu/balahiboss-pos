@@ -44,6 +44,7 @@ const SalesReportList = ({ data, navigation }: SalesReportListProp) => {
                 discount: item.invoiceForm.discount,
                 freebies: item.invoiceForm.freebies,
                 selectedProducts: item.selectedProduct,
+                fromSales: true,
               })
             }
           >

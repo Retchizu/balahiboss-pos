@@ -10,6 +10,7 @@ import { ProductListScreenProp } from "../../types/type";
 import ProductList from "../../components/ProductList";
 import { useProductContext } from "../../context/ProductContext";
 import { filterSearchForPoduct } from "../../methods/search-filters/filterSearchForProduct";
+import Toast from "react-native-toast-message";
 
 const ProductListScreen = ({ navigation }: ProductListScreenProp) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -31,6 +32,7 @@ const ProductListScreen = ({ navigation }: ProductListScreenProp) => {
         </TouchableOpacity>
       </View>
       <ProductList data={filteredData} navigation={navigation} />
+      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

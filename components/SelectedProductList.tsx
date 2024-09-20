@@ -44,18 +44,24 @@ const SelectedProductList = ({
         </Text>
       </View>
       <FlatList
+        removeClippedSubviews={false}
         data={data}
         renderItem={({ item }) => (
           <View style={styles.previewListContainer}>
             <Text
               style={[styles.itemText, { flex: 2 }]}
-              onPress={() =>
+              onPress={() => {
                 setSeletectedProduct(
                   data.filter(
                     (selectedProduct) => selectedProduct.id !== item.id
                   )
-                )
-              }
+                );
+                setQuantityInput((prevState) => {
+                  const updatedState = { ...prevState };
+                  delete updatedState[item.id];
+                  return updatedState;
+                });
+              }}
             >
               {item.productName}
             </Text>

@@ -1,3 +1,4 @@
+import { ToastType } from "react-native-toast-message";
 import { auth, db } from "../../firebaseConfig";
 import {
   InvoiceForm,
@@ -16,7 +17,8 @@ export const updateSalesReportData = async (
     reportId: String,
     attribute: Partial<SalesReport>
   ) => void,
-  originalSelectedProducts: SelectedProduct[]
+  originalSelectedProducts: SelectedProduct[],
+  showToast: (type: ToastType, text1: string, text2?: string) => void
 ) => {
   try {
     const user = auth.currentUser;
@@ -84,8 +86,8 @@ export const updateSalesReportData = async (
         }
       })
     );
-    console.log("Sales report updated successfully");
+    showToast("success", "Sales report updated successfully");
   } catch (error) {
-    //display error
+    showToast("error", "Error occured", "Try again later");
   }
 };

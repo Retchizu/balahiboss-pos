@@ -10,19 +10,20 @@ import {
 } from "react-native-responsive-screen";
 import { filterSearchForPoduct } from "../../../methods/search-filters/filterSearchForProduct";
 import { useSelectedProductContext } from "../../../context/SelectedProductContext";
+import Toast from "react-native-toast-message";
+import { useToastContext } from "../../../context/ToastContext";
 
 const ProductScreen = () => {
   const { products, setProductList } = useProductContext();
   const [searchQuery, setSearchQuery] = useState("");
   const { selectedProducts, addSelectedProduct, setSelectedProductList } =
     useSelectedProductContext();
-
+  const { showToast } = useToastContext();
   useEffect(() => {
     getProductData(setProductList);
   }, []);
 
   const filteredData = filterSearchForPoduct(products, searchQuery);
-
   return (
     <View style={styles.container}>
       <Searchbar
@@ -36,6 +37,7 @@ const ProductScreen = () => {
         selectedProducts={selectedProducts}
         setSelectedProductList={setSelectedProductList}
       />
+      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };
