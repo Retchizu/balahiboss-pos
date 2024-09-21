@@ -13,28 +13,12 @@ import { calculateTotalPrice } from "../../../methods/calculation-methods/calcul
 const PreviewScreen = () => {
   const { selectedProducts, setSelectedProductList, updateSelectedProduct } =
     useSelectedProductContext();
-  const [quantityInput, setQuantityInput] = useState<{
-    [productId: string]: string;
-  }>({});
-
-  useEffect(() => {
-    let initialQuantityInput: {
-      [productId: string]: string;
-    } = { ...quantityInput };
-    selectedProducts.forEach((item) => {
-      if (!quantityInput[item.id]) initialQuantityInput[item.id] = "1";
-    });
-    setQuantityInput(initialQuantityInput);
-  }, [selectedProducts]);
-
   return (
     <View style={[styles.container]}>
       <SelectedProductList
         data={selectedProducts}
         updateSelectedProduct={updateSelectedProduct}
         setSeletectedProduct={setSelectedProductList}
-        quantityInput={quantityInput}
-        setQuantityInput={setQuantityInput}
       />
       <View style={styles.footerStyle}>
         <Text style={styles.totalStyle}>
@@ -44,7 +28,6 @@ const PreviewScreen = () => {
           activeOpacity={0.7}
           onPress={() => {
             deleteSelectedProduct(setSelectedProductList);
-            setQuantityInput({});
           }}
         >
           <Entypo name="trash" size={26} color="#634F40" />

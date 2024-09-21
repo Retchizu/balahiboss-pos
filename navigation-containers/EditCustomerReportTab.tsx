@@ -4,9 +4,6 @@ import {
   EditCustomerReportTabParamList,
   EditCustomerReportTabScreenProp,
 } from "../types/type";
-import EditCustomerReportScreen from "../screens/sales-report-stack/edit-customer-report/EditCustomerReportScreen";
-import ProductListEditCustomerReportScreen from "../screens/sales-report-stack/edit-customer-report/ProductListEditCustomerReportScreen";
-import PreviewEditCustomerReportScreen from "../screens/sales-report-stack/edit-customer-report/PreviewEditCustomerReportScreen";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import {
@@ -15,6 +12,9 @@ import {
 } from "react-native-responsive-screen";
 import { TouchableOpacity } from "react-native";
 import { CommonActions, useNavigation } from "@react-navigation/native";
+import EditCustomerReportScreen from "../screens/mainDrawer/sales-report-stack/edit-customer-report/EditCustomerReportScreen";
+import ProductListEditCustomerReportScreen from "../screens/mainDrawer/sales-report-stack/edit-customer-report/ProductListEditCustomerReportScreen";
+import PreviewEditCustomerReportScreen from "../screens/mainDrawer/sales-report-stack/edit-customer-report/PreviewEditCustomerReportScreen";
 
 const EditCustomerReportTab =
   createBottomTabNavigator<EditCustomerReportTabParamList>();

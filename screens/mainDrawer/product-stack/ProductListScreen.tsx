@@ -5,11 +5,11 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import Fontisto from "@expo/vector-icons/Fontisto";
-import Searchbar from "../../components/Searchbar";
-import { ProductListScreenProp } from "../../types/type";
-import ProductList from "../../components/ProductList";
-import { useProductContext } from "../../context/ProductContext";
-import { filterSearchForPoduct } from "../../methods/search-filters/filterSearchForProduct";
+import Searchbar from "../../../components/Searchbar";
+import { ProductListScreenProp } from "../../../types/type";
+import ProductList from "../../../components/ProductList";
+import { useProductContext } from "../../../context/ProductContext";
+import { filterSearchForPoduct } from "../../../methods/search-filters/filterSearchForProduct";
 import Toast from "react-native-toast-message";
 
 const ProductListScreen = ({ navigation }: ProductListScreenProp) => {
@@ -20,7 +20,7 @@ const ProductListScreen = ({ navigation }: ProductListScreenProp) => {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Searchbar
-          placeholder="Search customer..."
+          placeholder="Search product..."
           onChangeText={(text) => setSearchQuery(text)}
           value={searchQuery}
         />

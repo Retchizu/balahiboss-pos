@@ -15,7 +15,7 @@ type StockReportListProp = {
 
 const StockReportList = ({ data, salesReport }: StockReportListProp) => {
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <View
         style={{
           flexDirection: "row",
@@ -74,7 +74,7 @@ const StockReportList = ({ data, salesReport }: StockReportListProp) => {
                 { flex: 1.5, textAlign: "right", fontFamily: "SoraSemiBold" })
               }
             >
-              ₱ {calculateTotalStockAmount(item).toString()}
+              ₱ {calculateTotalStockAmount(item).toFixed(2)}
             </Text>
           </View>
         )}

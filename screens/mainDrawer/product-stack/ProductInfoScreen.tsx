@@ -1,18 +1,18 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
-import { ProductInfoScreenProp } from "../../types/type";
+import { ProductInfoScreenProp } from "../../../types/type";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import InfoContainerHorizontal from "../../components/InfoContainerHorizontal";
+import InfoContainerHorizontal from "../../../components/InfoContainerHorizontal";
 import Entypo from "@expo/vector-icons/Entypo";
 import { Button } from "@rneui/base";
-import ConfirmationModal from "../../components/ConfirmationModal";
-import { deleteProductData } from "../../methods/data-methods/deleteProductData";
-import { useProductContext } from "../../context/ProductContext";
+import ConfirmationModal from "../../../components/ConfirmationModal";
+import { deleteProductData } from "../../../methods/data-methods/deleteProductData";
+import { useProductContext } from "../../../context/ProductContext";
 import Toast from "react-native-toast-message";
-import { useToastContext } from "../../context/ToastContext";
+import { useToastContext } from "../../../context/ToastContext";
 
 const ProductInfoScreen = ({ route, navigation }: ProductInfoScreenProp) => {
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] =

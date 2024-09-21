@@ -58,7 +58,6 @@ const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
           )}
         />
       </View>
-      <Toast position="bottom" autoHide visibilityTime={2000} />
     </SafeAreaView>
   );
 };

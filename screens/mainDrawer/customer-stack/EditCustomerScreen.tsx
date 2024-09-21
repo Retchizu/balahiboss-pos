@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React, { useState } from "react";
 import CustomerForm from "../../../components/CustomerForm";
-import { Customer, EditCustomerScreenProp } from "../../../types/type";
+import { EditCustomerScreenProp } from "../../../types/type";
 import { updateCustomerData } from "../../../methods/data-methods/updateCustomerData";
 import { useCustomerContext } from "../../../context/CustomerContext";
 import {

@@ -1,3 +1,4 @@
+import { ToastType } from "react-native-toast-message";
 import { auth, db } from "../../firebaseConfig";
 import {
   InvoiceForm,
@@ -11,7 +12,8 @@ export const addSalesReportData = async (
   invoiceForm: InvoiceForm,
   products: Product[],
   updateProduct: (productId: String, attribute: Partial<Product>) => void,
-  addSalesReport: (newReport: SalesReport) => void
+  addSalesReport: (newReport: SalesReport) => void,
+  showToast: (type: ToastType, text1: string, text2?: string) => void
 ) => {
   try {
     const user = auth.currentUser;
@@ -23,7 +25,7 @@ export const addSalesReportData = async (
         selectedProducts: selectedProducts,
         invoiceForm: invoiceForm,
       });
-
+    console.log("did run", salesReportRef.id);
     await Promise.all(
       selectedProducts.map(async (item) => {
         const itemInProductList = products.find(
@@ -54,6 +56,10 @@ export const addSalesReportData = async (
     };
 
     addSalesReport(newSalesReport);
-    console.log("Added Successfully");
-  } catch (error) {}
+    showToast("success", "Invoice added successfully");
+    console.log("done");
+  } catch (error) {
+    showToast("error", "Error occured", `${(error as Error).message}`);
+    console.log(`${(error as Error).message}`);
+  }
 };

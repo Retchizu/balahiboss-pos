@@ -1,15 +1,15 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
-import Searchbar from "../../../components/Searchbar";
+import Searchbar from "../../../../components/Searchbar";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import ProductPOSList from "../../../components/ProductPOSList";
+import ProductPOSList from "../../../../components/ProductPOSList";
 
-import { useSelectedProductInEditContext } from "../../../context/SelectedProductInEditContext";
-import { filterSearchForPoduct } from "../../../methods/search-filters/filterSearchForProduct";
-import { useProductInEditContext } from "../../../context/ProductInEditContext";
+import { useSelectedProductInEditContext } from "../../../../context/SelectedProductInEditContext";
+import { filterSearchForPoduct } from "../../../../methods/search-filters/filterSearchForProduct";
+import { useProductInEditContext } from "../../../../context/ProductInEditContext";
 
 const ProductListEditCustomerReportScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");

@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
-import InputFormWithLabelHorizontal from "../../components/InputFormWithLabelHorizontal";
+import InputFormWithLabelHorizontal from "../../../components/InputFormWithLabelHorizontal";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -8,16 +8,16 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, StringOmit } from "@rneui/base";
-import { EditProductInfoScreenProp, Product } from "../../types/type";
-import { updateProductData } from "../../methods/data-methods/updateProductData";
-import { useProductContext } from "../../context/ProductContext";
-import { handleInputChange } from "../../methods/handleInputChange";
+import { EditProductInfoScreenProp, Product } from "../../../types/type";
+import { updateProductData } from "../../../methods/data-methods/updateProductData";
+import { useProductContext } from "../../../context/ProductContext";
+import { handleInputChange } from "../../../methods/handleInputChange";
 import { CommonActions } from "@react-navigation/native";
 import {
   handleBuyStock,
   handleSameProductData,
-} from "../../methods/product-manipulation-methods/editProductMethod";
-import { useToastContext } from "../../context/ToastContext";
+} from "../../../methods/product-manipulation-methods/editProductMethod";
+import { useToastContext } from "../../../context/ToastContext";
 import Toast from "react-native-toast-message";
 
 const EditProductScreen = ({
@@ -82,7 +82,7 @@ const EditProductScreen = ({
           />
           <View style={styles.buyStockRow}>
             <InputFormWithLabelHorizontal
-              formLabel="Buy stock"
+              formLabel="Add stock"
               keyboardType="numeric"
               maxLength={9}
               contextMenuHidden={true}
@@ -99,7 +99,7 @@ const EditProductScreen = ({
                 { marginVertical: wp(1), width: wp(20) },
               ]}
               titleStyle={[styles.titleStyle, { fontSize: wp(3.5) }]}
-              title={"Buy"}
+              title={"Add"}
               onPress={() => {
                 handleBuyStock(
                   parseFloat(productInfo.buyStock),

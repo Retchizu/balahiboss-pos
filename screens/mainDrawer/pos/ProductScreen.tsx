@@ -11,14 +11,12 @@ import {
 import { filterSearchForPoduct } from "../../../methods/search-filters/filterSearchForProduct";
 import { useSelectedProductContext } from "../../../context/SelectedProductContext";
 import Toast from "react-native-toast-message";
-import { useToastContext } from "../../../context/ToastContext";
 
 const ProductScreen = () => {
   const { products, setProductList } = useProductContext();
   const [searchQuery, setSearchQuery] = useState("");
   const { selectedProducts, addSelectedProduct, setSelectedProductList } =
     useSelectedProductContext();
-  const { showToast } = useToastContext();
   useEffect(() => {
     getProductData(setProductList);
   }, []);

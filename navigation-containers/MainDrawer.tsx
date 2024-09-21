@@ -17,8 +17,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import CustomDrawerComponent from "../components/CustomDrawerComponent";
 import { SelectedProductInEditProvider } from "../context/SelectedProductInEditContext";
 import { ProductInEditProvider } from "../context/ProductInEditContext";
-import StockReportScreen from "../screens/stock-reports/StockReportScreen";
-import LowStockReportScreen from "../screens/stock-reports/LowStockReportScreen";
+import StockReportScreen from "../screens/mainDrawer/stock-reports/StockReportScreen";
+import LowStockReportScreen from "../screens/mainDrawer/stock-reports/LowStockReportScreen";
 
 const MainDrawer = createDrawerNavigator<DrawerParamList>();
 

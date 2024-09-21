@@ -1,22 +1,22 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
-import { CustomerReportScreenProp } from "../../types/type";
+import { CustomerReportScreenProp } from "../../../types/type";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import InfoHorizontal from "../../components/InfoHorizontal";
-import { readableDate } from "../../methods/time-methods/readableDate";
-import { calculateTotalPrice } from "../../methods/calculation-methods/calculateTotalPrice";
-import { calculateTotalProfit } from "../../methods/calculation-methods/calculateTotalProfit";
-import { calculatePrice } from "../../methods/calculation-methods/calculatePrice";
+import InfoHorizontal from "../../../components/InfoHorizontal";
+import { readableDate } from "../../../methods/time-methods/readableDate";
+import { calculateTotalPrice } from "../../../methods/calculation-methods/calculateTotalPrice";
+import { calculateTotalProfit } from "../../../methods/calculation-methods/calculateTotalProfit";
+import { calculatePrice } from "../../../methods/calculation-methods/calculatePrice";
 import { Button } from "@rneui/base";
 import Entypo from "@expo/vector-icons/Entypo";
-import ConfirmationModal from "../../components/ConfirmationModal";
-import { deleteSalesReportData } from "../../methods/data-methods/deleteSalesReportData";
-import { useSalesReportContext } from "../../context/SalesReportContext";
-import { useProductContext } from "../../context/ProductContext";
-import { useSelectedProductInEditContext } from "../../context/SelectedProductInEditContext";
+import ConfirmationModal from "../../../components/ConfirmationModal";
+import { deleteSalesReportData } from "../../../methods/data-methods/deleteSalesReportData";
+import { useSalesReportContext } from "../../../context/SalesReportContext";
+import { useProductContext } from "../../../context/ProductContext";
+import { useSelectedProductInEditContext } from "../../../context/SelectedProductInEditContext";
 import Toast from "react-native-toast-message";
 
 const CustomerReportScreen = ({

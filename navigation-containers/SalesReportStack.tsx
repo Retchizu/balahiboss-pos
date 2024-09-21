@@ -3,9 +3,9 @@ import {
   EditCustomerReportTabScreenProp,
   SalesReportStackParamList,
 } from "../types/type";
-import CustomerReportScreen from "../screens/sales-report-stack/CustomerReportScreen";
-import SalesReportListScreen from "../screens/sales-report-stack/SalesReportListScreen";
 import { EditCustomerReportTabScreen } from "./EditCustomerReportTab";
+import SalesReportListScreen from "../screens/mainDrawer/sales-report-stack/SalesReportListScreen";
+import CustomerReportScreen from "../screens/mainDrawer/sales-report-stack/CustomerReportScreen";
 
 const SalesReportStack =
   createNativeStackNavigator<SalesReportStackParamList>();

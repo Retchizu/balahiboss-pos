@@ -1,14 +1,13 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
-import AddProductForm from "../../components/AddProductForm";
+import AddProductForm from "../../../components/AddProductForm";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { addProductData } from "../../methods/data-methods/addProductData";
-import { useProductContext } from "../../context/ProductContext";
-import { useToastContext } from "../../context/ToastContext";
-import Toast from "react-native-toast-message";
+import { addProductData } from "../../../methods/data-methods/addProductData";
+import { useProductContext } from "../../../context/ProductContext";
+import { useToastContext } from "../../../context/ToastContext";
 
 const AddProductScreen = () => {
   const [productInfo, setProductInfo] = useState({

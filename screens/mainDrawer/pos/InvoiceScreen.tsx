@@ -15,11 +15,10 @@ import { onChangeDateInvoice } from "../../../methods/time-methods/onChangeDate"
 import { addSalesReportData } from "../../../methods/data-methods/addSalesReportData";
 import { useProductContext } from "../../../context/ProductContext";
 import { useSalesReportContext } from "../../../context/SalesReportContext";
-import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
-import * as Print from "expo-print";
 import Toast from "react-native-toast-message";
 import { useToastContext } from "../../../context/ToastContext";
+import { filterSearchForCustomer } from "../../../methods/search-filters/fitlerSearchForCustomer";
 
 const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
   const params = route.params;
@@ -58,6 +57,10 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
     requestPermission();
   }
   const { showToast } = useToastContext();
+  const filteredCustomerData = filterSearchForCustomer(
+    customers,
+    customerSearchQuery
+  );
 
   return (
     <View
@@ -95,7 +98,8 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
               invoiceFormInfo,
               products,
               updateProduct,
-              addSalesReport
+              addSalesReport,
+              showToast
             );
             setSelectedProductList([]);
             setInvoiceFormInfo({
@@ -107,7 +111,6 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
               freebies: "",
               deliveryFee: "",
             });
-            showToast("success", "Invoice added successfully");
           } else {
             showToast(
               "error",
@@ -128,7 +131,7 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
       <CustomerListModal
         isVisible={isCustomerListVisible}
         setIsVisible={() => setIsCustomerListVisible(!isCustomerListVisible)}
-        customers={customers}
+        customers={filteredCustomerData}
         setCustomerList={setCustomerList}
         searchQuery={customerSearchQuery}
         setSearchQuery={setCustomerSearchQuery}

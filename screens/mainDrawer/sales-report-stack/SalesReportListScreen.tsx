@@ -1,40 +1,64 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import { Keyboard, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import Searchbar from "../../../components/Searchbar";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Button } from "@rneui/base";
-import Searchbar from "../../components/Searchbar";
-import { readableDate } from "../../methods/time-methods/readableDate";
+import SalesReportList from "../../../components/SalesReportList";
+import { useSalesReportContext } from "../../../context/SalesReportContext";
+import { SalesReportListScreenProp } from "../../../types/type";
+import { readableDate } from "../../../methods/time-methods/readableDate";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { onChangeDateRange } from "../../methods/time-methods/onChangeDate";
-import StockReportList from "../../components/StockReportList";
-import { useProductContext } from "../../context/ProductContext";
-import { useSalesReportContext } from "../../context/SalesReportContext";
-import { getSalesReportData } from "../../methods/data-methods/getSalesReportData";
-import { filterSearchForPoduct } from "../../methods/search-filters/filterSearchForProduct";
+import { onChangeDateRange } from "../../../methods/time-methods/onChangeDate";
+import { getSalesReportData } from "../../../methods/data-methods/getSalesReportData";
+import SalesReportView from "../../../components/SalesReportView";
+import { filterSearchForSalesReport } from "../../../methods/search-filters/filterSearchForSalesReport";
+import { useToastContext } from "../../../context/ToastContext";
 import Toast from "react-native-toast-message";
-import { useToastContext } from "../../context/ToastContext";
 
-const StockReportScreen = () => {
+const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
+  const { salesReports, setSalesReportList } = useSalesReportContext();
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [isStartDatePickerVisible, setIsStartDatePickerVisible] =
     useState(false);
   const [isEndDatePickerVisible, setIsEndDatePickerVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
-  const { products } = useProductContext();
-  const { salesReports, setSalesReportList } = useSalesReportContext();
   const { showToast } = useToastContext();
 
-  const filteredData = filterSearchForPoduct(products, searchQuery);
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setIsKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setIsKeyboardVisible(false);
+      }
+    );
 
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    getSalesReportData(new Date(), new Date(), setSalesReportList);
+  }, []);
+
+  const filteredData = filterSearchForSalesReport(salesReports, searchQuery);
   return (
     <View style={styles.container}>
       <Searchbar
-        placeholder="Search a product..."
+        placeholder="Search a sales report..."
         onChangeText={(text) => setSearchQuery(text)}
         value={searchQuery}
       />
@@ -63,8 +87,7 @@ const StockReportScreen = () => {
           else showToast("error", "Date range incomplete");
         }}
       />
-      <StockReportList data={filteredData} salesReport={salesReports} />
-
+      <SalesReportList data={filteredData} navigation={navigation} />
       {isStartDatePickerVisible && (
         <DateTimePicker
           value={startDate ? startDate : new Date()}
@@ -82,12 +105,13 @@ const StockReportScreen = () => {
           onChange={onChangeDateRange(setIsEndDatePickerVisible, setEndDate)}
         />
       )}
+      {!isKeyboardVisible && <SalesReportView salesReportList={filteredData} />}
       <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };
 
-export default StockReportScreen;
+export default SalesReportListScreen;
 
 const styles = StyleSheet.create({
   container: {

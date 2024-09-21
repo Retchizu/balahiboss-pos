@@ -1,10 +1,10 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import Entypo from "@expo/vector-icons/Entypo";
-import SelectedProductList from "../../../components/SelectedProductList";
-import { useSelectedProductInEditContext } from "../../../context/SelectedProductInEditContext";
-import { calculateTotalPrice } from "../../../methods/calculation-methods/calculateTotalPrice";
-import { deleteSelectedProduct } from "../../../methods/product-select-methods/deleteSelectedProduct";
+import SelectedProductList from "../../../../components/SelectedProductList";
+import { useSelectedProductInEditContext } from "../../../../context/SelectedProductInEditContext";
+import { calculateTotalPrice } from "../../../../methods/calculation-methods/calculateTotalPrice";
+import { deleteSelectedProduct } from "../../../../methods/product-select-methods/deleteSelectedProduct";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,

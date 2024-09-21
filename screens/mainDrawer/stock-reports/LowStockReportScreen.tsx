@@ -1,13 +1,13 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { useProductContext } from "../../context/ProductContext";
-import { filterLowStockProducts } from "../../methods/filterLowStockProducts";
-import Searchbar from "../../components/Searchbar";
-import { filterSearchForPoduct } from "../../methods/search-filters/filterSearchForProduct";
+import { useProductContext } from "../../../context/ProductContext";
+import { filterLowStockProducts } from "../../../methods/filterLowStockProducts";
+import Searchbar from "../../../components/Searchbar";
+import { filterSearchForPoduct } from "../../../methods/search-filters/filterSearchForProduct";
 const LowStockReportScreen = () => {
   const { products } = useProductContext();
   const lowStockProducts = filterLowStockProducts(products);

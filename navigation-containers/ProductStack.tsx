@@ -1,9 +1,9 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ProductStackParamList } from "../types/type";
-import EditProductScreen from "../screens/product-stack/EditProductScreen";
-import ProductListScreen from "../screens/product-stack/ProductListScreen";
-import ProductInfoScreen from "../screens/product-stack/ProductInfoScreen";
-import AddProductScreen from "../screens/product-stack/AddProductScreen";
+import ProductListScreen from "../screens/mainDrawer/product-stack/ProductListScreen";
+import EditProductScreen from "../screens/mainDrawer/product-stack/EditProductScreen";
+import ProductInfoScreen from "../screens/mainDrawer/product-stack/ProductInfoScreen";
+import AddProductScreen from "../screens/mainDrawer/product-stack/AddProductScreen";
 
 const ProductStack = createNativeStackNavigator<ProductStackParamList>();
 
