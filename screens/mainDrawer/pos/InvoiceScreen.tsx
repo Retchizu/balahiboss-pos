@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import SummaryForm from "../../../components/SummaryForm";
 import { InvoiceForm, InvoiceScreenProp } from "../../../types/type";
@@ -36,6 +36,8 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
     deliveryFee: "",
   });
   const [isInvoiceVisible, setIsInvoiceVisible] = useState(false);
+  const { showToast } = useToastContext();
+  const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   //for customers in modal
   const { customers, setCustomerList } = useCustomerContext();
   const [isCustomerListVisible, setIsCustomerListVisible] = useState(false);
@@ -52,11 +54,11 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
         customer: params,
       }));
   }, [params]);
-  const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
+
   if (permissionResponse === null) {
     requestPermission();
   }
-  const { showToast } = useToastContext();
+
   const filteredCustomerData = filterSearchForCustomer(
     customers,
     customerSearchQuery
@@ -87,7 +89,7 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
         previewInvoiceFn={() => setIsInvoiceVisible(true)}
         customerModalVisibleFn={() => setIsCustomerListVisible(true)}
         dateInvoiceFn={() => setIsDateVisible(true)}
-        submitSummaryFormFn={() => {
+        submitSummaryFormFn={async () => {
           if (
             invoiceFormInfo.customer &&
             (invoiceFormInfo.cashPayment || invoiceFormInfo.onlinePayment) &&
@@ -120,7 +122,7 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
           }
         }}
       />
-
+      <Toast position="bottom" autoHide visibilityTime={2000} />
       <InvoiceModal
         isVisible={isInvoiceVisible}
         setIsVisible={setIsInvoiceVisible}
@@ -150,7 +152,6 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
           )}
         />
       )}
-      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

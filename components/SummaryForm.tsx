@@ -15,7 +15,7 @@ import ButtonFormWithLabel from "./ButtonFormWithLabel";
 import { Button } from "@rneui/base";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Fontisto from "@expo/vector-icons/Fontisto";
-import { Customer, InvoiceForm, SelectedProduct } from "../types/type";
+import { InvoiceForm, SelectedProduct } from "../types/type";
 import { handleInputChange } from "../methods/handleInputChange";
 import { calculateTotalPrice } from "../methods/calculation-methods/calculateTotalPrice";
 import { calculateTotalProfit } from "../methods/calculation-methods/calculateTotalProfit";
@@ -69,7 +69,7 @@ const SummaryForm = ({
             {previewInvoiceFn && (
               <TouchableOpacity
                 activeOpacity={0.7}
-                style={{ marginHorizontal: wp(2) }}
+                style={{ marginHorizontal: wp(1) }}
                 onPress={() => previewInvoiceFn()}
               >
                 <Fontisto name="preview" size={26} color="#634F40" />

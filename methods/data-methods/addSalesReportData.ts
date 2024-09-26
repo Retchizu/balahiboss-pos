@@ -25,7 +25,6 @@ export const addSalesReportData = async (
         selectedProducts: selectedProducts,
         invoiceForm: invoiceForm,
       });
-    console.log("did run", salesReportRef.id);
     await Promise.all(
       selectedProducts.map(async (item) => {
         const itemInProductList = products.find(
@@ -57,7 +56,7 @@ export const addSalesReportData = async (
 
     addSalesReport(newSalesReport);
     showToast("success", "Invoice added successfully");
-    console.log("done");
+    return;
   } catch (error) {
     showToast("error", "Error occured", `${(error as Error).message}`);
     console.log(`${(error as Error).message}`);

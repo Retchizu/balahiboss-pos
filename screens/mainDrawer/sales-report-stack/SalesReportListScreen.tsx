@@ -1,15 +1,19 @@
-import { Keyboard, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Keyboard,
+  StyleSheet,
+  View,
+  Text,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import Searchbar from "../../../components/Searchbar";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { Button } from "@rneui/base";
 import SalesReportList from "../../../components/SalesReportList";
 import { useSalesReportContext } from "../../../context/SalesReportContext";
 import { SalesReportListScreenProp } from "../../../types/type";
-import { readableDate } from "../../../methods/time-methods/readableDate";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { onChangeDateRange } from "../../../methods/time-methods/onChangeDate";
 import { getSalesReportData } from "../../../methods/data-methods/getSalesReportData";
@@ -17,6 +21,7 @@ import SalesReportView from "../../../components/SalesReportView";
 import { filterSearchForSalesReport } from "../../../methods/search-filters/filterSearchForSalesReport";
 import { useToastContext } from "../../../context/ToastContext";
 import Toast from "react-native-toast-message";
+import DateRangeSearch from "../../../components/DateRangeSearch";
 
 const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
   const { salesReports, setSalesReportList } = useSalesReportContext();
@@ -27,8 +32,18 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
   const [isEndDatePickerVisible, setIsEndDatePickerVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToastContext();
+
+  useEffect(() => {
+    getSalesReportData(
+      new Date(),
+      new Date(),
+      setSalesReportList,
+      setIsLoading,
+      showToast
+    );
+  }, []);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -50,10 +65,6 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
     };
   }, []);
 
-  useEffect(() => {
-    getSalesReportData(new Date(), new Date(), setSalesReportList);
-  }, []);
-
   const filteredData = filterSearchForSalesReport(salesReports, searchQuery);
   return (
     <View style={styles.container}>
@@ -62,32 +73,27 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
         onChangeText={(text) => setSearchQuery(text)}
         value={searchQuery}
       />
-      <View style={styles.buttonContainer}>
-        <Button
-          buttonStyle={styles.buttonStyle}
-          title={startDate ? readableDate(startDate) : "Start Date"}
-          titleStyle={styles.titleStyle}
-          onPress={() => setIsStartDatePickerVisible(true)}
-        />
-        <Text> -- </Text>
-        <Button
-          buttonStyle={styles.buttonStyle}
-          title={endDate ? readableDate(endDate) : "End Date"}
-          titleStyle={styles.titleStyle}
-          onPress={() => setIsEndDatePickerVisible(true)}
-        />
-      </View>
-      <Button
-        buttonStyle={styles.buttonStyle}
-        title={"Confirm Date"}
-        titleStyle={styles.titleStyle}
-        onPress={() => {
-          if (startDate && endDate)
-            getSalesReportData(startDate, endDate, setSalesReportList);
-          else showToast("error", "Date range incomplete");
-        }}
+      <DateRangeSearch
+        endDate={endDate}
+        startDate={startDate}
+        setIsEndDatePickerVisible={setIsEndDatePickerVisible}
+        setIsStartDatePickerVisible={setIsStartDatePickerVisible}
+        setSalesReportList={setSalesReportList}
+        showToast={showToast}
+        setIsLoading={setIsLoading}
       />
-      <SalesReportList data={filteredData} navigation={navigation} />
+      {isLoading ? (
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <ActivityIndicator color={"#634F40"} size={wp(10)} />
+        </View>
+      ) : filteredData.length ? (
+        <SalesReportList data={filteredData} navigation={navigation} />
+      ) : (
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <Text style={styles.messageStyle}>No sales found at this time.</Text>
+        </View>
+      )}
+
       {isStartDatePickerVisible && (
         <DateTimePicker
           value={startDate ? startDate : new Date()}
@@ -133,5 +139,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     marginBottom: hp(1),
+  },
+  messageStyle: {
+    fontFamily: "SoraBold",
+    fontSize: wp(4.5),
+    textAlign: "center",
   },
 });

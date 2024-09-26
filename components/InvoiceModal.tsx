@@ -33,7 +33,6 @@ const InvoiceModal = ({
   discount,
 }: InvoiceFormProps) => {
   const viewRef = useRef<View>(null);
-  const [imageUri, setImageUri] = useState<string | null>(null);
   const [snapshotVisible, setSnapshotVisible] = useState(true);
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   if (permissionResponse === null) {
@@ -163,18 +162,15 @@ const InvoiceModal = ({
             THANK YOU!
           </Text>
           {snapshotVisible && (
-            <TouchableOpacity
-              style={{
-                position: "absolute",
-                bottom: wp(5),
-                right: wp(5),
-                alignSelf: "flex-end",
-              }}
-              activeOpacity={0.6}
-              onPress={() => captureAndHandle()}
-            >
-              <Entypo name="camera" size={26} color="#634F40" />
-            </TouchableOpacity>
+            <View style={styles.buttonViewStyle}>
+              <TouchableOpacity
+                style={{ paddingHorizontal: wp(2) }}
+                activeOpacity={0.6}
+                onPress={() => captureAndHandle()}
+              >
+                <Entypo name="camera" size={26} color="#634F40" />
+              </TouchableOpacity>
+            </View>
           )}
         </View>
       </View>
@@ -228,5 +224,11 @@ const styles = StyleSheet.create({
   footerFontStyle: {
     fontSize: wp(6),
     fontFamily: "SoraSemiBold",
+  },
+  buttonViewStyle: {
+    flexDirection: "row",
+    position: "absolute",
+    bottom: wp(5),
+    right: wp(5),
   },
 });

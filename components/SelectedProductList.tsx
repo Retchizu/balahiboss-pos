@@ -29,67 +29,75 @@ const SelectedProductList = ({
         <Text style={[styles.labelText, { flex: 1.7 }]}>Price</Text>
         <Text style={[styles.labelText, { flex: 1 }]}>Qty</Text>
       </View>
-      <FlatList
-        removeClippedSubviews={false}
-        data={data}
-        renderItem={({ item }) => (
-          <View style={styles.previewListContainer}>
-            <Text
-              style={[styles.itemText, { flex: 2.5 }]}
-              onPress={() => {
-                setSeletectedProduct(
-                  data.filter(
-                    (selectedProduct) => selectedProduct.id !== item.id
-                  )
-                );
-              }}
-            >
-              {item.productName}
-            </Text>
-            <Text style={[styles.itemText, { flex: 2, textAlign: "center" }]}>
-              ₱{calculatePrice(item).toFixed(2)}
-            </Text>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <Button
-                buttonStyle={styles.buttonStyleMinus}
-                icon={<Entypo name="minus" size={wp(3.5)} color="#F3F0E9" />}
-                onPress={() =>
-                  updateSelectedProduct(item.id, {
-                    quantity: Math.max(item.quantity - 0.5, 0.5),
-                  })
-                }
-              />
-
+      {data.length ? (
+        <FlatList
+          removeClippedSubviews={false}
+          data={data}
+          renderItem={({ item }) => (
+            <View style={styles.previewListContainer}>
               <Text
-                style={[
-                  styles.itemText,
-                  {
-                    width: wp(11),
-                    paddingHorizontal: wp(1),
-                    textAlign: "center",
-                  },
-                ]}
+                style={[styles.itemText, { flex: 2.5 }]}
+                onPress={() => {
+                  setSeletectedProduct(
+                    data.filter(
+                      (selectedProduct) => selectedProduct.id !== item.id
+                    )
+                  );
+                }}
               >
-                {item.quantity}
+                {item.productName}
               </Text>
-              <Button
-                buttonStyle={styles.buttonStyleAdd}
-                icon={<Entypo name="plus" size={wp(3.5)} color="#F3F0E9" />}
-                onPress={() =>
-                  updateSelectedProduct(item.id, {
-                    quantity: Math.min(item.quantity + 0.5, item.stock),
-                  })
-                }
-              />
+              <Text style={[styles.itemText, { flex: 2, textAlign: "center" }]}>
+                ₱{calculatePrice(item).toFixed(2)}
+              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Button
+                  buttonStyle={styles.buttonStyleMinus}
+                  icon={<Entypo name="minus" size={wp(3.5)} color="#F3F0E9" />}
+                  onPress={() =>
+                    updateSelectedProduct(item.id, {
+                      quantity: Math.max(item.quantity - 0.5, 0.5),
+                    })
+                  }
+                />
+
+                <Text
+                  style={[
+                    styles.itemText,
+                    {
+                      width: wp(11),
+                      paddingHorizontal: wp(1),
+                      textAlign: "center",
+                    },
+                  ]}
+                >
+                  {item.quantity}
+                </Text>
+                <Button
+                  buttonStyle={styles.buttonStyleAdd}
+                  icon={<Entypo name="plus" size={wp(3.5)} color="#F3F0E9" />}
+                  onPress={() =>
+                    updateSelectedProduct(item.id, {
+                      quantity: Math.min(item.quantity + 0.5, item.stock),
+                    })
+                  }
+                />
+              </View>
             </View>
-          </View>
-        )}
-      />
+          )}
+        />
+      ) : (
+        <View style={styles.messageContainer}>
+          <Text style={[styles.labelText, { textAlign: "center" }]}>
+            You haven't selected any products yet.
+          </Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -121,4 +129,5 @@ const styles = StyleSheet.create({
   buttonStyleMinus: {
     backgroundColor: "#ff6347",
   },
+  messageContainer: { flex: 1, justifyContent: "center" },
 });
