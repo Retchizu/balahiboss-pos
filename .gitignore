@@ -79,6 +79,3 @@ yarn-error.*
 # @end expo-cli
 
 #for release
-types/react-native-bluetooth-escpos-printer.d.ts
-
-android/

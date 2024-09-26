@@ -1,0 +1,484 @@
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/.classpath b/node_modules/react-native-bluetooth-escpos-printer/android/.classpath
+new file mode 100644
+index 0000000..bbe97e5
+--- /dev/null
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/.classpath
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<classpath>
++	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17/"/>
++	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
++	<classpathentry kind="output" path="bin/default"/>
++</classpath>
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/.project b/node_modules/react-native-bluetooth-escpos-printer/android/.project
+new file mode 100644
+index 0000000..95332f7
+--- /dev/null
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/.project
+@@ -0,0 +1,34 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<projectDescription>
++	<name>react-native-bluetooth-escpos-printer</name>
++	<comment>Project react-native-bluetooth-escpos-printer created by Buildship.</comment>
++	<projects>
++	</projects>
++	<buildSpec>
++		<buildCommand>
++			<name>org.eclipse.jdt.core.javabuilder</name>
++			<arguments>
++			</arguments>
++		</buildCommand>
++		<buildCommand>
++			<name>org.eclipse.buildship.core.gradleprojectbuilder</name>
++			<arguments>
++			</arguments>
++		</buildCommand>
++	</buildSpec>
++	<natures>
++		<nature>org.eclipse.jdt.core.javanature</nature>
++		<nature>org.eclipse.buildship.core.gradleprojectnature</nature>
++	</natures>
++	<filteredResources>
++		<filter>
++			<id>1727347601749</id>
++			<name></name>
++			<type>30</type>
++			<matcher>
++				<id>org.eclipse.core.resources.regexFilterMatcher</id>
++				<arguments>node_modules|\.git|__CREATED_BY_JAVA_LANGUAGE_SERVER__</arguments>
++			</matcher>
++		</filter>
++	</filteredResources>
++</projectDescription>
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/.settings/org.eclipse.buildship.core.prefs b/node_modules/react-native-bluetooth-escpos-printer/android/.settings/org.eclipse.buildship.core.prefs
+new file mode 100644
+index 0000000..1675490
+--- /dev/null
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/.settings/org.eclipse.buildship.core.prefs
+@@ -0,0 +1,2 @@
++connection.project.dir=../../../android
++eclipse.preferences.version=1
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build.gradle b/node_modules/react-native-bluetooth-escpos-printer/android/build.gradle
+index d86e4f5..1795c41 100644
+--- a/node_modules/react-native-bluetooth-escpos-printer/android/build.gradle
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/build.gradle
+@@ -1,8 +1,9 @@
+ buildscript {
+     repositories {
+-        jcenter { url "http://jcenter.bintray.com/" }
+-        maven {url "http://repo.spring.io/plugins-release/"}
++
++        maven {url "https//repo.spring.io/plugins-snapshot/"}
+         mavenCentral()
++        gradlePluginPortal()
+         maven {
+             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+             url "$rootDir/../node_modules/react-native/android"
+@@ -20,12 +21,12 @@ buildscript {
+ apply plugin: 'com.android.library'
+ 
+ android {
+-    compileSdkVersion 27
+-    buildToolsVersion "27.0.3"
++    compileSdkVersion 34
++    buildToolsVersion "34.0.0"
+ 
+     defaultConfig {
+-        minSdkVersion 16
+-        targetSdkVersion 24
++        minSdkVersion 23
++        targetSdkVersion 34
+         versionCode 1
+         versionName "1.0"
+     }
+@@ -40,9 +41,9 @@ android {
+ }
+ 
+ repositories {
+-    jcenter { url "http://jcenter.bintray.com/" }
+-    maven {url "http://repo.spring.io/plugins-release/"}
++    maven {url "https/ /repo.spring.io/plugins-snapshot/"}
+     mavenCentral()
++    gradlePluginPortal()
+     maven {
+         // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+         url "$rootDir/../node_modules/react-native/android"
+@@ -53,7 +54,7 @@ repositories {
+ }
+ 
+ dependencies {
+-    compile fileTree(dir: 'libs', include: ['*.jar'])
++    //compile fileTree(dir: 'libs', include: ['*.jar'])
+     implementation 'com.facebook.react:react-native:+'  // From node_modules
+     implementation group: 'com.android.support', name: 'support-v4', version: '27.0.0'
+     implementation "com.google.zxing:core:3.3.0"
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/.transforms/67db95f4d528f6fad0ec0b15d5258dea/results.bin b/node_modules/react-native-bluetooth-escpos-printer/android/build/.transforms/67db95f4d528f6fad0ec0b15d5258dea/results.bin
+new file mode 100644
+index 0000000..0d259dd
+--- /dev/null
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/build/.transforms/67db95f4d528f6fad0ec0b15d5258dea/results.bin
+@@ -0,0 +1 @@
++o/classes
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/.transforms/67db95f4d528f6fad0ec0b15d5258dea/transformed/classes/classes_dex/classes.dex b/node_modules/react-native-bluetooth-escpos-printer/android/build/.transforms/67db95f4d528f6fad0ec0b15d5258dea/transformed/classes/classes_dex/classes.dex
+new file mode 100644
+index 0000000..eaee3a4
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/.transforms/67db95f4d528f6fad0ec0b15d5258dea/transformed/classes/classes_dex/classes.dex differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/generated/source/buildConfig/debug/cn/jystudio/bluetooth/BuildConfig.java b/node_modules/react-native-bluetooth-escpos-printer/android/build/generated/source/buildConfig/debug/cn/jystudio/bluetooth/BuildConfig.java
+new file mode 100644
+index 0000000..81aa281
+--- /dev/null
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/build/generated/source/buildConfig/debug/cn/jystudio/bluetooth/BuildConfig.java
+@@ -0,0 +1,10 @@
++/**
++ * Automatically generated file. DO NOT MODIFY
++ */
++package cn.jystudio.bluetooth;
++
++public final class BuildConfig {
++  public static final boolean DEBUG = Boolean.parseBoolean("true");
++  public static final String LIBRARY_PACKAGE_NAME = "cn.jystudio.bluetooth";
++  public static final String BUILD_TYPE = "debug";
++}
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml
+new file mode 100644
+index 0000000..79b8616
+--- /dev/null
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml
+@@ -0,0 +1,12 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="cn.jystudio.bluetooth" >
++
++    <uses-sdk android:minSdkVersion="23" />
++
++    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
++    <uses-permission android:name="android.permission.BLUETOOTH" />
++    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
++    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json
+new file mode 100644
+index 0000000..eaf30ae
+--- /dev/null
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json
+@@ -0,0 +1,18 @@
++{
++  "version": 3,
++  "artifactType": {
++    "type": "AAPT_FRIENDLY_MERGED_MANIFESTS",
++    "kind": "Directory"
++  },
++  "applicationId": "cn.jystudio.bluetooth",
++  "variantName": "debug",
++  "elements": [
++    {
++      "type": "SINGLE",
++      "filters": [],
++      "attributes": [],
++      "outputFile": "AndroidManifest.xml"
++    }
++  ],
++  "elementType": "File"
++}
+\ No newline at end of file
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/aar_metadata/debug/aar-metadata.properties b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
+new file mode 100644
+index 0000000..1211b1e
+--- /dev/null
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
+@@ -0,0 +1,6 @@
++aarFormatVersion=1.0
++aarMetadataVersion=1.0
++minCompileSdk=1
++minCompileSdkExtension=0
++minAndroidGradlePluginVersion=1.0.0
++coreLibraryDesugaringEnabled=false
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json
+new file mode 100644
+index 0000000..9e26dfe
+--- /dev/null
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json
+@@ -0,0 +1 @@
++{}
+\ No newline at end of file
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/compile_library_classes_jar/debug/classes.jar b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/compile_library_classes_jar/debug/classes.jar
+new file mode 100644
+index 0000000..fcfe1a0
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/compile_library_classes_jar/debug/classes.jar differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/compile_r_class_jar/debug/R.jar b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/compile_r_class_jar/debug/R.jar
+new file mode 100644
+index 0000000..08a59d7
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/compile_r_class_jar/debug/R.jar differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/compile_symbol_list/debug/R.txt b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/compile_symbol_list/debug/R.txt
+new file mode 100644
+index 0000000..e69de29
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+new file mode 100644
+index 0000000..1994304
+--- /dev/null
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+@@ -0,0 +1 @@
++#Thu Sep 26 17:25:24 PST 2024
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+new file mode 100644
+index 0000000..39da2f5
+--- /dev/null
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\debug\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\debug\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\build\generated\res\resValues\debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated" generated-set="generated$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\build\generated\res\resValues\debug"/></dataSet><mergedItems/></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/BluetoothService$ConnectedThread.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/BluetoothService$ConnectedThread.class
+new file mode 100644
+index 0000000..b08a79e
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/BluetoothService$ConnectedThread.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/BluetoothService.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/BluetoothService.class
+new file mode 100644
+index 0000000..567eb69
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/BluetoothService.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/BluetoothServiceStateObserver.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/BluetoothServiceStateObserver.class
+new file mode 100644
+index 0000000..d9436e4
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/BluetoothServiceStateObserver.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/BuildConfig.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/BuildConfig.class
+new file mode 100644
+index 0000000..86daf92
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/BuildConfig.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/RNBluetoothEscposPrinterPackage.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/RNBluetoothEscposPrinterPackage.class
+new file mode 100644
+index 0000000..8a82652
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/RNBluetoothEscposPrinterPackage.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/RNBluetoothManagerModule$1.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/RNBluetoothManagerModule$1.class
+new file mode 100644
+index 0000000..c648ab1
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/RNBluetoothManagerModule$1.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/RNBluetoothManagerModule.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/RNBluetoothManagerModule.class
+new file mode 100644
+index 0000000..d9a470b
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/RNBluetoothManagerModule.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/escpos/RNBluetoothEscposPrinterModule$ColumnSplitedString.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/escpos/RNBluetoothEscposPrinterModule$ColumnSplitedString.class
+new file mode 100644
+index 0000000..fcf9b0f
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/escpos/RNBluetoothEscposPrinterModule$ColumnSplitedString.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/escpos/RNBluetoothEscposPrinterModule.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/escpos/RNBluetoothEscposPrinterModule.class
+new file mode 100644
+index 0000000..98207d7
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/escpos/RNBluetoothEscposPrinterModule.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/escpos/command/sdk/Command.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/escpos/command/sdk/Command.class
+new file mode 100644
+index 0000000..1380506
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/escpos/command/sdk/Command.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/escpos/command/sdk/PrintPicture.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/escpos/command/sdk/PrintPicture.class
+new file mode 100644
+index 0000000..ced277e
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/escpos/command/sdk/PrintPicture.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/escpos/command/sdk/PrinterCommand.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/escpos/command/sdk/PrinterCommand.class
+new file mode 100644
+index 0000000..3358c04
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/escpos/command/sdk/PrinterCommand.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/RNBluetoothTscPrinterModule.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/RNBluetoothTscPrinterModule.class
+new file mode 100644
+index 0000000..2f3fbd5
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/RNBluetoothTscPrinterModule.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$BARCODETYPE.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$BARCODETYPE.class
+new file mode 100644
+index 0000000..0c3ea6c
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$BARCODETYPE.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$BITMAP_MODE.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$BITMAP_MODE.class
+new file mode 100644
+index 0000000..eb70a5a
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$BITMAP_MODE.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$CODEPAGE.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$CODEPAGE.class
+new file mode 100644
+index 0000000..93d77c6
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$CODEPAGE.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$DENSITY.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$DENSITY.class
+new file mode 100644
+index 0000000..a2cedfd
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$DENSITY.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$DIRECTION.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$DIRECTION.class
+new file mode 100644
+index 0000000..928785f
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$DIRECTION.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$EEC.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$EEC.class
+new file mode 100644
+index 0000000..65d00d3
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$EEC.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$ENABLE.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$ENABLE.class
+new file mode 100644
+index 0000000..1f687f9
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$ENABLE.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$FONTMUL.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$FONTMUL.class
+new file mode 100644
+index 0000000..602bbe0
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$FONTMUL.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$FONTTYPE.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$FONTTYPE.class
+new file mode 100644
+index 0000000..4f96d11
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$FONTTYPE.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$FOOT.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$FOOT.class
+new file mode 100644
+index 0000000..de2fddb
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$FOOT.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$READABLE.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$READABLE.class
+new file mode 100644
+index 0000000..70b93af
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$READABLE.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$ROTATION.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$ROTATION.class
+new file mode 100644
+index 0000000..cf59337
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$ROTATION.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$SPEED.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$SPEED.class
+new file mode 100644
+index 0000000..519b363
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand$SPEED.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand.class b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand.class
+new file mode 100644
+index 0000000..6dd9968
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/javac/debug/classes/cn/jystudio/bluetooth/tsc/TscCommand.class differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/local_only_symbol_list/debug/R-def.txt b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/local_only_symbol_list/debug/R-def.txt
+new file mode 100644
+index 0000000..78ac5b8
+--- /dev/null
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/local_only_symbol_list/debug/R-def.txt
+@@ -0,0 +1,2 @@
++R_DEF: Internal format may change without notice
++local
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt
+new file mode 100644
+index 0000000..094aaac
+--- /dev/null
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt
+@@ -0,0 +1,20 @@
++1<?xml version="1.0" encoding="utf-8"?>
++2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++3    package="cn.jystudio.bluetooth" >
++4
++5    <uses-sdk android:minSdkVersion="23" />
++6
++7    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
++7-->C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:4:5-74
++7-->C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:4:22-71
++8    <uses-permission android:name="android.permission.BLUETOOTH" />
++8-->C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:5:5-68
++8-->C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:5:22-65
++9    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
++9-->C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:6:5-80
++9-->C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:6:22-78
++10    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
++10-->C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:7:5-78
++10-->C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:7:22-76
++11
++12</manifest>
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml
+new file mode 100644
+index 0000000..79b8616
+--- /dev/null
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml
+@@ -0,0 +1,12 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="cn.jystudio.bluetooth" >
++
++    <uses-sdk android:minSdkVersion="23" />
++
++    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
++    <uses-permission android:name="android.permission.BLUETOOTH" />
++    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
++    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/navigation_json/debug/navigation.json b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/navigation_json/debug/navigation.json
+new file mode 100644
+index 0000000..0637a08
+--- /dev/null
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/navigation_json/debug/navigation.json
+@@ -0,0 +1 @@
++[]
+\ No newline at end of file
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/runtime_library_classes_jar/debug/classes.jar b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/runtime_library_classes_jar/debug/classes.jar
+new file mode 100644
+index 0000000..3b7ff4e
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/runtime_library_classes_jar/debug/classes.jar differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt
+new file mode 100644
+index 0000000..abf5209
+--- /dev/null
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt
+@@ -0,0 +1 @@
++cn.jystudio.bluetooth
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/react-native-bluetooth-escpos-printer/android/build/outputs/logs/manifest-merger-debug-report.txt
+new file mode 100644
+index 0000000..f75f697
+--- /dev/null
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/build/outputs/logs/manifest-merger-debug-report.txt
+@@ -0,0 +1,33 @@
++-- Merging decision tree log ---
++manifest
++ADDED from C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:2:1-9:12
++INJECTED from C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:2:1-9:12
++	package
++		ADDED from C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:3:11-42
++		INJECTED from C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml
++	xmlns:android
++		ADDED from C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:2:11-69
++uses-permission#android.permission.BLUETOOTH_ADMIN
++ADDED from C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:4:5-74
++	android:name
++		ADDED from C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:4:22-71
++uses-permission#android.permission.BLUETOOTH
++ADDED from C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:5:5-68
++	android:name
++		ADDED from C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:5:22-65
++uses-permission#android.permission.ACCESS_COARSE_LOCATION
++ADDED from C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:6:5-80
++	android:name
++		ADDED from C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:6:22-78
++uses-permission#android.permission.ACCESS_FINE_LOCATION
++ADDED from C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:7:5-78
++	android:name
++		ADDED from C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml:7:22-76
++uses-sdk
++INJECTED from C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml reason: use-sdk injection requested
++INJECTED from C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml
++INJECTED from C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml
++	android:targetSdkVersion
++		INJECTED from C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml
++	android:minSdkVersion
++		INJECTED from C:\Users\balta\OneDrive\Documents\GitHub\sales-tracker-for-android-ios\node_modules\react-native-bluetooth-escpos-printer\android\src\main\AndroidManifest.xml
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin b/node_modules/react-native-bluetooth-escpos-printer/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin
+new file mode 100644
+index 0000000..c4481b8
+Binary files /dev/null and b/node_modules/react-native-bluetooth-escpos-printer/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin differ
+diff --git a/node_modules/react-native-bluetooth-escpos-printer/android/src/main/java/cn/jystudio/bluetooth/RNBluetoothManagerModule.java b/node_modules/react-native-bluetooth-escpos-printer/android/src/main/java/cn/jystudio/bluetooth/RNBluetoothManagerModule.java
+index dd5d33e..82767f3 100644
+--- a/node_modules/react-native-bluetooth-escpos-printer/android/src/main/java/cn/jystudio/bluetooth/RNBluetoothManagerModule.java
++++ b/node_modules/react-native-bluetooth-escpos-printer/android/src/main/java/cn/jystudio/bluetooth/RNBluetoothManagerModule.java
+@@ -10,8 +10,8 @@ import android.content.Intent;
+ import android.content.IntentFilter;
+ import android.content.pm.PackageManager;
+ import android.os.Bundle;
+-import android.support.v4.app.ActivityCompat;
+-import android.support.v4.content.ContextCompat;
++import androidx.core.app.ActivityCompat;
++import androidx.core.content.ContextCompat;
+ import android.util.Log;
+ import android.widget.Toast;
+ import com.facebook.react.bridge.*;
+@@ -172,11 +172,11 @@ public class RNBluetoothManagerModule extends ReactContextBaseJavaModule
+             promise.reject(EVENT_BLUETOOTH_NOT_SUPPORT);
+         }else {
+             cancelDisCovery();
+-            int permissionChecked = ContextCompat.checkSelfPermission(reactContext, android.Manifest.permission.ACCESS_COARSE_LOCATION);
++            int permissionChecked = ContextCompat.checkSelfPermission(reactContext, android.Manifest.permission.ACCESS_FINE_LOCATION);
+             if (permissionChecked == PackageManager.PERMISSION_DENIED) {
+                 // // TODO: 2018/9/21
+                 ActivityCompat.requestPermissions(reactContext.getCurrentActivity(),
+-                        new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
++                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                         1);
+             }
+ 

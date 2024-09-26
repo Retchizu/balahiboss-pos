@@ -129,6 +129,8 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
         selectedProducts={selectedProducts}
         deliveryFee={invoiceFormInfo.deliveryFee}
         discount={invoiceFormInfo.discount}
+        showToast={showToast}
+        invoiceDate={invoiceFormInfo.date!}
       />
       <CustomerListModal
         isVisible={isCustomerListVisible}

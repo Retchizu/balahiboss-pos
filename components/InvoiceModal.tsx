@@ -17,6 +17,8 @@ import { calculateTotalPrice } from "../methods/calculation-methods/calculateTot
 import Entypo from "@expo/vector-icons/Entypo";
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
+import { handlePrint } from "../methods/print-methods/handlePrint";
+import Toast, { ToastType } from "react-native-toast-message";
 
 type InvoiceFormProps = {
   isVisible: boolean;
@@ -24,13 +26,17 @@ type InvoiceFormProps = {
   selectedProducts: SelectedProduct[];
   deliveryFee: string;
   discount: string;
+  invoiceDate: Date;
+  showToast: (type: ToastType, text1: string, text2?: string) => void;
 };
 const InvoiceModal = ({
   isVisible,
   setIsVisible,
   selectedProducts,
   deliveryFee,
+  invoiceDate,
   discount,
+  showToast,
 }: InvoiceFormProps) => {
   const viewRef = useRef<View>(null);
   const [snapshotVisible, setSnapshotVisible] = useState(true);
@@ -51,10 +57,11 @@ const InvoiceModal = ({
 
       await MediaLibrary.saveToLibraryAsync(localUri);
 
-      console.log("Success", "Image saved to gallery!");
+      showToast("success", "Image saved to gallery!");
 
       setSnapshotVisible(true);
     } catch (error) {
+      showToast("error", "Error saving to gallery", "try again later");
       console.error("Failed to capture and handle image:", error);
       setSnapshotVisible(true);
     }
@@ -164,15 +171,30 @@ const InvoiceModal = ({
           {snapshotVisible && (
             <View style={styles.buttonViewStyle}>
               <TouchableOpacity
-                style={{ paddingHorizontal: wp(2) }}
+                style={{ paddingHorizontal: wp(4) }}
                 activeOpacity={0.6}
                 onPress={() => captureAndHandle()}
               >
                 <Entypo name="camera" size={26} color="#634F40" />
               </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => {
+                  handlePrint(
+                    selectedProducts,
+                    discount,
+                    deliveryFee,
+                    invoiceDate,
+                    showToast
+                  );
+                }}
+              >
+                <Entypo name="print" size={26} color="#634F40" />
+              </TouchableOpacity>
             </View>
           )}
         </View>
+        <Toast position="bottom" autoHide visibilityTime={2000} />
       </View>
     </Modal>
   );
