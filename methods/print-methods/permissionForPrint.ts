@@ -24,13 +24,28 @@ export const permissionForPrint = async () => {
         }
       );
 
+      const grantedFineLocation = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: "Location Permission",
+          message:
+            "This app needs access to your location to scan Bluetooth devices.",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK",
+        }
+      );
+
       if (
         grantedBluetoothConnect === PermissionsAndroid.RESULTS.GRANTED &&
-        grantedBluetoothScan === PermissionsAndroid.RESULTS.GRANTED
+        grantedBluetoothScan === PermissionsAndroid.RESULTS.GRANTED &&
+        grantedFineLocation === PermissionsAndroid.RESULTS.GRANTED
       ) {
         console.log("Bluetooth permissions granted for Android 12+");
+        return true;
       } else {
         console.log("Bluetooth permissions denied for Android 12+");
+        return false;
       }
     } else {
       // For Android versions below 12, only request general Bluetooth permissions
@@ -73,15 +88,14 @@ export const permissionForPrint = async () => {
         grantedBluetoothAdmin === PermissionsAndroid.RESULTS.GRANTED &&
         grantedFineLocation == PermissionsAndroid.RESULTS.GRANTED
       ) {
-        console.log(
-          "Bluetooth permissions granted for Android versions below 12"
-        );
+        return true;
       } else {
         console.log(
           "Bluetooth permissions denied for Android versions below 12"
         );
       }
     }
+    return false;
   } catch (error) {
     console.log("error asking for permissions");
   }

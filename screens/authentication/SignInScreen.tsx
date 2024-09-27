@@ -31,6 +31,7 @@ const SignInScreen = ({ navigation }: SignInScreenProp) => {
         onChangeText={(text) =>
           handleInputChange("email", text, setUserCredential)
         }
+        autoCapitalize="none"
       />
       <PasswordForm
         isVisible={isPasswordVisible}
@@ -39,6 +40,7 @@ const SignInScreen = ({ navigation }: SignInScreenProp) => {
         onChangeText={(text) =>
           handleInputChange("password", text, setUserCredential)
         }
+        autoCapitalize="none"
       />
 
       <Button

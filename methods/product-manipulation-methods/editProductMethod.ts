@@ -33,10 +33,18 @@ export const handleSameProductData = (
   const updatedProduct: Product = {
     id: id,
     productName: productInfo.productName,
-    stockPrice: parseFloat(productInfo.stockPrice),
-    sellPrice: parseFloat(productInfo.sellPrice),
-    stock: parseFloat(productInfo.editStock),
-    lowStockThreshold: parseFloat(productInfo.lowStockThreshold),
+    stockPrice: parseFloat(
+      productInfo.stockPrice.trim() ? productInfo.stockPrice : "0"
+    ),
+    sellPrice: parseFloat(
+      productInfo.sellPrice.trim() ? productInfo.sellPrice : "0"
+    ),
+    stock: parseFloat(
+      productInfo.editStock.trim() ? productInfo.editStock : "0"
+    ),
+    lowStockThreshold: parseFloat(
+      productInfo.lowStockThreshold.trim() ? productInfo.lowStockThreshold : "0"
+    ),
   };
   const isSameData =
     previousProductData.productName === updatedProduct.productName &&
