@@ -4,10 +4,9 @@ declare module "react-native-bluetooth-escpos-printer" {
     scanDevices(): Promise<string>; // Include both paired and found devices
     connect(address: string): Promise<void>;
     disconnect(): Promise<void>;
-    isConnected(): Promise<boolean>;
     isBluetoothEnabled(): Promise<boolean>;
     closeBluetooth(): Promise<void>; // Turns off Bluetooth
-    unpairDevice(address: string): Promise<void>; // Unpair a device
+    unpaire(address: string): Promise<void>; // Unpair a device
 
     // Event names
     EVENT_DEVICE_ALREADY_PAIRED: string; // Emits the devices array already paired

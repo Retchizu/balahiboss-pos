@@ -105,6 +105,10 @@ export type SalesReport = {
   invoiceForm: InvoiceForm;
 };
 
+export type Device = {
+  address: string;
+  name: string;
+};
 export type SplashScreenProp = NativeStackScreenProps<
   AuthStackParamList,
   "SplashScreen"

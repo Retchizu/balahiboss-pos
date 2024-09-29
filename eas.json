@@ -13,7 +13,12 @@
         "gradleCommand": "assembleRelease"
       }
     },
-    "production": {}
+    "production": {
+      "android": {
+        "buildType": "apk"
+      },
+      "autoIncrement": true
+    }
   },
   "submit": {
     "production": {}

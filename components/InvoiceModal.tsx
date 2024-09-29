@@ -11,7 +11,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { SelectedProduct } from "../types/type";
+import { Device, SelectedProduct } from "../types/type";
 import { calculatePrice } from "../methods/calculation-methods/calculatePrice";
 import { calculateTotalPrice } from "../methods/calculation-methods/calculateTotalPrice";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -19,23 +19,30 @@ import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
 import { handlePrint } from "../methods/print-methods/handlePrint";
 import Toast, { ToastType } from "react-native-toast-message";
+import { connectToBluetooth } from "../methods/print-methods/connectToBluetooth";
 
 type InvoiceFormProps = {
-  isVisible: boolean;
-  setIsVisible: React.Dispatch<SetStateAction<boolean>>;
+  isInvoiceVisible: boolean;
+  setIsBluetoothDeviceListModalVisible: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
+  setIsInvoiceVisible: React.Dispatch<SetStateAction<boolean>>;
   selectedProducts: SelectedProduct[];
   deliveryFee: string;
   discount: string;
-  invoiceDate: Date;
   showToast: (type: ToastType, text1: string, text2?: string) => void;
+  setPairedDevice: React.Dispatch<React.SetStateAction<Device[]>>;
+  setPrintButtonVisibility: React.Dispatch<React.SetStateAction<boolean>>;
 };
 const InvoiceModal = ({
-  isVisible,
-  setIsVisible,
+  isInvoiceVisible,
+  setIsInvoiceVisible,
+  setIsBluetoothDeviceListModalVisible,
   selectedProducts,
   deliveryFee,
-  invoiceDate,
   discount,
+  setPairedDevice,
+  setPrintButtonVisibility,
   showToast,
 }: InvoiceFormProps) => {
   const viewRef = useRef<View>(null);
@@ -68,8 +75,8 @@ const InvoiceModal = ({
   };
   return (
     <Modal
-      visible={isVisible}
-      onRequestClose={() => setIsVisible(false)}
+      visible={isInvoiceVisible}
+      onRequestClose={() => setIsInvoiceVisible(false)}
       transparent
     >
       <View style={styles.mainContainer}>
@@ -179,14 +186,19 @@ const InvoiceModal = ({
               </TouchableOpacity>
               <TouchableOpacity
                 activeOpacity={0.7}
-                onPress={() => {
-                  handlePrint(
-                    selectedProducts,
-                    discount,
-                    deliveryFee,
-                    invoiceDate,
-                    showToast
-                  );
+                onPress={async () => {
+                  setIsBluetoothDeviceListModalVisible(true);
+                  setIsInvoiceVisible(false);
+                  try {
+                    const pairedDevice = await connectToBluetooth(
+                      showToast,
+                      setPrintButtonVisibility
+                    );
+                    setPairedDevice(pairedDevice);
+                  } catch (error) {
+                    console.error("Failed to connect to Bluetooth:", error);
+                    showToast("error", "Failed to get paired devices");
+                  }
                 }}
               >
                 <Entypo name="print" size={26} color="#634F40" />

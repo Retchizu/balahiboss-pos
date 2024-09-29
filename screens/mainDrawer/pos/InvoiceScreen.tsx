@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import SummaryForm from "../../../components/SummaryForm";
-import { InvoiceForm, InvoiceScreenProp } from "../../../types/type";
+import { Device, InvoiceForm, InvoiceScreenProp } from "../../../types/type";
 import InvoiceModal from "../../../components/InvoiceModal";
 import { useSelectedProductContext } from "../../../context/SelectedProductContext";
 import {
@@ -19,6 +19,7 @@ import * as MediaLibrary from "expo-media-library";
 import Toast from "react-native-toast-message";
 import { useToastContext } from "../../../context/ToastContext";
 import { filterSearchForCustomer } from "../../../methods/search-filters/fitlerSearchForCustomer";
+import BluetoothDeviceListModal from "../../../components/BluetoothDeviceListModal";
 
 const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
   const params = route.params;
@@ -35,7 +36,12 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
     freebies: "",
     deliveryFee: "",
   });
+  const [printButtonVisibility, setPrintButtonVisibilty] = useState(false);
   const [isInvoiceVisible, setIsInvoiceVisible] = useState(false);
+  const [
+    isBluetoothDeviceListModalVisible,
+    setIsBluetoothDeviceListModalVisible,
+  ] = useState(false);
   const { showToast } = useToastContext();
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   //for customers in modal
@@ -46,6 +52,8 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
   //date
   const [isDateVisible, setIsDateVisible] = useState(false);
   const [mode, setMode] = useState<"date" | "time">("date");
+  const [pairedDevices, setPairedDevices] = useState<Device[]>([]);
+  const [currentPrinter, setCurrentPrinter] = useState<Device>();
 
   useEffect(() => {
     if (params)
@@ -124,13 +132,35 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
       />
       <Toast position="bottom" autoHide visibilityTime={2000} />
       <InvoiceModal
-        isVisible={isInvoiceVisible}
-        setIsVisible={setIsInvoiceVisible}
+        isInvoiceVisible={isInvoiceVisible}
+        setIsInvoiceVisible={setIsInvoiceVisible}
         selectedProducts={selectedProducts}
         deliveryFee={invoiceFormInfo.deliveryFee}
         discount={invoiceFormInfo.discount}
         showToast={showToast}
+        setIsBluetoothDeviceListModalVisible={
+          setIsBluetoothDeviceListModalVisible
+        }
+        setPairedDevice={setPairedDevices}
+        setPrintButtonVisibility={setPrintButtonVisibilty}
+      />
+      <BluetoothDeviceListModal
+        isBluetoothDeviceListModalVisible={isBluetoothDeviceListModalVisible}
+        printButtonVisibility={printButtonVisibility}
+        setIsBluetoothDeviceListModalVisible={
+          setIsBluetoothDeviceListModalVisible
+        }
+        setIsInvoiceModalVisible={setIsInvoiceVisible}
+        pairedDevices={pairedDevices}
+        deliveryFee={invoiceFormInfo.deliveryFee}
+        discount={invoiceFormInfo.discount}
         invoiceDate={invoiceFormInfo.date!}
+        selectedProducts={selectedProducts}
+        showToast={showToast}
+        currentPrinter={currentPrinter}
+        setCurrentPrinter={setCurrentPrinter}
+        setPrintButtonVisibility={setPrintButtonVisibilty}
+        setPairedDevice={setPairedDevices}
       />
       <CustomerListModal
         isVisible={isCustomerListVisible}

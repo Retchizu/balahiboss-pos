@@ -3,7 +3,7 @@ import {
   BluetoothEscposPrinter,
   BluetoothTscPrinter,
 } from "react-native-bluetooth-escpos-printer";
-import { SelectedProduct } from "../../types/type";
+import { Device, SelectedProduct } from "../../types/type";
 import { permissionForPrint } from "./permissionForPrint";
 import { calculatePrice } from "../calculation-methods/calculatePrice";
 import { calculateTotalPrice } from "../calculation-methods/calculateTotalPrice";
@@ -19,6 +19,7 @@ export const handlePrint = async (
   discount: string,
   deliveryFee: string,
   invoiceDate: Date,
+  device: Device,
   showToast: (type: ToastType, text1: string, text2?: string) => void
 ) => {
   try {
@@ -37,14 +38,8 @@ export const handlePrint = async (
     };
     if (isGranted) {
       showToast("info", "Connecting...", "Please wait");
-      const devices = await BluetoothManager.scanDevices();
-      const devicesJson = JSON.parse(devices);
-      const printerDevice = devicesJson.paired.find(
-        (device: { address: string; name: string }) =>
-          device.name.includes("PT-210")
-      );
+      await BluetoothManager.connect(device.address);
       showToast("success", "Connected", "Printing Receipt");
-      await BluetoothManager.connect(printerDevice.address);
       await BluetoothEscposPrinter.printerInit();
       await BluetoothEscposPrinter.printerAlign(
         BluetoothEscposPrinter.ALIGN.CENTER
