@@ -16,29 +16,13 @@ const PreviewEditCustomerReportScreen = () => {
     updateSelectedProductInEdit,
     setSelectedProductListInEdit,
   } = useSelectedProductInEditContext();
-  const [quantityInput, setQuantityInput] = useState<{
-    [productId: string]: string;
-  }>({});
 
-  useEffect(() => {
-    selectedProductsInEdit.forEach((item) => {
-      if (!quantityInput[item.id]) {
-        setQuantityInput((prevQuantityInput) => ({
-          ...prevQuantityInput,
-          [item.id.toString()]: item.quantity.toString(),
-        }));
-      }
-    });
-  }, [selectedProductsInEdit]);
-  console.log(quantityInput);
   return (
     <View style={[styles.container]}>
       <SelectedProductList
         data={selectedProductsInEdit}
         updateSelectedProduct={updateSelectedProductInEdit}
         setSeletectedProduct={setSelectedProductListInEdit}
-        quantityInput={quantityInput}
-        setQuantityInput={setQuantityInput}
       />
       <View style={styles.footerStyle}>
         <Text style={styles.totalStyle}>

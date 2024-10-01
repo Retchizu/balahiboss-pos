@@ -2,7 +2,7 @@
   "expo": {
     "name": "Retchi",
     "slug": "sales-tracker-for-android-ios",
-    "version": "2.3.0.6",
+    "version": "2.3.1.7",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",

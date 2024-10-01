@@ -159,7 +159,11 @@ export const handlePrint = async (
       return;
     }
   } catch (error) {
-    showToast("error", "Turn on your bluetooth and location");
+    showToast(
+      "error",
+      "Turn on your bluetooth and location",
+      (error as Error).message
+    );
     console.log((error as Error).message);
   }
 };

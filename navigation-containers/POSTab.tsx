@@ -26,6 +26,7 @@ export const POSScreen = () => (
         color: "#634F40",
       },
       tabBarActiveBackgroundColor: "#E6B794",
+      tabBarHideOnKeyboard: true,
     }}
   >
     <POSTab.Screen

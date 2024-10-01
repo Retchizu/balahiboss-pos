@@ -10,7 +10,7 @@ import {
 } from "react-native-responsive-screen";
 import { useToastContext } from "../../../context/ToastContext";
 import Toast from "react-native-toast-message";
-import { CommonActions, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
 const EditCustomerScreen = ({ route, navigation }: EditCustomerScreenProp) => {
   const customerId = route.params.id;
@@ -26,22 +26,12 @@ const EditCustomerScreen = ({ route, navigation }: EditCustomerScreenProp) => {
   const handleCustomerUpdateSubmit = () => {
     updateCustomerData(customerId, customer, updateCustomer, showToast);
 
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 1,
-        routes: [
-          { name: "CustomerListScreen" },
-          {
-            name: "CustomerInfoScreen",
-            params: {
-              id: customerId,
-              customerName: customer.customerName,
-              customerInfo: customer.customerInfo,
-            },
-          },
-        ],
-      })
-    );
+    navigation.pop();
+    navigation.replace("CustomerInfoScreen", {
+      id: customerId,
+      customerName: customer.customerName,
+      customerInfo: customer.customerInfo,
+    });
   };
 
   return (

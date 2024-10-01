@@ -20,6 +20,7 @@ import Toast from "react-native-toast-message";
 import { useToastContext } from "../../../context/ToastContext";
 import { filterSearchForCustomer } from "../../../methods/search-filters/fitlerSearchForCustomer";
 import BluetoothDeviceListModal from "../../../components/BluetoothDeviceListModal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
   const params = route.params;
@@ -54,6 +55,25 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
   const [mode, setMode] = useState<"date" | "time">("date");
   const [pairedDevices, setPairedDevices] = useState<Device[]>([]);
   const [currentPrinter, setCurrentPrinter] = useState<Device>();
+
+  useEffect(() => {
+    const loadPrinter = async () => {
+      try {
+        const printerData = await AsyncStorage.getItem("printer");
+        if (printerData !== null) {
+          setCurrentPrinter(JSON.parse(printerData));
+        }
+      } catch (error) {
+        showToast(
+          "error",
+          "Select a new printer",
+          "Error loading previous printer"
+        );
+      }
+    };
+
+    loadPrinter();
+  }, []);
 
   useEffect(() => {
     if (params)

@@ -22,6 +22,10 @@ import { filterSearchForSalesReport } from "../../../methods/search-filters/filt
 import { useToastContext } from "../../../context/ToastContext";
 import Toast from "react-native-toast-message";
 import DateRangeSearch from "../../../components/DateRangeSearch";
+import { Button } from "@rneui/base";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import FilterChoiceModalForSaleslist from "../../../components/FilterChoiceModalForSaleslist";
+import { choices } from "../../../methods/search-filters/chooseFilterTypeForSaleslist";
 
 const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
   const { salesReports, setSalesReportList } = useSalesReportContext();
@@ -34,6 +38,9 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToastContext();
+
+  const [isNameFilter, setIsNameFilter] = useState(true);
+  const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
 
   useEffect(() => {
     getSalesReportData(
@@ -65,14 +72,29 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
     };
   }, []);
 
-  const filteredData = filterSearchForSalesReport(salesReports, searchQuery);
+  const filteredData = filterSearchForSalesReport(
+    salesReports,
+    searchQuery,
+    isNameFilter
+  );
   return (
-    <View style={styles.container}>
-      <Searchbar
-        placeholder="Search a sales report..."
-        onChangeText={(text) => setSearchQuery(text)}
-        value={searchQuery}
-      />
+    <View
+      style={[styles.container, { opacity: isFilterModalVisible ? 0.1 : 1 }]}
+    >
+      <View style={styles.headerContainer}>
+        <Searchbar
+          placeholder="Search a sales report..."
+          onChangeText={(text) => setSearchQuery(text)}
+          value={searchQuery}
+        />
+        <Button
+          buttonStyle={[styles.buttonStyle, { backgroundColor: "#F3F0E9" }]}
+          icon={<AntDesign name="filter" size={24} color="#634F40" />}
+          containerStyle={{ paddingHorizontal: wp(1) }}
+          onPress={() => setIsFilterModalVisible(true)}
+        />
+      </View>
+
       <DateRangeSearch
         endDate={endDate}
         startDate={startDate}
@@ -111,6 +133,13 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
           onChange={onChangeDateRange(setIsEndDatePickerVisible, setEndDate)}
         />
       )}
+      <FilterChoiceModalForSaleslist
+        choices={choices}
+        isFilterModalVisible={isFilterModalVisible}
+        setIsFilterModalVisible={setIsFilterModalVisible}
+        isNameFilter={isNameFilter}
+        setIsNameFilter={setIsNameFilter}
+      />
       {!isKeyboardVisible && <SalesReportView salesReportList={filteredData} />}
       <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
@@ -144,5 +173,10 @@ const styles = StyleSheet.create({
     fontFamily: "SoraBold",
     fontSize: wp(4.5),
     textAlign: "center",
+  },
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingRight: wp(10),
   },
 });

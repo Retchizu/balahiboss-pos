@@ -16,7 +16,7 @@ export const connectToBluetooth = async (
     showToast("info", "Checking for permission");
     const isGranted = await permissionForPrint();
     if (isGranted) {
-      showToast("info", "Connecting...", "Please wait");
+      showToast("info", "Scanning paired devices", "Please wait");
       const devices = await BluetoothManager.scanDevices();
       const devicesJson = JSON.parse(devices);
       showToast("info", "Make sure the device is a thermal printer");

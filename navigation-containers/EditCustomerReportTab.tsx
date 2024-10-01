@@ -1,6 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
-  EditCustomerReportScreenProp,
   EditCustomerReportTabParamList,
   EditCustomerReportTabScreenProp,
 } from "../types/type";
@@ -11,7 +10,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { TouchableOpacity } from "react-native";
-import { CommonActions, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import EditCustomerReportScreen from "../screens/mainDrawer/sales-report-stack/edit-customer-report/EditCustomerReportScreen";
 import ProductListEditCustomerReportScreen from "../screens/mainDrawer/sales-report-stack/edit-customer-report/ProductListEditCustomerReportScreen";
 import PreviewEditCustomerReportScreen from "../screens/mainDrawer/sales-report-stack/edit-customer-report/PreviewEditCustomerReportScreen";
@@ -43,21 +42,12 @@ export const EditCustomerReportTabScreen = ({
           color: "#634F40",
         },
         tabBarActiveBackgroundColor: "#E6B794",
+        tabBarHideOnKeyboard: true,
         headerRight: () => (
           <TouchableOpacity
             activeOpacity={0.6}
             style={{ paddingHorizontal: wp(2) }}
-            onPress={() =>
-              navigation.dispatch(
-                CommonActions.reset({
-                  index: 1,
-                  routes: [
-                    { name: "SalesReportScreen" },
-                    { name: "CustomerReportScreen", params },
-                  ],
-                })
-              )
-            }
+            onPress={() => navigation.goBack()}
           >
             <Entypo name="cross" size={30} color="#634F40" />
           </TouchableOpacity>

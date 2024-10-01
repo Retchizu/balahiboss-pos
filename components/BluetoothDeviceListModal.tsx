@@ -16,6 +16,7 @@ import Toast, { ToastType } from "react-native-toast-message";
 import { Button } from "@rneui/base";
 import { handlePrint } from "../methods/print-methods/handlePrint";
 import { connectToBluetooth } from "../methods/print-methods/connectToBluetooth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type BluetoothDeviceListModalProp = {
   isBluetoothDeviceListModalVisible: boolean;
@@ -78,6 +79,7 @@ const BluetoothDeviceListModal = ({
                     titleStyle={styles.titleStyle}
                     onPress={() => {
                       setCurrentPrinter(item);
+                      AsyncStorage.setItem("printer", JSON.stringify(item));
                     }}
                     loading={printButtonVisibility}
                   />
@@ -100,7 +102,7 @@ const BluetoothDeviceListModal = ({
                 fontSize: wp(5),
               }}
             >
-              Current Prnter
+              Current Printer
             </Text>
             <View style={styles.currentPrinterParent}>
               {currentPrinter ? (
@@ -134,6 +136,7 @@ const BluetoothDeviceListModal = ({
                       onPress={async () => {
                         setCurrentPrinter(undefined);
                         try {
+                          await AsyncStorage.removeItem("printer");
                           if (pairedDevices.length === 0 && currentPrinter) {
                             const pairedDevice = await connectToBluetooth(
                               showToast,

@@ -1,4 +1,3 @@
-import { CommonActions } from "@react-navigation/native";
 import { Product, ProductStackParamList } from "../../types/type";
 import { updateProductData } from "../data-methods/updateProductData";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -54,25 +53,11 @@ export const handleSameProductData = (
     previousProductData.lowStockThreshold === updatedProduct.lowStockThreshold;
   if (!isSameData) {
     updateProductData(updatedProduct, updateProduct, showToast);
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 1,
-        routes: [
-          { name: "ProductListScreen" },
-          { name: "ProductInfoScreen", params: updatedProduct },
-        ],
-      })
-    );
+    navigation.pop();
+    navigation.replace("ProductInfoScreen", updatedProduct);
   } else {
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 1,
-        routes: [
-          { name: "ProductListScreen" },
-          { name: "ProductInfoScreen", params: updatedProduct },
-        ],
-      })
-    );
+    navigation.pop();
+    navigation.replace("ProductInfoScreen", updatedProduct);
   }
 };
 
@@ -115,15 +100,8 @@ export const handleBuyStock = async (
         lowStockThreshold: getProductToUpdate.lowStockThreshold,
       };
       showToast("success", "Stocks added successfully");
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 1,
-          routes: [
-            { name: "ProductListScreen" },
-            { name: "ProductInfoScreen", params: updatedProduct },
-          ],
-        })
-      );
+      navigation.pop();
+      navigation.replace("ProductInfoScreen", updatedProduct);
     }
   } catch (error) {
     showToast("error", "Error occured", "Try again later");
