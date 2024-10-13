@@ -12,13 +12,15 @@ import { filterSearchForCustomer } from "../../../methods/search-filters/fitlerS
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { CustomerListScreenProp } from "../../../types/type";
 import Toast from "react-native-toast-message";
+import { useUserContext } from "../../../context/UserContext";
 
 const CustomerListScreen = ({ navigation }: CustomerListScreenProp) => {
   const { customers, setCustomerList } = useCustomerContext();
   const [searchQuery, setSearchQuery] = useState("");
+  const { user } = useUserContext();
 
   useEffect(() => {
-    getCustomerData(setCustomerList);
+    getCustomerData(setCustomerList, user);
   }, []);
 
   const filteredData = filterSearchForCustomer(customers, searchQuery);

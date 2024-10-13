@@ -1,22 +1,21 @@
 import { ToastType } from "react-native-toast-message";
-import { auth, db } from "../../firebaseConfig";
-import { Product } from "../../types/type";
+import { db } from "../../firebaseConfig";
+import { Product, User } from "../../types/type";
+import { collection, getDocs } from "firebase/firestore";
 
 export const getProductData = async (
   setProductList: (newProductList: Product[]) => void,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
-  showToast: (type: ToastType, text1: string, text2?: string) => void
+  showToast: (type: ToastType, text1: string, text2?: string) => void,
+  user: User | null
 ) => {
-  const user = auth.currentUser;
   if (user) {
     try {
       setIsLoading(true);
       const fetched: Product[] = [];
-      const productRef = db
-        .collection("users")
-        .doc(user.uid)
-        .collection("products");
-      const productData = await productRef.get();
+      const productData = await getDocs(
+        collection(db, "users", user.uid, "products")
+      );
       productData.forEach((doc) => {
         const { productName, stockPrice, sellPrice, stock, lowStockThreshold } =
           doc.data();
@@ -38,6 +37,8 @@ export const getProductData = async (
         "Something went wrong",
         "Can't get product data, try again later"
       );
+
+      console.log((error as Error).message);
     }
   }
 };

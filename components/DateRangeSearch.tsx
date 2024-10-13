@@ -7,7 +7,7 @@ import {
 } from "react-native-responsive-screen";
 import { readableDate } from "../methods/time-methods/readableDate";
 import { getSalesReportData } from "../methods/data-methods/getSalesReportData";
-import { SalesReport } from "../types/type";
+import { SalesReport, User } from "../types/type";
 import { ToastType } from "react-native-toast-message";
 
 type DateRangeSearchProp = {
@@ -18,6 +18,7 @@ type DateRangeSearchProp = {
   showToast: (type: ToastType, text1: string, text2?: string) => void;
   setSalesReportList: (newSalesReportList: SalesReport[]) => void;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  user: User | null;
 };
 
 const DateRangeSearch = ({
@@ -28,6 +29,7 @@ const DateRangeSearch = ({
   showToast,
   setSalesReportList,
   setIsLoading,
+  user,
 }: DateRangeSearchProp) => {
   return (
     <View>
@@ -57,7 +59,8 @@ const DateRangeSearch = ({
               endDate,
               setSalesReportList,
               setIsLoading,
-              showToast
+              showToast,
+              user
             );
           else showToast("error", "Date range incomplete");
         }}

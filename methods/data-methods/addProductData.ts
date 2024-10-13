@@ -1,6 +1,7 @@
 import { ToastType } from "react-native-toast-message";
-import { auth, db } from "../../firebaseConfig";
-import { Product } from "../../types/type";
+import { db } from "../../firebaseConfig";
+import { Product, User } from "../../types/type";
+import { addDoc, collection } from "firebase/firestore";
 
 export const addProductData = async (
   productInfo: {
@@ -10,7 +11,8 @@ export const addProductData = async (
     lowStockThreshold: string;
   },
   addProduct: (newProduct: Product) => void,
-  showToast: (type: ToastType, text1: string, text2?: string) => void
+  showToast: (type: ToastType, text1: string, text2?: string) => void,
+  user: User | null
 ) => {
   try {
     if (
@@ -18,19 +20,16 @@ export const addProductData = async (
       productInfo.sellPrice.trim() &&
       productInfo.lowStockThreshold.trim()
     ) {
-      const user = auth.currentUser;
-      const productRef = await db
-        .collection("users")
-        .doc(user?.uid)
-        .collection("products")
-        .add({
+      const productRef = await addDoc(
+        collection(db, "users", user?.uid!, "products"),
+        {
           productName: productInfo.productName,
           stockPrice: parseFloat(productInfo.stockPrice),
           sellPrice: parseFloat(productInfo.sellPrice),
           lowStockThreshold: parseFloat(productInfo.lowStockThreshold),
           stock: 0,
-        });
-
+        }
+      );
       const newProduct: Product = {
         id: productRef.id,
         productName: productInfo.productName,

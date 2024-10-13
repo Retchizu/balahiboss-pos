@@ -21,6 +21,7 @@ import { useToastContext } from "../../../context/ToastContext";
 import { filterSearchForCustomer } from "../../../methods/search-filters/fitlerSearchForCustomer";
 import BluetoothDeviceListModal from "../../../components/BluetoothDeviceListModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useUserContext } from "../../../context/UserContext";
 
 const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
   const params = route.params;
@@ -44,6 +45,7 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
     setIsBluetoothDeviceListModalVisible,
   ] = useState(false);
   const { showToast } = useToastContext();
+  const { user } = useUserContext();
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   //for customers in modal
   const { customers, setCustomerList } = useCustomerContext();
@@ -123,13 +125,14 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
             (invoiceFormInfo.cashPayment || invoiceFormInfo.onlinePayment) &&
             invoiceFormInfo.date
           ) {
-            addSalesReportData(
+            await addSalesReportData(
               selectedProducts,
               invoiceFormInfo,
               products,
               updateProduct,
               addSalesReport,
-              showToast
+              showToast,
+              user
             );
             setSelectedProductList([]);
             setInvoiceFormInfo({
@@ -141,6 +144,7 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
               freebies: "",
               deliveryFee: "",
             });
+            showToast("success", "Invoice added successfully");
           } else {
             showToast(
               "error",
@@ -150,7 +154,7 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
           }
         }}
       />
-      <Toast position="bottom" autoHide visibilityTime={2000} />
+
       <InvoiceModal
         isInvoiceVisible={isInvoiceVisible}
         setIsInvoiceVisible={setIsInvoiceVisible}
@@ -191,11 +195,14 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
         setSearchQuery={setCustomerSearchQuery}
         navigation={navigation}
         setInvoiceFormInfo={setInvoiceFormInfo}
+        user={user}
       />
       {isDateVisible && (
         <DateTimePicker
           value={invoiceFormInfo.date ? invoiceFormInfo.date : new Date()}
           mode={mode}
+          negativeButton={{ label: "" }}
+          positiveButton={{ label: "next" }}
           onChange={onChangeDateInvoice(
             setIsDateVisible,
             setInvoiceFormInfo,
@@ -204,6 +211,7 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
           )}
         />
       )}
+      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

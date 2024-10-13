@@ -70,6 +70,11 @@ export type SalesReportStackParamList = {
   EditCustomerReportTabScreen: CustomerReportParams;
 };
 
+export type User = {
+  uid: string;
+  email: string;
+  displayName: string;
+};
 export type Product = {
   id: string;
   productName: string;
@@ -109,6 +114,16 @@ export type Device = {
   address: string;
   name: string;
 };
+
+export type ProductInfoType = {
+  productName: string;
+  stockPrice: string;
+  sellPrice: string;
+  lowStockThreshold: string;
+  buyStock: string;
+  editStock: string;
+};
+
 export type SplashScreenProp = NativeStackScreenProps<
   AuthStackParamList,
   "SplashScreen"

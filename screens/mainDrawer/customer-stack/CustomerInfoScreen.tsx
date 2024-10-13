@@ -12,12 +12,14 @@ import { deleteCustomerData } from "../../../methods/data-methods/deleteCustomer
 import { useCustomerContext } from "../../../context/CustomerContext";
 import Toast from "react-native-toast-message";
 import { useToastContext } from "../../../context/ToastContext";
+import { useUserContext } from "../../../context/UserContext";
 
 const CustomerInfoScreen = ({ navigation, route }: CustomerInfoScreenProp) => {
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
     useState(false);
   const { customers, setCustomerList } = useCustomerContext();
   const { showToast } = useToastContext();
+  const { user } = useUserContext();
   const params = route.params;
   return (
     <View
@@ -52,10 +54,16 @@ const CustomerInfoScreen = ({ navigation, route }: CustomerInfoScreenProp) => {
         confirmationTitle={`Delete Customer "${params.customerName}"`}
         confirmationDescription="Are you sure you want to delete this customer?"
         cancelFn={() => setIsConfirmationModalVisible(false)}
-        confirmFn={() => {
-          deleteCustomerData(params.id, customers, setCustomerList, showToast);
-          setIsConfirmationModalVisible(false);
+        confirmFn={async () => {
           navigation.goBack();
+          await deleteCustomerData(
+            params.id,
+            customers,
+            setCustomerList,
+            showToast,
+            user
+          );
+          setIsConfirmationModalVisible(false);
         }}
         setIsVisible={setIsConfirmationModalVisible}
       />

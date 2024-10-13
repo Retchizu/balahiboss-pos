@@ -1,11 +1,13 @@
 import { ToastType } from "react-native-toast-message";
-import { auth, db } from "../../firebaseConfig";
+import { db } from "../../firebaseConfig";
 import {
   InvoiceForm,
   Product,
   SalesReport,
   SelectedProduct,
+  User,
 } from "../../types/type";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 
 export const addSalesReportData = async (
   selectedProducts: SelectedProduct[],
@@ -13,18 +15,18 @@ export const addSalesReportData = async (
   products: Product[],
   updateProduct: (productId: String, attribute: Partial<Product>) => void,
   addSalesReport: (newReport: SalesReport) => void,
-  showToast: (type: ToastType, text1: string, text2?: string) => void
+  showToast: (type: ToastType, text1: string, text2?: string) => void,
+  user: User | null
 ) => {
   try {
-    const user = auth.currentUser;
-    const salesReportRef = await db
-      .collection("users")
-      .doc(user?.uid)
-      .collection("sales")
-      .add({
+    const salesReportRef = await addDoc(
+      collection(db, "users", user?.uid!, "sales"),
+      {
         selectedProducts: selectedProducts,
         invoiceForm: invoiceForm,
-      });
+      }
+    );
+
     await Promise.all(
       selectedProducts.map(async (item) => {
         const itemInProductList = products.find(
@@ -32,13 +34,15 @@ export const addSalesReportData = async (
         );
         if (itemInProductList) {
           const reduceStockInProduct = itemInProductList.stock - item.quantity;
-          const productRef = db
-            .collection("users")
-            .doc(user?.uid)
-            .collection("products")
-            .doc(itemInProductList.id);
+          const productRef = doc(
+            db,
+            "users",
+            user?.uid!,
+            "products",
+            itemInProductList.id
+          );
 
-          await productRef.update({
+          await updateDoc(productRef, {
             stock: reduceStockInProduct,
           });
 

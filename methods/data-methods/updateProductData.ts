@@ -1,20 +1,23 @@
 import { ToastType } from "react-native-toast-message";
-import { auth, db } from "../../firebaseConfig";
-import { Product } from "../../types/type";
+import { db } from "../../firebaseConfig";
+import { Product, User } from "../../types/type";
+import { doc, updateDoc } from "firebase/firestore";
 
 export const updateProductData = async (
   productInfo: Product,
   updateProduct: (productId: String, attribute: Partial<Product>) => void,
-  showToast: (type: ToastType, text1: string, text2?: string) => void
+  showToast: (type: ToastType, text1: string, text2?: string) => void,
+  user: User | null
 ) => {
   try {
-    const user = auth.currentUser;
-    const productRef = db
-      .collection("users")
-      .doc(user?.uid)
-      .collection("products")
-      .doc(productInfo.id.toString());
-    await productRef.update({
+    const productRef = doc(
+      db,
+      "users",
+      user?.uid!,
+      "products",
+      productInfo.id.toString()
+    );
+    await updateDoc(productRef, {
       productName: productInfo.productName,
       stockPrice: productInfo.stockPrice,
       sellPrice: productInfo.sellPrice,

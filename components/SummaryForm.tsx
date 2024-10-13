@@ -27,7 +27,7 @@ type SummaryFormProps = {
   deleteInputValuesFn: () => void;
   previewInvoiceFn?: () => void;
   dateInvoiceFn: () => void;
-  submitSummaryFormFn: () => void;
+  submitSummaryFormFn: () => Promise<void>;
   selectedProducts: SelectedProduct[];
   customerModalVisibleFn: () => void;
 };
@@ -86,6 +86,7 @@ const SummaryForm = ({
           onChangeText={(text) =>
             handleInputChange("cashPayment", text, setInvoiceFormInfo)
           }
+          contextMenuHidden={true}
         />
         <InputFormWithLabel
           formLabel="Online Payment"
@@ -95,6 +96,7 @@ const SummaryForm = ({
           onChangeText={(text) =>
             handleInputChange("onlinePayment", text, setInvoiceFormInfo)
           }
+          contextMenuHidden={true}
         />
         <ButtonFormWithLabel
           formLabel="Customer"
@@ -116,6 +118,7 @@ const SummaryForm = ({
           onChangeText={(text) =>
             handleInputChange("discount", text, setInvoiceFormInfo)
           }
+          contextMenuHidden={true}
         />
         <InputFormWithLabel
           formLabel="Freebies"
@@ -125,6 +128,7 @@ const SummaryForm = ({
           onChangeText={(text) =>
             handleInputChange("freebies", text, setInvoiceFormInfo)
           }
+          contextMenuHidden={true}
         />
         <InputFormWithLabel
           formLabel="Delivery Fee"
@@ -134,6 +138,7 @@ const SummaryForm = ({
           onChangeText={(text) =>
             handleInputChange("deliveryFee", text, setInvoiceFormInfo)
           }
+          contextMenuHidden={true}
         />
         <View style={{ flexDirection: "row" }}>
           <Text style={[styles.label, { flex: 1.5 }]}>Total Price:</Text>
@@ -167,7 +172,7 @@ const SummaryForm = ({
           title={"Confirm"}
           buttonStyle={styles.buttonStyle}
           titleStyle={styles.titleStyle}
-          onPress={() => submitSummaryFormFn()}
+          onPress={async () => await submitSummaryFormFn()}
         />
       </ScrollView>
     </View>

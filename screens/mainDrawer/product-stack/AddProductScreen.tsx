@@ -8,6 +8,7 @@ import {
 import { addProductData } from "../../../methods/data-methods/addProductData";
 import { useProductContext } from "../../../context/ProductContext";
 import { useToastContext } from "../../../context/ToastContext";
+import { useUserContext } from "../../../context/UserContext";
 
 const AddProductScreen = () => {
   const [productInfo, setProductInfo] = useState({
@@ -18,9 +19,10 @@ const AddProductScreen = () => {
   });
   const { addProduct } = useProductContext();
   const { showToast } = useToastContext();
+  const { user } = useUserContext();
 
-  const handleAddProductSubmit = () => {
-    addProductData(productInfo, addProduct, showToast);
+  const handleAddProductSubmit = async () => {
+    await addProductData(productInfo, addProduct, showToast, user);
     setProductInfo({
       productName: "",
       sellPrice: "",

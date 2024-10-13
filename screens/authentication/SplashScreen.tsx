@@ -8,13 +8,19 @@ import {
 import { SplashScreenProp } from "../../types/type";
 import { autoSignIn } from "../../methods/auth-methods/autoSignIn";
 import { loadFont } from "../../methods/auth-methods/loadFont";
+import { useUserContext } from "../../context/UserContext";
+import { useAuthStateListenerAutoSignIn } from "../../hooks/useAuthStateListenerAutoSignIn";
 
 const SplashScreen = ({ navigation }: SplashScreenProp) => {
   const result = loadFont();
+  const { signUser } = useUserContext();
 
-  useEffect(() => {
-    if (result) autoSignIn(navigation);
-  }, [result]);
+  /*   useEffect(() => {
+    if (result) {
+      autoSignIn(navigation, signUser);
+    }
+  }, [result]); */
+  useAuthStateListenerAutoSignIn(navigation, signUser, result);
 
   return (
     <SafeAreaView

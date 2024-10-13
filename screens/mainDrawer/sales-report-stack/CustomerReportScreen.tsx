@@ -18,6 +18,8 @@ import { useSalesReportContext } from "../../../context/SalesReportContext";
 import { useProductContext } from "../../../context/ProductContext";
 import { useSelectedProductInEditContext } from "../../../context/SelectedProductInEditContext";
 import Toast from "react-native-toast-message";
+import { useUserContext } from "../../../context/UserContext";
+import { useToastContext } from "../../../context/ToastContext";
 
 const CustomerReportScreen = ({
   route,
@@ -29,6 +31,8 @@ const CustomerReportScreen = ({
   const { salesReports, setSalesReportList } = useSalesReportContext();
   const { products, updateProduct } = useProductContext();
   const { setSelectedProductListInEdit } = useSelectedProductInEditContext();
+  const { user } = useUserContext();
+  const { showToast } = useToastContext();
   return (
     <View
       style={[
@@ -118,6 +122,7 @@ const CustomerReportScreen = ({
           />
         )}
       </View>
+      <Toast position="bottom" autoHide visibilityTime={2000} />
       <ConfirmationModal
         isVisible={isConfirmationModalVisible}
         setIsVisible={setIsConfirmationModalVisible}
@@ -128,7 +133,9 @@ const CustomerReportScreen = ({
             salesReports,
             setSalesReportList,
             products,
-            updateProduct
+            updateProduct,
+            showToast,
+            user
           );
           setIsConfirmationModalVisible(false);
           navigation.goBack();
@@ -136,7 +143,6 @@ const CustomerReportScreen = ({
         confirmationTitle="Delete this report?"
         confirmationDescription={`Delete purchase info of ${params.customer?.customerName}`}
       />
-      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

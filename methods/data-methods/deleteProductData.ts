@@ -1,22 +1,24 @@
 import { ToastType } from "react-native-toast-message";
-import { auth, db } from "../../firebaseConfig";
-import { Product } from "../../types/type";
+import { db } from "../../firebaseConfig";
+import { Product, User } from "../../types/type";
+import { deleteDoc, doc } from "firebase/firestore";
 
 export const deleteProductData = async (
   productId: String,
   setProductList: (newProductList: Product[]) => void,
   products: Product[],
-  showToast: (type: ToastType, text1: string, text2?: string) => void
+  showToast: (type: ToastType, text1: string, text2?: string) => void,
+  user: User | null
 ) => {
   try {
-    const user = auth.currentUser;
-    await db
-      .collection("users")
-      .doc(user?.uid)
-      .collection("products")
-      .doc(productId.toString())
-      .delete();
-
+    const productRef = doc(
+      db,
+      "users",
+      user?.uid!,
+      "products",
+      productId.toString()
+    );
+    await deleteDoc(productRef);
     const updatedData = products.filter((item) => item.id !== productId);
     setProductList(updatedData);
     showToast("success", "Product deleted successfully");

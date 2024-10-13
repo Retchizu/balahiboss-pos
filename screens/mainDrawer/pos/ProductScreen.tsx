@@ -12,6 +12,7 @@ import { filterSearchForPoduct } from "../../../methods/search-filters/filterSea
 import { useSelectedProductContext } from "../../../context/SelectedProductContext";
 import Toast from "react-native-toast-message";
 import { useToastContext } from "../../../context/ToastContext";
+import { useUserContext } from "../../../context/UserContext";
 
 const ProductScreen = () => {
   const { products, setProductList } = useProductContext();
@@ -20,8 +21,10 @@ const ProductScreen = () => {
     useSelectedProductContext();
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToastContext();
+  const { user } = useUserContext();
+
   useEffect(() => {
-    getProductData(setProductList, setIsLoading, showToast);
+    getProductData(setProductList, setIsLoading, showToast, user);
   }, []);
 
   const filteredData = filterSearchForPoduct(products, searchQuery);

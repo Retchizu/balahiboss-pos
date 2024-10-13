@@ -17,11 +17,13 @@ import { getSalesReportData } from "../../../methods/data-methods/getSalesReport
 import { RecentScreenProp } from "../../../types/type";
 import { useToastContext } from "../../../context/ToastContext";
 import Toast from "react-native-toast-message";
+import { useUserContext } from "../../../context/UserContext";
 
 const RecentScreen = ({ navigation }: RecentScreenProp) => {
   const { salesReports, setSalesReportList } = useSalesReportContext();
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToastContext();
+  const { user } = useUserContext();
   let startDate = new Date();
   let endDate = new Date();
 
@@ -31,7 +33,8 @@ const RecentScreen = ({ navigation }: RecentScreenProp) => {
       endDate,
       setSalesReportList,
       setIsLoading,
-      showToast
+      showToast,
+      user
     );
   }, []);
 

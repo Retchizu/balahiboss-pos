@@ -1,22 +1,25 @@
 import { ToastType } from "react-native-toast-message";
-import { auth, db } from "../../firebaseConfig";
-import { Customer } from "../../types/type";
+import { db } from "../../firebaseConfig";
+import { Customer, User } from "../../types/type";
+import { deleteDoc, doc } from "firebase/firestore";
 
 export const deleteCustomerData = async (
   customerId: String,
   customers: Customer[],
   setCustomerList: (newCustomerList: Customer[]) => void,
-  showToast: (type: ToastType, text1: string, text2?: string) => void
+  showToast: (type: ToastType, text1: string, text2?: string) => void,
+  user: User | null
 ) => {
   try {
-    const user = auth.currentUser;
     if (user) {
-      await db
-        .collection("users")
-        .doc(user.uid)
-        .collection("customers")
-        .doc(customerId.toString())
-        .delete();
+      const customerRef = doc(
+        db,
+        "users",
+        user.uid,
+        "customers",
+        customerId.toString()
+      );
+      await deleteDoc(customerRef);
 
       const updatedCustomerList = customers.filter(
         (item) => item.id !== customerId

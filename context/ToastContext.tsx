@@ -1,18 +1,3 @@
-/* const showToast = (type: ToastType, text1: string, text2?: string) => {
-    Toast.show({
-      type: type,
-      text1: text1,
-      text2: text2,
-      text1Style: {
-        fontFamily: "SoraBold",
-        fontSize: wp(4),
-      },
-      text2Style: {
-        fontFamily: "SoraMedium",
-        fontSize: wp(3),
-      },
-    });
-  }; */
 import React, { createContext, ReactNode, useContext } from "react";
 import Toast, { ToastType } from "react-native-toast-message";
 import {

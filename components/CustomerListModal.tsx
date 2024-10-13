@@ -12,7 +12,12 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { Customer, InvoiceForm, InvoiceStackParamList } from "../types/type";
+import {
+  Customer,
+  InvoiceForm,
+  InvoiceStackParamList,
+  User,
+} from "../types/type";
 import { getCustomerData } from "../methods/data-methods/getCustomerData";
 import Searchbar from "./Searchbar";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -30,6 +35,7 @@ type CustomerListModalProp = {
     "InvoiceScreen"
   >;
   setInvoiceFormInfo: React.Dispatch<React.SetStateAction<InvoiceForm>>;
+  user: User | null;
 };
 
 const CustomerListModal = ({
@@ -41,10 +47,11 @@ const CustomerListModal = ({
   setSearchQuery,
   navigation,
   setInvoiceFormInfo,
+  user,
 }: CustomerListModalProp) => {
   useEffect(() => {
     if (!customers.length) {
-      getCustomerData(setCustomerList);
+      getCustomerData(setCustomerList, user);
     }
   }, []);
   return (

@@ -26,7 +26,7 @@ type AddProductFormProps = {
     }>
   >;
   buttonLabel: string;
-  submit: () => void;
+  submit: () => Promise<void>;
 };
 
 const AddProductForm = ({

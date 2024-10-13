@@ -11,16 +11,16 @@ import {
   DrawerItem,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import { auth } from "../firebaseConfig";
-import { CommonActions, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useToastContext } from "../context/ToastContext";
-import Toast from "react-native-toast-message";
+import { useUserContext } from "../context/UserContext";
+import { signOut } from "../methods/auth-methods/signOut";
 
 const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
   const navigation = useNavigation();
   const { showToast } = useToastContext();
+  const { signUser, user } = useUserContext();
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Text style={styles.drawerHeaderTitle}>Retchi POS</Text>
@@ -28,6 +28,7 @@ const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
         source={require("../assets/icon-transparent.png")}
         style={{ width: wp(30), height: wp(30), alignSelf: "center" }}
       />
+      <Text style={styles.displayNameStyle}>{user?.displayName}</Text>
       <DrawerContentScrollView scrollEnabled={false}>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
@@ -36,18 +37,7 @@ const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
         <DrawerItem
           style={{ borderTopWidth: wp(0.1) }}
           label={() => <Text style={styles.drawerLabelStyle}>Sign out</Text>}
-          onPress={async () => {
-            await auth.signOut();
-            await AsyncStorage.removeItem("email");
-            await AsyncStorage.removeItem("password");
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: "Auth Screen" }],
-              })
-            );
-            showToast("info", "Signed out successfully");
-          }}
+          onPress={() => signOut(navigation, signUser, showToast)}
           icon={() => (
             <Ionicons
               name="exit-outline"
@@ -75,5 +65,10 @@ const styles = StyleSheet.create({
     fontFamily: "SoraSemiBold",
     fontSize: wp(5),
     color: "#634F40",
+  },
+  displayNameStyle: {
+    textAlign: "center",
+    fontFamily: "SoraLight",
+    fontSize: wp(3),
   },
 });

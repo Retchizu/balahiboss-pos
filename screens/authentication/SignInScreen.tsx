@@ -1,5 +1,5 @@
 import { StyleSheet, Image, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputForm from "../../components/InputForm";
 import {
   widthPercentageToDP as wp,
@@ -12,14 +12,33 @@ import { signIn } from "../../methods/auth-methods/signIn";
 import { SignInScreenProp } from "../../types/type";
 import Toast from "react-native-toast-message";
 import { useToastContext } from "../../context/ToastContext";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import * as Google from "expo-auth-session/providers/google";
+import * as WebBrowser from "expo-web-browser";
+import { useAuthStateListenerSignIn } from "../../hooks/useAuthStateListenerSignIn";
+import { ANDROID_CLIENT_ID, WEB_CLIENT_ID } from "@env";
+import { useUserContext } from "../../context/UserContext";
+import { useGoogleSignIn } from "../../hooks/useGoogleSignIn";
+
+WebBrowser.maybeCompleteAuthSession();
 
 const SignInScreen = ({ navigation }: SignInScreenProp) => {
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    webClientId: WEB_CLIENT_ID,
+    androidClientId: ANDROID_CLIENT_ID,
+  });
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [userCredential, setUserCredential] = useState({
     email: "",
     password: "",
   });
   const { showToast } = useToastContext();
+  const { signUser } = useUserContext();
+  const [loading, setLoading] = useState(false);
+
+  useGoogleSignIn(response);
+  useAuthStateListenerSignIn(navigation, signUser);
+
   return (
     <View style={styles.container}>
       <Image
@@ -47,7 +66,24 @@ const SignInScreen = ({ navigation }: SignInScreenProp) => {
         title={"Sign In"}
         buttonStyle={styles.buttonStyle}
         titleStyle={styles.titleStyle}
-        onPress={() => signIn(userCredential, navigation, showToast)}
+        onPress={() =>
+          signIn(userCredential, navigation, showToast, signUser, setLoading)
+        }
+        loading={loading}
+      />
+      <Button
+        title={"Sign In With Google"}
+        buttonStyle={[styles.buttonStyle, { backgroundColor: "#DB4437" }]}
+        titleStyle={[styles.titleStyle, { color: "#F3F0E9" }]}
+        onPress={() => promptAsync()}
+        icon={
+          <AntDesign
+            name="google"
+            size={24}
+            color="#F3F0E9"
+            style={{ paddingHorizontal: wp(2) }}
+          />
+        }
       />
       <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>

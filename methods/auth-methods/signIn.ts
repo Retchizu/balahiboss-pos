@@ -1,33 +1,44 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { auth } from "../../firebaseConfig";
+import * as SecureStore from "expo-secure-store";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { ToastType } from "react-native-toast-message";
+import { User } from "../../types/type";
+import { auth } from "../../firebaseConfig";
 
 export const signIn = async (
   userCredential: { email: string; password: string },
   navigation: any,
-  showToast: (type: ToastType, text1: string, text2?: string) => void
+  showToast: (type: ToastType, text1: string, text2?: string) => void,
+  signUser: (user: User | null) => void,
+  setLoading?: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   try {
+    if (setLoading) setLoading(true);
     if (!userCredential.email.trim() || !userCredential.password.trim()) {
       showToast("error", "Incomplete Field", "Provide email and passwsord");
       return;
     }
-    const signInResult = await auth.signInWithEmailAndPassword(
+    const signInResult = await signInWithEmailAndPassword(
+      auth,
       userCredential.email,
       userCredential.password
     );
 
-    const user = signInResult.user;
+    const user: User = {
+      uid: signInResult.user?.uid!,
+      email: signInResult.user?.email!,
+      displayName: signInResult.user?.displayName!,
+    };
 
-    if (user?.emailVerified) {
-      AsyncStorage.setItem("email", userCredential.email);
-      AsyncStorage.setItem("password", userCredential.password);
-
+    if (user) {
+      SecureStore.setItem("email", userCredential.email);
+      SecureStore.setItem("password", userCredential.password);
+      signUser(user);
       navigation.replace("DrawerScreen");
     }
     showToast("success", "Signed In Successfully");
-    //handle email verification later
   } catch (error) {
     showToast("error", "Error Occured", "Wrong credentials or No internet");
+  } finally {
+    if (setLoading) setLoading(false);
   }
 };

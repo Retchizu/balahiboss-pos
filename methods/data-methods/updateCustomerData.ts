@@ -1,22 +1,25 @@
 import { ToastType } from "react-native-toast-message";
-import { auth, db } from "../../firebaseConfig";
-import { Customer } from "../../types/type";
+import { db } from "../../firebaseConfig";
+import { Customer, User } from "../../types/type";
+import { doc, updateDoc } from "firebase/firestore";
 
 export const updateCustomerData = async (
   customerId: String,
   customerInfo: { customerName: string; customerInfo: string },
   updateCustomer: (customerId: String, attribute: Partial<Customer>) => void,
-  showToast: (type: ToastType, text1: string, text2?: string) => void
+  showToast: (type: ToastType, text1: string, text2?: string) => void,
+  user: User | null
 ) => {
   try {
-    const user = auth.currentUser;
     if (user) {
-      const docRef = db
-        .collection("users")
-        .doc(user.uid)
-        .collection("customers")
-        .doc(customerId.toString());
-      await docRef.update({
+      const customerRef = doc(
+        db,
+        "users",
+        user?.uid!,
+        "customers",
+        customerId.toString()
+      );
+      await updateDoc(customerRef, {
         customerName: customerInfo.customerName,
         customerInfo: customerInfo.customerInfo,
       });

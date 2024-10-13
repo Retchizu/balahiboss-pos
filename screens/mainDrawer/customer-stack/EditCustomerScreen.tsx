@@ -10,7 +10,7 @@ import {
 } from "react-native-responsive-screen";
 import { useToastContext } from "../../../context/ToastContext";
 import Toast from "react-native-toast-message";
-import { useNavigation } from "@react-navigation/native";
+import { useUserContext } from "../../../context/UserContext";
 
 const EditCustomerScreen = ({ route, navigation }: EditCustomerScreenProp) => {
   const customerId = route.params.id;
@@ -21,10 +21,11 @@ const EditCustomerScreen = ({ route, navigation }: EditCustomerScreenProp) => {
 
   const { updateCustomer } = useCustomerContext();
   const { showToast } = useToastContext();
-  const navi = useNavigation();
+  const { user } = useUserContext();
+
   console.log(navigation.getState());
   const handleCustomerUpdateSubmit = () => {
-    updateCustomerData(customerId, customer, updateCustomer, showToast);
+    updateCustomerData(customerId, customer, updateCustomer, showToast, user);
 
     navigation.pop();
     navigation.replace("CustomerInfoScreen", {

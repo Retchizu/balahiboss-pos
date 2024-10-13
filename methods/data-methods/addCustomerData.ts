@@ -1,23 +1,23 @@
 import { ToastType } from "react-native-toast-message";
-import { auth, db } from "../../firebaseConfig";
-import { Customer } from "../../types/type";
+import { db } from "../../firebaseConfig";
+import { Customer, User } from "../../types/type";
+import { addDoc, collection } from "firebase/firestore";
 
 export const addCustomerData = async (
   customerInfo: { customerName: string; customerInfo: string },
   addCustomer: (newCustomer: Customer) => void,
-  showToast: (type: ToastType, text1: string, text2?: string) => void
+  showToast: (type: ToastType, text1: string, text2?: string) => void,
+  user: User | null
 ) => {
   try {
-    const user = auth.currentUser;
     if (customerInfo.customerName.trim() && user) {
-      const customerRef = db
-        .collection("users")
-        .doc(user.uid)
-        .collection("customers");
-      const addedCustomer = await customerRef.add(customerInfo);
+      const customerRef = await addDoc(
+        collection(db, "users", user?.uid!, "customers"),
+        customerInfo
+      );
 
       const newCustomer: Customer = {
-        id: addedCustomer.id,
+        id: customerRef.id,
         customerName: customerInfo.customerName,
         customerInfo: customerInfo.customerInfo,
       };

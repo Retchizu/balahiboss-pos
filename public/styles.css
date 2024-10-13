@@ -1,0 +1,61 @@
+@font-face {
+  font-family: "SoraSemiBold";
+  src: url("../assets/fonts/Sora-SemiBold.ttf") format("truetype"); /* Specify the format if known */
+}
+@font-face {
+  font-family: "SoraRegular";
+  src: url("../assets/fonts/Sora-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "SoraBold";
+  src: url("../assets/fonts/Sora-Bold.ttf") format("truetype");
+}
+#aboutBody {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0 5%;
+}
+#privacyPolicyBody {
+  padding: 0% 1%;
+}
+body::before {
+  content: "";
+  position: fixed;
+  background-image: url(https://raw.githubusercontent.com/Retchizu/balahiboss-pos/main/assets/icon-transparent.png);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.1;
+  z-index: -1;
+}
+
+h1 {
+  color: #634f40;
+  font-family: SoraSemiBold;
+}
+
+p {
+  color: #634f40;
+  font-family: SoraRegular;
+}
+
+h2 {
+  color: #634f40;
+  font-family: SoraBold;
+}
+
+h3 {
+  font-family: SoraSemiBold;
+  color: #634f40;
+}
+
+li {
+  font-family: SoraRegular;
+  color: #634f40;
+}

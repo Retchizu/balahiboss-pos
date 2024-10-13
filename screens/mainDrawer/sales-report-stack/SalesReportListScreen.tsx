@@ -26,6 +26,7 @@ import { Button } from "@rneui/base";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FilterChoiceModalForSaleslist from "../../../components/FilterChoiceModalForSaleslist";
 import { choices } from "../../../methods/search-filters/chooseFilterTypeForSaleslist";
+import { useUserContext } from "../../../context/UserContext";
 
 const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
   const { salesReports, setSalesReportList } = useSalesReportContext();
@@ -38,6 +39,7 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToastContext();
+  const { user } = useUserContext();
 
   const [isNameFilter, setIsNameFilter] = useState(true);
   const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
@@ -48,7 +50,8 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
       new Date(),
       setSalesReportList,
       setIsLoading,
-      showToast
+      showToast,
+      user
     );
   }, []);
 
@@ -103,7 +106,9 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
         setSalesReportList={setSalesReportList}
         showToast={showToast}
         setIsLoading={setIsLoading}
+        user={user}
       />
+
       {isLoading ? (
         <View style={{ flex: 1, justifyContent: "center" }}>
           <ActivityIndicator color={"#634F40"} size={wp(10)} />

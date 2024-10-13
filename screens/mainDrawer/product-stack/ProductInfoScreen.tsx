@@ -13,6 +13,7 @@ import { deleteProductData } from "../../../methods/data-methods/deleteProductDa
 import { useProductContext } from "../../../context/ProductContext";
 import Toast from "react-native-toast-message";
 import { useToastContext } from "../../../context/ToastContext";
+import { useUserContext } from "../../../context/UserContext";
 
 const ProductInfoScreen = ({ route, navigation }: ProductInfoScreenProp) => {
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
@@ -21,6 +22,18 @@ const ProductInfoScreen = ({ route, navigation }: ProductInfoScreenProp) => {
   const params = route.params;
 
   const { showToast } = useToastContext();
+  const { user } = useUserContext();
+
+  const handleDeleteProduct = async () => {
+    navigation.goBack();
+    await deleteProductData(
+      params.id,
+      setProductList,
+      products,
+      showToast,
+      user
+    );
+  };
 
   return (
     <View
@@ -47,19 +60,14 @@ const ProductInfoScreen = ({ route, navigation }: ProductInfoScreenProp) => {
       />
       <InfoContainerHorizontal
         label={"Low stock threshold"}
-        value={
-          params.lowStockThreshold ? params.lowStockThreshold.toString() : "2"
-        }
+        value={params.lowStockThreshold.toString()}
       />
 
       <ConfirmationModal
         isVisible={isConfirmationModalVisible}
         setIsVisible={setIsConfirmationModalVisible}
         cancelFn={() => setIsConfirmationModalVisible(false)}
-        confirmFn={() => {
-          deleteProductData(params.id, setProductList, products, showToast);
-          navigation.goBack();
-        }}
+        confirmFn={async () => await handleDeleteProduct()}
         confirmationTitle={`Delete product "${params.productName}"`}
         confirmationDescription="Do you want to delete this product?"
       />

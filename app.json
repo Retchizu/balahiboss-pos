@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "Retchi",
-    "slug": "sales-tracker-for-android-ios",
-    "version": "2.3.1.7",
+    "slug": "retchi",
+    "version": "2.4.0.8",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -10,9 +10,6 @@
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
@@ -36,11 +33,12 @@
         {
           "isAccessMediaLocationEnabled": true
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "extra": {
       "eas": {
-        "projectId": "67a00f60-929f-4110-8d9c-d5b57ca1fb1c"
+        "projectId": "98f9aed9-d403-41e5-841e-b62155cbbe72"
       }
     }
   }

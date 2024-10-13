@@ -1,21 +1,20 @@
-import { auth, db } from "../../firebaseConfig";
-import { Product, SalesReport } from "../../types/type";
+import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebaseConfig";
+import { Product, SalesReport, User } from "../../types/type";
+import { ToastType } from "react-native-toast-message";
 
 export const deleteSalesReportData = async (
   salesReportId: string,
   salesReports: SalesReport[],
   setSalesReportList: (newSalesReportList: SalesReport[]) => void,
   products: Product[],
-  updateProduct: (productId: String, attribute: Partial<Product>) => void
+  updateProduct: (productId: String, attribute: Partial<Product>) => void,
+  showToast: (type: ToastType, text1: string, text2?: string) => void,
+  user: User | null
 ) => {
   try {
-    const user = auth.currentUser;
-    await db
-      .collection("users")
-      .doc(user?.uid)
-      .collection("sales")
-      .doc(salesReportId)
-      .delete();
+    const salesReportRef = doc(db, "users", user?.uid!, "sales", salesReportId);
+    await deleteDoc(salesReportRef);
 
     const currentSalesReport = salesReports.find(
       (salesReport) => salesReport.id === salesReportId
@@ -24,29 +23,37 @@ export const deleteSalesReportData = async (
       (element) => element.id !== salesReportId
     );
 
-    currentSalesReport?.selectedProduct.map((selectedProduct) => {
-      const productInList = products.find(
-        (product) => product.id === selectedProduct.id
-      );
-      if (productInList) {
-        const retrievedProductStock =
-          productInList.stock + selectedProduct.quantity;
-        updateProduct(productInList.id, {
-          stock: retrievedProductStock,
-        });
-
-        db.collection("users")
-          .doc(user?.uid)
-          .collection("products")
-          .doc(productInList.id)
-          .update({
+    const salesReportPromises = currentSalesReport?.selectedProduct.map(
+      async (selectedProduct) => {
+        const productInList = products.find(
+          (product) => product.id === selectedProduct.id
+        );
+        if (productInList) {
+          const retrievedProductStock =
+            productInList.stock + selectedProduct.quantity;
+          updateProduct(productInList.id, {
             stock: retrievedProductStock,
           });
+
+          const productRef = doc(
+            db,
+            "users",
+            user?.uid!,
+            "products",
+            productInList.id
+          );
+          await updateDoc(productRef, {
+            stock: retrievedProductStock,
+          });
+        }
+        setSalesReportList(updatedData);
+        console.log("Deleted Successfully");
+        showToast("success", "Invoice deleted sucessfully");
       }
-      setSalesReportList(updatedData);
-      console.log("Deleted Successfully");
-    });
+    );
+
+    await Promise.all(salesReportPromises || []);
   } catch (error) {
-    //display error
+    showToast("error", "Error occured", "Try again later");
   }
 };

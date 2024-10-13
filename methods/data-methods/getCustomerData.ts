@@ -1,19 +1,18 @@
-import { auth, db } from "../../firebaseConfig";
-import { Customer } from "../../types/type";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebaseConfig";
+import { Customer, User } from "../../types/type";
 
 export const getCustomerData = async (
-  setCustomerList: (newCustomerList: Customer[]) => void
+  setCustomerList: (newCustomerList: Customer[]) => void,
+  user: User | null
 ) => {
-  const user = auth.currentUser;
   try {
     if (user) {
       const fetched: Customer[] = [];
-      const customerRef = db
-        .collection("users")
-        .doc(user.uid)
-        .collection("customers");
-      const querySnapshot = await customerRef.get();
-      querySnapshot.forEach((doc) => {
+      const customerData = await getDocs(
+        collection(db, "users", user.uid, "customers")
+      );
+      customerData.forEach((doc) => {
         const { customerName, customerInfo } = doc.data();
         fetched.push({
           id: doc.id,

@@ -1,11 +1,13 @@
 import { ToastType } from "react-native-toast-message";
-import { auth, db } from "../../firebaseConfig";
+import { db } from "../../firebaseConfig";
 import {
   InvoiceForm,
   Product,
   SalesReport,
   SelectedProduct,
+  User,
 } from "../../types/type";
+import { doc, updateDoc } from "firebase/firestore";
 
 export const updateSalesReportData = async (
   salesReportId: string,
@@ -18,19 +20,15 @@ export const updateSalesReportData = async (
     attribute: Partial<SalesReport>
   ) => void,
   originalSelectedProducts: SelectedProduct[],
-  showToast: (type: ToastType, text1: string, text2?: string) => void
+  showToast: (type: ToastType, text1: string, text2?: string) => void,
+  user: User | null
 ) => {
   try {
-    const user = auth.currentUser;
-    await db
-      .collection("users")
-      .doc(user?.uid)
-      .collection("sales")
-      .doc(salesReportId)
-      .update({
-        selectedProducts: selectedProducts,
-        invoiceForm: invoiceForm,
-      });
+    const salesReportRef = doc(db, "users", user?.uid!, "sales", salesReportId);
+    await updateDoc(salesReportRef, {
+      selectedProducts: selectedProducts,
+      invoiceForm: invoiceForm,
+    });
 
     updateSalesReport(salesReportId, {
       selectedProduct: selectedProducts,
@@ -44,13 +42,15 @@ export const updateSalesReportData = async (
         );
         if (itemInProductList) {
           const reduceStockInProduct = itemInProductList.stock - item.quantity;
-          const productRef = db
-            .collection("users")
-            .doc(user?.uid)
-            .collection("products")
-            .doc(itemInProductList.id);
+          const productRef = doc(
+            db,
+            "users",
+            user?.uid!,
+            "products",
+            itemInProductList.id
+          );
 
-          await productRef.update({
+          await updateDoc(productRef, {
             stock: reduceStockInProduct,
           });
 
@@ -71,12 +71,14 @@ export const updateSalesReportData = async (
             (selectedProduct) => selectedProduct.id === itemInProductList.id
           );
           if (!isInCurrentSelectedProducts) {
-            const productRef = db
-              .collection("users")
-              .doc(user?.uid)
-              .collection("products")
-              .doc(itemInProductList.id);
-            await productRef.update({
+            const productRef = doc(
+              db,
+              "users",
+              user?.uid!,
+              "products",
+              itemInProductList.id
+            );
+            await updateDoc(productRef, {
               stock: itemInProductList.stock,
             });
             updateProduct(itemInProductList.id, {

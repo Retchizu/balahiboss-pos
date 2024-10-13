@@ -21,6 +21,9 @@ import { updateSalesReportData } from "../../../../methods/data-methods/updateSa
 import { useSalesReportContext } from "../../../../context/SalesReportContext";
 import { CommonActions } from "@react-navigation/native";
 import { useToastContext } from "../../../../context/ToastContext";
+import { useUserContext } from "../../../../context/UserContext";
+import { filterSearchForCustomer } from "../../../../methods/search-filters/fitlerSearchForCustomer";
+import Toast from "react-native-toast-message";
 
 const EditCustomerReportScreen = ({
   route,
@@ -51,6 +54,7 @@ const EditCustomerReportScreen = ({
   const [mode, setMode] = useState<"date" | "time">("date");
 
   const { showToast } = useToastContext();
+  const { user } = useUserContext();
 
   useEffect(() => {
     setProductListInEditScreen(
@@ -59,6 +63,11 @@ const EditCustomerReportScreen = ({
       selectedProductsInEdit
     );
   }, []);
+
+  const filteredCustomerData = filterSearchForCustomer(
+    customers,
+    customerSearchQuery
+  );
 
   return (
     <View style={styles.container}>
@@ -81,8 +90,8 @@ const EditCustomerReportScreen = ({
             deliveryFee: "",
           })
         }
-        submitSummaryFormFn={() => {
-          updateSalesReportData(
+        submitSummaryFormFn={async () => {
+          await updateSalesReportData(
             invoiceForm.id,
             invoiceFormInfoEdit,
             selectedProductsInEdit,
@@ -90,7 +99,8 @@ const EditCustomerReportScreen = ({
             updateProduct,
             updateSalesReport,
             invoiceForm.selectedProducts,
-            showToast
+            showToast,
+            user
           );
           setSelectedProductListInEdit([]);
           navigation.dispatch(
@@ -121,11 +131,12 @@ const EditCustomerReportScreen = ({
       <CustomerListModal
         isVisible={isCustomerListVisible}
         setIsVisible={() => setIsCustomerListVisible(!isCustomerListVisible)}
-        customers={customers}
+        customers={filteredCustomerData}
         setCustomerList={setCustomerList}
         searchQuery={customerSearchQuery}
         setSearchQuery={setCustomerSearchQuery}
         setInvoiceFormInfo={setInvoiceFormInfoEdit}
+        user={user}
       />
       {isDateVisible && (
         <DateTimePicker
@@ -141,6 +152,7 @@ const EditCustomerReportScreen = ({
           )}
         />
       )}
+      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };
