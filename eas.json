@@ -16,7 +16,7 @@
     "production": {
       "android": {
         "buildType": "apk",
-        "gradleCommand": "assembleRelease"
+        "gradleCommand": "app:assembleRelease"
       },
       "autoIncrement": true
     }

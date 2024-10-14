@@ -10,21 +10,18 @@ const MainStack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <>
-      <NavigationContainer>
-        <ToastProvider>
-          <UserProvider>
-            <MainStack.Navigator screenOptions={{ headerShown: false }}>
-              <MainStack.Screen name="Auth Screen" component={AuthScreen} />
-              <MainStack.Screen
-                name="DrawerScreen"
-                component={MainDrawerScreen}
-              />
-            </MainStack.Navigator>
-          </UserProvider>
-        </ToastProvider>
-      </NavigationContainer>
-      <Toast position="bottom" autoHide visibilityTime={2000} />
-    </>
+    <NavigationContainer>
+      <ToastProvider>
+        <UserProvider>
+          <MainStack.Navigator screenOptions={{ headerShown: false }}>
+            <MainStack.Screen name="Auth Screen" component={AuthScreen} />
+            <MainStack.Screen
+              name="DrawerScreen"
+              component={MainDrawerScreen}
+            />
+          </MainStack.Navigator>
+        </UserProvider>
+      </ToastProvider>
+    </NavigationContainer>
   );
 }
