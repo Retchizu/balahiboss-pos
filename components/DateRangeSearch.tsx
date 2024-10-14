@@ -18,6 +18,7 @@ type DateRangeSearchProp = {
   showToast: (type: ToastType, text1: string, text2?: string) => void;
   setSalesReportList: (newSalesReportList: SalesReport[]) => void;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: boolean;
   user: User | null;
 };
 
@@ -29,6 +30,7 @@ const DateRangeSearch = ({
   showToast,
   setSalesReportList,
   setIsLoading,
+  loading,
   user,
 }: DateRangeSearchProp) => {
   return (
@@ -64,6 +66,7 @@ const DateRangeSearch = ({
             );
           else showToast("error", "Date range incomplete");
         }}
+        loading={loading}
       />
     </View>
   );

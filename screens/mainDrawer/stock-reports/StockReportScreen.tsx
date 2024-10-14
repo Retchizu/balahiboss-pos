@@ -16,6 +16,7 @@ import Toast from "react-native-toast-message";
 import { useToastContext } from "../../../context/ToastContext";
 import CurrentStockTotalVIew from "../../../components/CurrentStockTotalVIew";
 import DateRangeSearch from "../../../components/DateRangeSearch";
+import { useUserContext } from "../../../context/UserContext";
 
 const StockReportScreen = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -32,6 +33,7 @@ const StockReportScreen = () => {
   const filteredData = filterSearchForPoduct(products, searchQuery);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useUserContext();
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -68,6 +70,8 @@ const StockReportScreen = () => {
         setSalesReportList={setSalesReportList}
         showToast={showToast}
         setIsLoading={setIsLoading}
+        loading={isLoading}
+        user={user}
       />
       <StockReportList data={filteredData} salesReport={salesReports} />
       <Toast position="bottom" autoHide visibilityTime={2000} />
