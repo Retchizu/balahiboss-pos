@@ -1,5 +1,4 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from "expo-secure-store";
 import { auth } from "../../firebaseConfig";
 import {
   CommonActions,
@@ -21,14 +20,10 @@ export const signOut = async (
 ) => {
   try {
     await auth.signOut();
-
     const email = await AsyncStorage.getItem("email");
     const password = await AsyncStorage.getItem("password");
     if (email) await AsyncStorage.removeItem("email");
     if (password) await AsyncStorage.removeItem("password");
-
-    await SecureStore.deleteItemAsync("email");
-    await SecureStore.deleteItemAsync("password");
     signUser(null);
 
     navigation.dispatch(

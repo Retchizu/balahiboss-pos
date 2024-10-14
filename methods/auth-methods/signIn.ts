@@ -1,4 +1,3 @@
-import * as SecureStore from "expo-secure-store";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { ToastType } from "react-native-toast-message";
 import { User } from "../../types/type";
@@ -30,8 +29,6 @@ export const signIn = async (
     };
 
     if (user) {
-      SecureStore.setItem("email", userCredential.email);
-      SecureStore.setItem("password", userCredential.password);
       signUser(user);
       navigation.replace("DrawerScreen");
     }

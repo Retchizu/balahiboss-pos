@@ -4,7 +4,6 @@ import { AuthScreen } from "./navigation-containers/AuthStack";
 import { MainDrawerScreen } from "./navigation-containers/MainDrawer";
 import { ToastProvider } from "./context/ToastContext";
 import { UserProvider } from "./context/UserContext";
-import Toast from "react-native-toast-message";
 
 const MainStack = createNativeStackNavigator();
 

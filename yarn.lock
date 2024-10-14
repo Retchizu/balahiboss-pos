@@ -3909,11 +3909,6 @@ expo-print@~13.0.1:
   resolved "https://registry.yarnpkg.com/expo-print/-/expo-print-13.0.1.tgz#2fe419593aa812642f4ad7057928d2e712578e97"
   integrity sha512-o8LuCguGrkyC5RaWEfL5N2J0V9mfbZ3GVzLpaf3KU5RrdYzGEjoiv4xlhVVzh/++hMUqOgnIrtF7tzWYhwu/7g==
 
-expo-secure-store@~13.0.2:
-  version "13.0.2"
-  resolved "https://registry.yarnpkg.com/expo-secure-store/-/expo-secure-store-13.0.2.tgz#ba8f6076fc38062a28bb2ce5edab9cd28ef88598"
-  integrity sha512-3QYgoneo8p8yeeBPBiAfokNNc2xq6+n8+Ob4fAlErEcf4H7Y72LH+K/dx0nQyWau2ZKZUXBxyyfuHFyVKrEVLg==
-
 expo-sharing@~12.0.1:
   version "12.0.1"
   resolved "https://registry.yarnpkg.com/expo-sharing/-/expo-sharing-12.0.1.tgz#6c4d951beda47dac47112e679d60fc06c233b7aa"
