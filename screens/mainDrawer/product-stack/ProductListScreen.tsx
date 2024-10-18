@@ -23,6 +23,8 @@ const ProductListScreen = ({ navigation }: ProductListScreenProp) => {
           placeholder="Search product..."
           onChangeText={(text) => setSearchQuery(text)}
           value={searchQuery}
+          setSearchBarValue={setSearchQuery}
+          searchBarValue={searchQuery}
         />
         <TouchableOpacity
           style={{ padding: wp(2) }}

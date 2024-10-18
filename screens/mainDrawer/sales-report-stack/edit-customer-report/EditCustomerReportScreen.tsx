@@ -19,11 +19,12 @@ import { useProductInEditContext } from "../../../../context/ProductInEditContex
 import { useProductContext } from "../../../../context/ProductContext";
 import { updateSalesReportData } from "../../../../methods/data-methods/updateSalesReportData";
 import { useSalesReportContext } from "../../../../context/SalesReportContext";
-import { CommonActions } from "@react-navigation/native";
 import { useToastContext } from "../../../../context/ToastContext";
 import { useUserContext } from "../../../../context/UserContext";
 import { filterSearchForCustomer } from "../../../../methods/search-filters/fitlerSearchForCustomer";
 import Toast from "react-native-toast-message";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { submitSummaryReportInEdit } from "../../../../methods/submit-sales-method/submitSummaryReportInEdit";
 
 const EditCustomerReportScreen = ({
   route,
@@ -49,9 +50,10 @@ const EditCustomerReportScreen = ({
   const { customers, setCustomerList } = useCustomerContext();
   const [isCustomerListVisible, setIsCustomerListVisible] = useState(false);
   const [customerSearchQuery, setCustomerSearchQuery] = useState("");
+  const [isLoadingCustomerFetch, setIsLoadingCustomerFetch] = useState(false);
   //date
   const [isDateVisible, setIsDateVisible] = useState(false);
-  const [mode, setMode] = useState<"date" | "time">("date");
+  const [isTimeVisible, setIsTimeVisible] = useState(false);
 
   const { showToast } = useToastContext();
   const { user } = useUserContext();
@@ -71,63 +73,46 @@ const EditCustomerReportScreen = ({
 
   return (
     <View style={styles.container}>
-      <SummaryForm
-        invoiceFormInfo={invoiceFormInfoEdit}
-        setInvoiceFormInfo={setInvoiceFormInfoEdit}
-        selectedProducts={selectedProductsInEdit}
-        customerModalVisibleFn={() => {
-          setIsCustomerListVisible(true);
-        }}
-        dateInvoiceFn={() => setIsDateVisible(true)}
-        deleteInputValuesFn={() =>
-          setInvoiceFormInfoEdit({
-            cashPayment: "",
-            onlinePayment: "",
-            customer: null,
-            date: null,
-            discount: "",
-            freebies: "",
-            deliveryFee: "",
-          })
-        }
-        submitSummaryFormFn={async () => {
-          await updateSalesReportData(
-            invoiceForm.id,
-            invoiceFormInfoEdit,
-            selectedProductsInEdit,
-            productsInEdit,
-            updateProduct,
-            updateSalesReport,
-            invoiceForm.selectedProducts,
-            showToast,
-            user
-          );
-          setSelectedProductListInEdit([]);
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 1,
-              routes: [
-                { name: "SalesReportScreen" },
-                {
-                  name: "CustomerReportScreen",
-                  params: {
-                    id: invoiceForm.id,
-                    cashPayment: invoiceFormInfoEdit.cashPayment,
-                    onlinePayment: invoiceFormInfoEdit.onlinePayment,
-                    customer: invoiceFormInfoEdit.customer,
-                    date: invoiceFormInfoEdit.date?.toISOString(),
-                    discount: invoiceFormInfoEdit.discount,
-                    freebies: invoiceFormInfoEdit.freebies,
-                    deliveryFee: invoiceFormInfoEdit.deliveryFee,
-                    selectedProducts: selectedProductsInEdit,
-                    fromSales: true,
-                  },
-                },
-              ],
-            })
-          );
-        }}
-      />
+      <View>
+        <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
+          <SummaryForm
+            invoiceFormInfo={invoiceFormInfoEdit}
+            setInvoiceFormInfo={setInvoiceFormInfoEdit}
+            selectedProducts={selectedProductsInEdit}
+            customerModalVisibleFn={() => {
+              setIsCustomerListVisible(true);
+            }}
+            dateInvoiceFn={() => setIsDateVisible(true)}
+            timeInvoiceFn={() => setIsTimeVisible(true)}
+            deleteInputValuesFn={() =>
+              setInvoiceFormInfoEdit({
+                cashPayment: "",
+                onlinePayment: "",
+                customer: null,
+                date: null,
+                discount: "",
+                freebies: "",
+                deliveryFee: "",
+              })
+            }
+            submitSummaryFormFn={() =>
+              submitSummaryReportInEdit(
+                selectedProductsInEdit,
+                setSelectedProductListInEdit,
+                invoiceFormInfoEdit,
+                navigation,
+                updateSalesReportData,
+                invoiceForm,
+                productsInEdit,
+                updateProduct,
+                updateSalesReport,
+                showToast,
+                user
+              )
+            }
+          />
+        </KeyboardAwareScrollView>
+      </View>
       <CustomerListModal
         isVisible={isCustomerListVisible}
         setIsVisible={() => setIsCustomerListVisible(!isCustomerListVisible)}
@@ -137,18 +122,31 @@ const EditCustomerReportScreen = ({
         setSearchQuery={setCustomerSearchQuery}
         setInvoiceFormInfo={setInvoiceFormInfoEdit}
         user={user}
+        showToast={showToast}
+        setIsLoadingCustomerFetch={setIsLoadingCustomerFetch}
       />
       {isDateVisible && (
         <DateTimePicker
           value={
             invoiceFormInfoEdit.date ? invoiceFormInfoEdit.date : new Date()
           }
-          mode={mode}
+          mode={"date"}
           onChange={onChangeDateInvoice(
             setIsDateVisible,
-            setInvoiceFormInfoEdit,
-            mode,
-            setMode
+            setInvoiceFormInfoEdit
+          )}
+        />
+      )}
+
+      {isTimeVisible && (
+        <DateTimePicker
+          value={
+            invoiceFormInfoEdit.date ? invoiceFormInfoEdit.date : new Date()
+          }
+          mode={"time"}
+          onChange={onChangeDateInvoice(
+            setIsTimeVisible,
+            setInvoiceFormInfoEdit
           )}
         />
       )}

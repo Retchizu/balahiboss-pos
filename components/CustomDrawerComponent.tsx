@@ -23,29 +23,36 @@ const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
   const { signUser, user } = useUserContext();
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Text style={styles.drawerHeaderTitle}>Retchi POS</Text>
       <Image
         source={require("../assets/icon-transparent.png")}
         style={{ width: wp(30), height: wp(30), alignSelf: "center" }}
       />
+      <Text style={styles.drawerHeaderTitle}>Retchi POS</Text>
       <Text style={styles.displayNameStyle}>{user?.displayName}</Text>
       <DrawerContentScrollView scrollEnabled={false}>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
 
-      <View style={{ marginBottom: hp(3) }}>
+      <View
+        style={{
+          marginBottom: hp(1),
+          flexDirection: "row",
+          borderTopWidth: wp(0.2),
+          borderColor: "#634F40",
+          paddingHorizontal: wp(3.5),
+        }}
+      >
+        <Ionicons
+          name="exit-outline"
+          size={26}
+          color="#634F40"
+          style={{ alignSelf: "center", top: hp(0.2) }}
+        />
+
         <DrawerItem
-          style={{ borderTopWidth: wp(0.1) }}
+          style={{ flex: 1 }}
           label={() => <Text style={styles.drawerLabelStyle}>Sign out</Text>}
           onPress={() => signOut(navigation, signUser, showToast)}
-          icon={() => (
-            <Ionicons
-              name="exit-outline"
-              size={30}
-              color="#634F40"
-              style={{ alignSelf: "center" }}
-            />
-          )}
         />
       </View>
     </SafeAreaView>
@@ -62,8 +69,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   drawerLabelStyle: {
+    textAlignVertical: "top",
     fontFamily: "SoraSemiBold",
-    fontSize: wp(5),
+    fontSize: wp(4),
     color: "#634F40",
   },
   displayNameStyle: {

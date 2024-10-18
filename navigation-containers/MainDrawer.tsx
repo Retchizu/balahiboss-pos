@@ -42,7 +42,7 @@ export const MainDrawerScreen = () => (
                   headerTintColor: "#634F40",
                   drawerLabelStyle: {
                     fontFamily: "SoraSemiBold",
-                    fontSize: wp(4.5),
+                    fontSize: wp(3.8),
                     color: "#634F40",
                   },
                   drawerActiveBackgroundColor: "#E6B794",

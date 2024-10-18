@@ -20,10 +20,6 @@ export const signOut = async (
 ) => {
   try {
     await auth.signOut();
-    const email = await AsyncStorage.getItem("email");
-    const password = await AsyncStorage.getItem("password");
-    if (email) await AsyncStorage.removeItem("email");
-    if (password) await AsyncStorage.removeItem("password");
     signUser(null);
 
     navigation.dispatch(

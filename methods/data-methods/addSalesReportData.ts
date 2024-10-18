@@ -13,7 +13,7 @@ export const addSalesReportData = async (
   selectedProducts: SelectedProduct[],
   invoiceForm: InvoiceForm,
   products: Product[],
-  updateProduct: (productId: String, attribute: Partial<Product>) => void,
+  updateProduct: (productId: string, attribute: Partial<Product>) => void,
   addSalesReport: (newReport: SalesReport) => void,
   showToast: (type: ToastType, text1: string, text2?: string) => void,
   user: User | null
@@ -60,7 +60,6 @@ export const addSalesReportData = async (
 
     addSalesReport(newSalesReport);
     showToast("success", "Invoice added successfully");
-    return;
   } catch (error) {
     showToast("error", "Error occured", `${(error as Error).message}`);
     console.log(`${(error as Error).message}`);

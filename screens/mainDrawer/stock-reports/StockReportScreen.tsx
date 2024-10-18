@@ -10,7 +10,6 @@ import { onChangeDateRange } from "../../../methods/time-methods/onChangeDate";
 import StockReportList from "../../../components/StockReportList";
 import { useProductContext } from "../../../context/ProductContext";
 import { useSalesReportContext } from "../../../context/SalesReportContext";
-import { getSalesReportData } from "../../../methods/data-methods/getSalesReportData";
 import { filterSearchForPoduct } from "../../../methods/search-filters/filterSearchForProduct";
 import Toast from "react-native-toast-message";
 import { useToastContext } from "../../../context/ToastContext";
@@ -61,6 +60,8 @@ const StockReportScreen = () => {
         placeholder="Search a product..."
         onChangeText={(text) => setSearchQuery(text)}
         value={searchQuery}
+        setSearchBarValue={setSearchQuery}
+        searchBarValue={searchQuery}
       />
       <DateRangeSearch
         startDate={startDate}

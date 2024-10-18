@@ -1,4 +1,10 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import Searchbar from "../../../components/Searchbar";
 import {
@@ -13,14 +19,17 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { CustomerListScreenProp } from "../../../types/type";
 import Toast from "react-native-toast-message";
 import { useUserContext } from "../../../context/UserContext";
+import { useToastContext } from "../../../context/ToastContext";
 
 const CustomerListScreen = ({ navigation }: CustomerListScreenProp) => {
   const { customers, setCustomerList } = useCustomerContext();
   const [searchQuery, setSearchQuery] = useState("");
   const { user } = useUserContext();
+  const [isLoading, setIsLoading] = useState(false);
+  const { showToast } = useToastContext();
 
   useEffect(() => {
-    getCustomerData(setCustomerList, user);
+    getCustomerData(setCustomerList, user, setIsLoading, showToast);
   }, []);
 
   const filteredData = filterSearchForCustomer(customers, searchQuery);
@@ -31,6 +40,8 @@ const CustomerListScreen = ({ navigation }: CustomerListScreenProp) => {
           placeholder="Search customer..."
           onChangeText={(text) => setSearchQuery(text)}
           value={searchQuery}
+          setSearchBarValue={setSearchQuery}
+          searchBarValue={searchQuery}
         />
         <TouchableOpacity
           style={{ padding: wp(2) }}
@@ -39,8 +50,16 @@ const CustomerListScreen = ({ navigation }: CustomerListScreenProp) => {
           <AntDesign name="adduser" size={24} color="#634F40" />
         </TouchableOpacity>
       </View>
+      {isLoading ? (
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <ActivityIndicator color={"#634F40"} size={wp(10)} />
+        </View>
+      ) : (
+        <>
+          <CustomerList data={filteredData} navigation={navigation} />
+        </>
+      )}
 
-      <CustomerList data={filteredData} navigation={navigation} />
       <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );

@@ -5,7 +5,7 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { memo, useCallback } from "react";
 import { Product, ProductStackParamList } from "../types/type";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
@@ -22,27 +22,35 @@ type ProductListProp = {
 };
 
 const ProductList = ({ data, navigation }: ProductListProp) => {
+  const renderProductList = useCallback(
+    ({ item }: { item: Product }) => (
+      <TouchableOpacity
+        style={styles.productContainer}
+        activeOpacity={0.5}
+        onPress={() => navigation.navigate("ProductInfoScreen", item)}
+      >
+        <Text style={styles.productTitle}>{item.productName}</Text>
+        <Text style={styles.productDetail}>Price: ₱{item.sellPrice}</Text>
+        <Text style={styles.productDetail}>Stock: {item.stock}</Text>
+      </TouchableOpacity>
+    ),
+    [data]
+  );
   return (
     <View style={{ flex: 1 }}>
       <FlatList
         data={data}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.productContainer}
-            activeOpacity={0.5}
-            onPress={() => navigation.navigate("ProductInfoScreen", item)}
-          >
-            <Text style={styles.productTitle}>{item.productName}</Text>
-            <Text style={styles.productDetail}>Price: ₱{item.sellPrice}</Text>
-            <Text style={styles.productDetail}>Stock: {item.stock}</Text>
-          </TouchableOpacity>
-        )}
+        renderItem={renderProductList}
+        initialNumToRender={10}
+        maxToRenderPerBatch={5}
+        windowSize={5}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
 };
 
-export default ProductList;
+export default memo(ProductList);
 
 const styles = StyleSheet.create({
   productContainer: {

@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { memo, useCallback } from "react";
 import { Product, SalesReport, SelectedProduct } from "../types/type";
 import { calculateTotalStockSold } from "../methods/calculation-methods/calculateTotalStockSold";
 import { calculateTotalStockAmount } from "../methods/calculation-methods/calculateTotalStockAmount";
@@ -14,6 +14,35 @@ type StockReportListProp = {
 };
 
 const StockReportList = ({ data, salesReport }: StockReportListProp) => {
+  const renderStockReportList = useCallback(
+    ({ item }: { item: Product }) => (
+      <View style={styles.rowFormat}>
+        <Text style={[styles.valueStyle, { flex: 2, maxWidth: wp(30) }]}>
+          {item.productName}
+        </Text>
+        <Text
+          style={[
+            styles.valueStyle,
+            { color: "blue", flex: 1, textAlign: "center" },
+          ]}
+        >
+          {item.stock}
+        </Text>
+        <Text style={[styles.valueStyle, { flex: 1, textAlign: "center" }]}>
+          {calculateTotalStockSold(salesReport, item.id).toString()}
+        </Text>
+        <Text
+          style={
+            (styles.valueStyle,
+            { flex: 1.5, textAlign: "right", fontFamily: "SoraSemiBold" })
+          }
+        >
+          ₱ {calculateTotalStockAmount(item).toFixed(2)}
+        </Text>
+      </View>
+    ),
+    [salesReport, data]
+  );
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -52,38 +81,17 @@ const StockReportList = ({ data, salesReport }: StockReportListProp) => {
       </View>
       <FlatList
         data={data}
-        renderItem={({ item }) => (
-          <View style={styles.rowFormat}>
-            <Text style={[styles.valueStyle, { flex: 2, maxWidth: wp(30) }]}>
-              {item.productName}
-            </Text>
-            <Text
-              style={[
-                styles.valueStyle,
-                { color: "blue", flex: 1, textAlign: "center" },
-              ]}
-            >
-              {item.stock}
-            </Text>
-            <Text style={[styles.valueStyle, { flex: 1, textAlign: "center" }]}>
-              {calculateTotalStockSold(salesReport, item.id).toString()}
-            </Text>
-            <Text
-              style={
-                (styles.valueStyle,
-                { flex: 1.5, textAlign: "right", fontFamily: "SoraSemiBold" })
-              }
-            >
-              ₱ {calculateTotalStockAmount(item).toFixed(2)}
-            </Text>
-          </View>
-        )}
+        renderItem={renderStockReportList}
+        initialNumToRender={10}
+        maxToRenderPerBatch={5}
+        windowSize={5}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
 };
 
-export default StockReportList;
+export default memo(StockReportList);
 
 const styles = StyleSheet.create({
   rowFormat: {

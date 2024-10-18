@@ -89,6 +89,8 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
           placeholder="Search a sales report..."
           onChangeText={(text) => setSearchQuery(text)}
           value={searchQuery}
+          setSearchBarValue={setSearchQuery}
+          searchBarValue={searchQuery}
         />
         <Button
           buttonStyle={[styles.buttonStyle, { backgroundColor: "#F3F0E9" }]}
@@ -107,6 +109,7 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
         showToast={showToast}
         setIsLoading={setIsLoading}
         user={user}
+        loading={isLoading}
       />
 
       {isLoading ? (

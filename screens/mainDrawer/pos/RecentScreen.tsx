@@ -89,6 +89,7 @@ const RecentScreen = ({ navigation }: RecentScreenProp) => {
               </Text>
             </TouchableOpacity>
           )}
+          showsVerticalScrollIndicator={false}
         />
       ) : (
         <View style={styles.messageContainer}>

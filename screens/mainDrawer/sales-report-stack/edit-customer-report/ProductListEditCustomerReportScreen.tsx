@@ -31,6 +31,8 @@ const ProductListEditCustomerReportScreen = () => {
         placeholder="Search a product..."
         value={searchQuery}
         onChangeText={(text) => setSearchQuery(text)}
+        setSearchBarValue={setSearchQuery}
+        searchBarValue={searchQuery}
       />
       <ProductPOSList
         selectedProducts={selectedProductsInEdit}

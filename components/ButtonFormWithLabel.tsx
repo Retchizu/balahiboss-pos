@@ -1,4 +1,11 @@
-import { StyleSheet, Text, TextProps, View } from "react-native";
+import {
+  StyleProp,
+  StyleSheet,
+  Text,
+  TextProps,
+  View,
+  ViewStyle,
+} from "react-native";
 import React from "react";
 import { Button, ButtonProps } from "@rneui/base";
 import {
@@ -9,14 +16,15 @@ import {
 type ButtonFormWithLabelProps = ButtonProps &
   TextProps & {
     formLabel: string;
+    viewStyle?: StyleProp<ViewStyle>;
   };
 
 const ButtonFormWithLabel: React.FC<ButtonFormWithLabelProps> = (props) => {
-  const { formLabel, ...restProps } = props;
+  const { formLabel, viewStyle, ...restProps } = props;
   const buttonProps: ButtonProps = restProps;
   const textProps: TextProps = restProps;
   return (
-    <View style={styles.buttonFormContainer}>
+    <View style={viewStyle}>
       <Text style={styles.labelStyle} {...textProps}>
         {formLabel}:{" "}
       </Text>
@@ -33,11 +41,6 @@ const ButtonFormWithLabel: React.FC<ButtonFormWithLabelProps> = (props) => {
 export default ButtonFormWithLabel;
 
 const styles = StyleSheet.create({
-  buttonFormContainer: {
-    flexDirection: "row",
-    marginVertical: hp(0.5),
-    alignItems: "center",
-  },
   labelStyle: {
     flex: 1.5,
     fontFamily: "SoraMedium",
@@ -49,7 +52,9 @@ const styles = StyleSheet.create({
   titleStyle: {
     fontFamily: "SoraSemiBold",
     color: "#F3F0E9",
-    fontSize: wp(3.5),
+    fontSize: wp(3),
+    height: hp(2.7),
+    bottom: hp(0.5),
   },
   buttonStyle: {
     backgroundColor: "#E6B794",

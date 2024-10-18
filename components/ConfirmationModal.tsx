@@ -31,19 +31,30 @@ const ConfirmationModal = ({
     >
       <View style={styles.mainContainer}>
         <View style={styles.childContainer}>
-          <Text style={styles.confirmationTitleStyle}>{confirmationTitle}</Text>
+          <View
+            style={{
+              borderBottomWidth: wp(0.5),
+              paddingBottom: hp(1),
+              borderColor: "#634F40",
+            }}
+          >
+            <Text style={styles.confirmationTitleStyle}>
+              {confirmationTitle}
+            </Text>
+          </View>
+
           <Text style={styles.confirmatioDescriptionStyle}>
             {confirmationDescription}
           </Text>
           <View style={styles.buttonContainer}>
             <Button
               buttonStyle={styles.buttonStyle}
-              icon={<Entypo name="cross" size={24} color="#F3F0E9" />}
+              title={"Cancel"}
               onPress={() => cancelFn()}
             />
             <Button
               buttonStyle={styles.buttonStyle}
-              icon={<Entypo name="check" size={24} color="#F3F0E9" />}
+              title={"Confirm"}
               onPress={() => confirmFn()}
             />
           </View>
@@ -79,6 +90,7 @@ const styles = StyleSheet.create({
   confirmatioDescriptionStyle: {
     fontFamily: "SoraSemiBold",
     fontSize: wp(3.5),
+    paddingVertical: hp(1),
   },
   buttonContainer: {
     flexDirection: "row",

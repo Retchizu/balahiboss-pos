@@ -12,13 +12,25 @@ import {
 } from "react-native-responsive-screen";
 import Entypo from "@expo/vector-icons/Entypo";
 
-type SearchbarProps = TextInputProps;
+type SearchbarProps = TextInputProps & {
+  setSearchBarValue: React.Dispatch<React.SetStateAction<string>>;
+  searchBarValue: string;
+};
 
 const Searchbar: React.FC<SearchbarProps> = (props) => {
+  const { setSearchBarValue, searchBarValue, ...textInputProp } = props;
   return (
     <View style={styles.textInputContainer}>
       <Entypo name="magnifying-glass" size={24} color="#E6B794" />
-      <TextInput style={styles.textInputStyle} {...props} />
+      <TextInput style={styles.textInputStyle} {...textInputProp} />
+      {searchBarValue.trim() && (
+        <Entypo
+          name="cross"
+          size={24}
+          color="#E6B794"
+          onPress={() => setSearchBarValue("")}
+        />
+      )}
     </View>
   );
 };

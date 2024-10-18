@@ -1,10 +1,4 @@
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import {
   widthPercentageToDP as wp,
@@ -20,6 +14,7 @@ import { handleInputChange } from "../methods/handleInputChange";
 import { calculateTotalPrice } from "../methods/calculation-methods/calculateTotalPrice";
 import { calculateTotalProfit } from "../methods/calculation-methods/calculateTotalProfit";
 import { readableDate } from "../methods/time-methods/readableDate";
+import { readableTime } from "../methods/time-methods/readableTime";
 
 type SummaryFormProps = {
   invoiceFormInfo: InvoiceForm;
@@ -27,6 +22,7 @@ type SummaryFormProps = {
   deleteInputValuesFn: () => void;
   previewInvoiceFn?: () => void;
   dateInvoiceFn: () => void;
+  timeInvoiceFn: () => void;
   submitSummaryFormFn: () => Promise<void>;
   selectedProducts: SelectedProduct[];
   customerModalVisibleFn: () => void;
@@ -40,141 +36,172 @@ const SummaryForm = ({
   selectedProducts,
   customerModalVisibleFn,
   dateInvoiceFn,
+  timeInvoiceFn,
   submitSummaryFormFn,
 }: SummaryFormProps) => {
   return (
     <View style={styles.summaryFormContainer}>
-      <ScrollView>
-        <View style={styles.summaryHeaderContainer}>
-          <Text style={{ fontFamily: "SoraSemiBold", fontSize: wp(5) }}>
-            Invoice Form
-          </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-            }}
+      <View style={styles.summaryHeaderContainer}>
+        <Text style={{ fontFamily: "SoraSemiBold", fontSize: wp(5) }}>
+          Invoice Form
+        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={{ marginHorizontal: wp(2) }}
+            onPress={() => deleteInputValuesFn()}
           >
+            <MaterialCommunityIcons
+              name="tag-minus"
+              size={26}
+              color="#634F40"
+            />
+          </TouchableOpacity>
+          {previewInvoiceFn && (
             <TouchableOpacity
               activeOpacity={0.7}
-              style={{ marginHorizontal: wp(2) }}
-              onPress={() => deleteInputValuesFn()}
+              style={{ marginHorizontal: wp(1) }}
+              onPress={() => previewInvoiceFn()}
             >
-              <MaterialCommunityIcons
-                name="tag-minus"
-                size={26}
-                color="#634F40"
-              />
+              <Fontisto name="preview" size={26} color="#634F40" />
             </TouchableOpacity>
-            {previewInvoiceFn && (
-              <TouchableOpacity
-                activeOpacity={0.7}
-                style={{ marginHorizontal: wp(1) }}
-                onPress={() => previewInvoiceFn()}
-              >
-                <Fontisto name="preview" size={26} color="#634F40" />
-              </TouchableOpacity>
-            )}
-          </View>
+          )}
         </View>
-
+      </View>
+      <View style={styles.viewWithRows}>
         <InputFormWithLabel
           formLabel="Cash Payment"
-          placeholder="Cash Payment"
-          keyboardType="numeric"
-          value={invoiceFormInfo.cashPayment}
-          onChangeText={(text) =>
-            handleInputChange("cashPayment", text, setInvoiceFormInfo)
-          }
-          contextMenuHidden={true}
+          textInputProp={{
+            placeholder: "Cash Payment",
+            keyboardType: "numeric",
+            value: invoiceFormInfo.cashPayment,
+            onChangeText: (text) =>
+              handleInputChange("cashPayment", text, setInvoiceFormInfo),
+            contextMenuHidden: true,
+          }}
+          viewStyle={styles.viewStyleWithMargin}
         />
         <InputFormWithLabel
           formLabel="Online Payment"
-          placeholder="Online Payment"
-          keyboardType="numeric"
-          value={invoiceFormInfo.onlinePayment}
-          onChangeText={(text) =>
-            handleInputChange("onlinePayment", text, setInvoiceFormInfo)
-          }
-          contextMenuHidden={true}
+          textInputProp={{
+            placeholder: "Online Payment",
+            keyboardType: "numeric",
+            value: invoiceFormInfo.onlinePayment,
+            onChangeText: (text) =>
+              handleInputChange("onlinePayment", text, setInvoiceFormInfo),
+
+            contextMenuHidden: true,
+          }}
+          viewStyle={styles.viewstyleWithoutMargin}
         />
+      </View>
+      <View style={[styles.viewWithRows, { alignItems: "center" }]}>
         <ButtonFormWithLabel
           formLabel="Customer"
           title={invoiceFormInfo.customer?.customerName ?? "Select Customer"}
           onPress={() => customerModalVisibleFn()}
+          viewStyle={styles.viewStyleWithMargin}
         />
+        <InputFormWithLabel
+          formLabel="Delivery Fee"
+          textInputProp={{
+            placeholder: "Delivery Fee",
+            keyboardType: "numeric",
+            value: invoiceFormInfo.deliveryFee,
+            onChangeText: (text) =>
+              handleInputChange("deliveryFee", text, setInvoiceFormInfo),
+            contextMenuHidden: true,
+          }}
+          viewStyle={styles.viewstyleWithoutMargin}
+        />
+      </View>
+      <View style={styles.viewWithRows}>
         <ButtonFormWithLabel
           formLabel="Date"
           title={
             invoiceFormInfo.date ? readableDate(invoiceFormInfo.date) : "Date"
           }
           onPress={() => dateInvoiceFn()}
+          viewStyle={styles.viewStyleWithMargin}
         />
+        <ButtonFormWithLabel
+          formLabel="Time"
+          title={
+            invoiceFormInfo.date ? readableTime(invoiceFormInfo.date) : "Time"
+          }
+          onPress={() => timeInvoiceFn()}
+          viewStyle={styles.viewstyleWithoutMargin}
+        />
+      </View>
+
+      <View style={styles.viewWithRows}>
         <InputFormWithLabel
           formLabel="Discount"
-          placeholder="Discount"
-          keyboardType="numeric"
-          value={invoiceFormInfo.discount}
-          onChangeText={(text) =>
-            handleInputChange("discount", text, setInvoiceFormInfo)
-          }
-          contextMenuHidden={true}
+          textInputProp={{
+            placeholder: "Discount",
+            keyboardType: "numeric",
+            value: invoiceFormInfo.discount,
+            onChangeText: (text) =>
+              handleInputChange("discount", text, setInvoiceFormInfo),
+
+            contextMenuHidden: true,
+          }}
+          viewStyle={styles.viewStyleWithMargin}
         />
+
         <InputFormWithLabel
           formLabel="Freebies"
-          placeholder="Freebies"
-          keyboardType="numeric"
-          value={invoiceFormInfo.freebies}
-          onChangeText={(text) =>
-            handleInputChange("freebies", text, setInvoiceFormInfo)
-          }
-          contextMenuHidden={true}
+          textInputProp={{
+            placeholder: "Freebies",
+            keyboardType: "numeric",
+            value: invoiceFormInfo.freebies,
+            onChangeText: (text) =>
+              handleInputChange("freebies", text, setInvoiceFormInfo),
+            contextMenuHidden: true,
+          }}
+          viewStyle={styles.viewstyleWithoutMargin}
         />
-        <InputFormWithLabel
-          formLabel="Delivery Fee"
-          placeholder="Delivery Fee (for invoice)"
-          keyboardType="numeric"
-          value={invoiceFormInfo.deliveryFee}
-          onChangeText={(text) =>
-            handleInputChange("deliveryFee", text, setInvoiceFormInfo)
-          }
-          contextMenuHidden={true}
-        />
-        <View style={{ flexDirection: "row" }}>
-          <Text style={[styles.label, { flex: 1.5 }]}>Total Price:</Text>
-          <Text style={[styles.label, { flex: 2.5 }]}>
-            ₱{" "}
-            {calculateTotalPrice(
-              selectedProducts,
-              undefined,
-              parseFloat(invoiceFormInfo.discount)
-            ).toFixed(2)}
-          </Text>
-        </View>
+      </View>
 
-        <View style={{ flexDirection: "row" }}>
-          <Text style={[styles.label, { flex: 1.5 }]}>Total Profit:</Text>
-          <Text style={[styles.label, { flex: 2.5 }]}>
-            ₱{" "}
-            {calculateTotalProfit(
-              selectedProducts,
-              parseFloat(
-                invoiceFormInfo.discount.trim() ? invoiceFormInfo.discount : "0"
-              ),
-              parseFloat(
-                invoiceFormInfo.freebies.trim() ? invoiceFormInfo.freebies : "0"
-              )
-            ).toFixed(2)}
-          </Text>
-        </View>
+      <View style={[styles.viewWithRows, { paddingTop: hp(1) }]}>
+        <Text style={[styles.label, { flex: 1.5 }]}>Total Price:</Text>
+        <Text style={[styles.label, { flex: 2.5 }]}>
+          ₱{" "}
+          {calculateTotalPrice(
+            selectedProducts,
+            undefined,
+            parseFloat(invoiceFormInfo.discount)
+          ).toFixed(2)}
+        </Text>
+      </View>
 
-        <Button
-          title={"Confirm"}
-          buttonStyle={styles.buttonStyle}
-          titleStyle={styles.titleStyle}
-          onPress={async () => await submitSummaryFormFn()}
-        />
-      </ScrollView>
+      <View style={styles.viewWithRows}>
+        <Text style={[styles.label, { flex: 1.5 }]}>Total Profit:</Text>
+        <Text style={[styles.label, { flex: 2.5 }]}>
+          ₱{" "}
+          {calculateTotalProfit(
+            selectedProducts,
+            parseFloat(
+              invoiceFormInfo.discount.trim() ? invoiceFormInfo.discount : "0"
+            ),
+            parseFloat(
+              invoiceFormInfo.freebies.trim() ? invoiceFormInfo.freebies : "0"
+            )
+          ).toFixed(2)}
+        </Text>
+      </View>
+
+      <Button
+        title={"Confirm"}
+        buttonStyle={styles.buttonStyle}
+        titleStyle={styles.titleStyle}
+        onPress={async () => await submitSummaryFormFn()}
+      />
     </View>
   );
 };
@@ -185,7 +212,7 @@ const styles = StyleSheet.create({
   summaryFormContainer: {
     borderWidth: wp(0.3),
     borderColor: "#634F40",
-    padding: wp(1),
+    padding: wp(2),
   },
   titleStyle: {
     fontFamily: "SoraSemiBold",
@@ -202,9 +229,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    borderBottomColor: "#634F40",
+    borderBottomWidth: wp(0.2),
+    marginBottom: hp(2),
   },
   label: {
     fontFamily: "SoraMedium",
     fontSize: wp(3.7),
   },
+  viewWithRows: {
+    flexDirection: "row",
+  },
+  viewStyleWithMargin: { flex: 1, marginRight: wp(1) },
+  viewstyleWithoutMargin: { flex: 1 },
 });

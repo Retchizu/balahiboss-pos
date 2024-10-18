@@ -22,7 +22,6 @@ export const EditCustomerReportTabScreen = ({
   route,
 }: EditCustomerReportTabScreenProp) => {
   const params = route.params;
-  const navigation = useNavigation();
   return (
     <EditCustomerReportTab.Navigator
       screenOptions={{
@@ -43,15 +42,6 @@ export const EditCustomerReportTabScreen = ({
         },
         tabBarActiveBackgroundColor: "#E6B794",
         tabBarHideOnKeyboard: true,
-        headerRight: () => (
-          <TouchableOpacity
-            activeOpacity={0.6}
-            style={{ paddingHorizontal: wp(2) }}
-            onPress={() => navigation.goBack()}
-          >
-            <Entypo name="cross" size={30} color="#634F40" />
-          </TouchableOpacity>
-        ),
       }}
     >
       <EditCustomerReportTab.Screen

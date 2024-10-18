@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { memo, useCallback, useEffect, useMemo } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -22,6 +22,7 @@ import { getCustomerData } from "../methods/data-methods/getCustomerData";
 import Searchbar from "./Searchbar";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import Toast, { ToastType } from "react-native-toast-message";
 
 type CustomerListModalProp = {
   isVisible: boolean;
@@ -36,87 +37,109 @@ type CustomerListModalProp = {
   >;
   setInvoiceFormInfo: React.Dispatch<React.SetStateAction<InvoiceForm>>;
   user: User | null;
+  setIsLoadingCustomerFetch: React.Dispatch<React.SetStateAction<boolean>>;
+  showToast: (type: ToastType, text1: string, text2?: string) => void;
 };
 
-const CustomerListModal = ({
-  isVisible,
-  setIsVisible,
-  customers,
-  setCustomerList,
-  searchQuery,
-  setSearchQuery,
-  navigation,
-  setInvoiceFormInfo,
-  user,
-}: CustomerListModalProp) => {
-  useEffect(() => {
-    if (!customers.length) {
-      getCustomerData(setCustomerList, user);
-    }
-  }, []);
-  return (
-    <Modal
-      transparent
-      visible={isVisible}
-      onRequestClose={() => setIsVisible()}
-    >
-      <View style={styles.mainContainer}>
-        <View style={styles.childContainer}>
-          <View
-            style={[
-              styles.headerContainer,
-              { paddingRight: navigation ? wp(10) : 0 },
-            ]}
+const CustomerListModal = memo(
+  ({
+    isVisible,
+    setIsVisible,
+    customers,
+    setCustomerList,
+    searchQuery,
+    setSearchQuery,
+    navigation,
+    setInvoiceFormInfo,
+    user,
+    setIsLoadingCustomerFetch,
+    showToast,
+  }: CustomerListModalProp) => {
+    useEffect(() => {
+      if (!customers.length) {
+        getCustomerData(
+          setCustomerList,
+          user,
+          setIsLoadingCustomerFetch,
+          showToast
+        );
+      }
+    }, []);
+
+    const renderCustomerList = useCallback(
+      ({ item }: { item: Customer }) => (
+        <TouchableOpacity
+          style={styles.customerInfoContainer}
+          activeOpacity={0.5}
+          onPress={() => {
+            setInvoiceFormInfo((prev) => ({ ...prev, customer: item }));
+            setIsVisible();
+          }}
+        >
+          <Text
+            numberOfLines={1}
+            style={{ fontFamily: "SoraSemiBold", fontSize: wp(5) }}
           >
-            <Searchbar
-              placeholder="Search customer..."
-              onChangeText={(text) => setSearchQuery(text)}
-              value={searchQuery}
-            />
-            {navigation && (
-              <TouchableOpacity
-                style={{ padding: wp(2) }}
-                onPress={() => {
-                  setIsVisible();
-                  navigation.navigate("AddCustomerScreen", true);
-                }}
-              >
-                <AntDesign name="adduser" size={24} color="#634F40" />
-              </TouchableOpacity>
-            )}
-          </View>
-          <FlatList
-            data={customers}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.customerInfoContainer}
-                activeOpacity={0.5}
-                onPress={() => {
-                  setInvoiceFormInfo((prev) => ({ ...prev, customer: item }));
-                  setIsVisible();
-                }}
-              >
-                <Text
-                  numberOfLines={1}
-                  style={{ fontFamily: "SoraSemiBold", fontSize: wp(5) }}
-                >
-                  {item.customerName}
-                </Text>
-                <Text
-                  numberOfLines={1}
-                  style={{ fontFamily: "SoraLight", fontSize: wp(3) }}
-                >
-                  {item.customerInfo}
-                </Text>
-              </TouchableOpacity>
-            )}
-          />
-        </View>
-      </View>
-    </Modal>
-  );
-};
+            {item.customerName}
+          </Text>
+          <Text
+            numberOfLines={1}
+            style={{ fontFamily: "SoraLight", fontSize: wp(3) }}
+          >
+            {item.customerInfo}
+          </Text>
+        </TouchableOpacity>
+      ),
+      [customers, isVisible]
+    );
 
+    return (
+      <Modal
+        transparent
+        visible={isVisible}
+        onRequestClose={() => setIsVisible()}
+      >
+        <View style={styles.mainContainer}>
+          <View style={styles.childContainer}>
+            <View
+              style={[
+                styles.headerContainer,
+                { paddingRight: navigation ? wp(10) : 0 },
+              ]}
+            >
+              <Searchbar
+                placeholder="Search customer..."
+                onChangeText={(text) => setSearchQuery(text)}
+                value={searchQuery}
+                setSearchBarValue={setSearchQuery}
+                searchBarValue={searchQuery}
+              />
+              {navigation && (
+                <TouchableOpacity
+                  style={{ padding: wp(2) }}
+                  onPress={() => {
+                    setIsVisible();
+                    navigation.navigate("AddCustomerScreen", true);
+                  }}
+                >
+                  <AntDesign name="adduser" size={24} color="#634F40" />
+                </TouchableOpacity>
+              )}
+            </View>
+            <FlatList
+              data={customers}
+              renderItem={renderCustomerList}
+              initialNumToRender={10}
+              maxToRenderPerBatch={5}
+              windowSize={5}
+            />
+          </View>
+          <Toast position="bottom" autoHide visibilityTime={2000} />
+        </View>
+      </Modal>
+    );
+  }
+);
 export default CustomerListModal;
 
 const styles = StyleSheet.create({

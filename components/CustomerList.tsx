@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { memo, useCallback } from "react";
 import { Customer, CustomerStackParamList } from "../types/type";
 import {
   widthPercentageToDP as wp,
@@ -22,37 +22,44 @@ type CustomerListProp = {
 };
 
 const CustomerList = ({ data, navigation }: CustomerListProp) => {
+  const renderCustomerList = useCallback(
+    ({ item }: { item: Customer }) => (
+      <TouchableOpacity
+        style={styles.customerInfoContainer}
+        activeOpacity={0.5}
+        onPress={() => navigation.navigate("CustomerInfoScreen", item)}
+      >
+        <Text
+          numberOfLines={1}
+          style={{ fontFamily: "SoraSemiBold", fontSize: wp(5) }}
+        >
+          {item.customerName}
+        </Text>
+        <Text
+          numberOfLines={1}
+          style={{ fontFamily: "SoraLight", fontSize: wp(3) }}
+        >
+          {item.customerInfo}
+        </Text>
+      </TouchableOpacity>
+    ),
+    [data]
+  );
   return (
     <View style={{ flex: 1 }}>
       <FlatList
         showsVerticalScrollIndicator={false}
         data={data}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.customerInfoContainer}
-            activeOpacity={0.5}
-            onPress={() => navigation.navigate("CustomerInfoScreen", item)}
-          >
-            <Text
-              numberOfLines={1}
-              style={{ fontFamily: "SoraSemiBold", fontSize: wp(5) }}
-            >
-              {item.customerName}
-            </Text>
-            <Text
-              numberOfLines={1}
-              style={{ fontFamily: "SoraLight", fontSize: wp(3) }}
-            >
-              {item.customerInfo}
-            </Text>
-          </TouchableOpacity>
-        )}
+        renderItem={renderCustomerList}
+        initialNumToRender={10}
+        maxToRenderPerBatch={5}
+        windowSize={5}
       />
     </View>
   );
 };
 
-export default CustomerList;
+export default memo(CustomerList);
 
 const styles = StyleSheet.create({
   customerInfoContainer: {

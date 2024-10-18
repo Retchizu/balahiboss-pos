@@ -19,6 +19,7 @@ import { useAuthStateListenerSignIn } from "../../hooks/useAuthStateListenerSign
 import { ANDROID_CLIENT_ID, WEB_CLIENT_ID } from "@env";
 import { useUserContext } from "../../context/UserContext";
 import { useGoogleSignIn } from "../../hooks/useGoogleSignIn";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -41,51 +42,53 @@ const SignInScreen = ({ navigation }: SignInScreenProp) => {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require("../../assets/icon-transparent.png")}
-        style={styles.logo}
-      />
-      <InputForm
-        placeholder="Email"
-        onChangeText={(text) =>
-          handleInputChange("email", text, setUserCredential)
-        }
-        autoCapitalize="none"
-      />
-      <PasswordForm
-        isVisible={isPasswordVisible}
-        setIsVisible={setIsPasswordVisible}
-        placeholder="Password"
-        onChangeText={(text) =>
-          handleInputChange("password", text, setUserCredential)
-        }
-        autoCapitalize="none"
-      />
+      <KeyboardAvoidingView behavior="position">
+        <Image
+          source={require("../../assets/icon-transparent.png")}
+          style={styles.logo}
+        />
+        <InputForm
+          placeholder="Email"
+          onChangeText={(text) =>
+            handleInputChange("email", text, setUserCredential)
+          }
+          autoCapitalize="none"
+        />
+        <PasswordForm
+          isVisible={isPasswordVisible}
+          setIsVisible={setIsPasswordVisible}
+          placeholder="Password"
+          onChangeText={(text) =>
+            handleInputChange("password", text, setUserCredential)
+          }
+          autoCapitalize="none"
+        />
 
-      <Button
-        title={"Sign In"}
-        buttonStyle={styles.buttonStyle}
-        titleStyle={styles.titleStyle}
-        onPress={() =>
-          signIn(userCredential, navigation, showToast, signUser, setLoading)
-        }
-        loading={loading}
-      />
-      <Button
-        title={"Sign In With Google"}
-        buttonStyle={[styles.buttonStyle, { backgroundColor: "#DB4437" }]}
-        titleStyle={[styles.titleStyle, { color: "#F3F0E9" }]}
-        onPress={() => promptAsync()}
-        icon={
-          <AntDesign
-            name="google"
-            size={24}
-            color="#F3F0E9"
-            style={{ paddingHorizontal: wp(2) }}
-          />
-        }
-      />
-      <Toast position="bottom" autoHide visibilityTime={2000} />
+        <Button
+          title={"Sign In"}
+          buttonStyle={styles.buttonStyle}
+          titleStyle={styles.titleStyle}
+          onPress={() =>
+            signIn(userCredential, navigation, showToast, signUser, setLoading)
+          }
+          loading={loading}
+        />
+        <Button
+          title={"Sign In With Google"}
+          buttonStyle={[styles.buttonStyle, { backgroundColor: "#DB4437" }]}
+          titleStyle={[styles.titleStyle, { color: "#F3F0E9" }]}
+          onPress={() => promptAsync()}
+          icon={
+            <AntDesign
+              name="google"
+              size={24}
+              color="#F3F0E9"
+              style={{ paddingHorizontal: wp(2) }}
+            />
+          }
+        />
+        <Toast position="bottom" autoHide visibilityTime={2000} />
+      </KeyboardAvoidingView>
     </View>
   );
 };

@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import SummaryForm from "../../../components/SummaryForm";
 import { Device, InvoiceForm, InvoiceScreenProp } from "../../../types/type";
 import InvoiceModal from "../../../components/InvoiceModal";
@@ -22,6 +22,8 @@ import { filterSearchForCustomer } from "../../../methods/search-filters/fitlerS
 import BluetoothDeviceListModal from "../../../components/BluetoothDeviceListModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useUserContext } from "../../../context/UserContext";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { submitSummaryReport } from "../../../methods/submit-sales-method/submitSummaryReport";
 
 const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
   const params = route.params;
@@ -51,10 +53,11 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
   const { customers, setCustomerList } = useCustomerContext();
   const [isCustomerListVisible, setIsCustomerListVisible] = useState(false);
   const [customerSearchQuery, setCustomerSearchQuery] = useState("");
+  const [isLoadingCustomerFetch, setIsLoadingCustomerFetch] = useState(false);
 
   //date
   const [isDateVisible, setIsDateVisible] = useState(false);
-  const [mode, setMode] = useState<"date" | "time">("date");
+  const [isTimeVisible, setIsTimeVisible] = useState(false);
   const [pairedDevices, setPairedDevices] = useState<Device[]>([]);
   const [currentPrinter, setCurrentPrinter] = useState<Device>();
 
@@ -93,7 +96,6 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
     customers,
     customerSearchQuery
   );
-
   return (
     <View
       style={[
@@ -101,59 +103,44 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
         { opacity: isInvoiceVisible || isCustomerListVisible ? 0.1 : 1 },
       ]}
     >
-      <SummaryForm
-        invoiceFormInfo={invoiceFormInfo}
-        setInvoiceFormInfo={setInvoiceFormInfo}
-        deleteInputValuesFn={() =>
-          setInvoiceFormInfo({
-            cashPayment: "",
-            onlinePayment: "",
-            customer: null,
-            date: null,
-            discount: "",
-            freebies: "",
-            deliveryFee: "",
-          })
-        }
-        selectedProducts={selectedProducts}
-        previewInvoiceFn={() => setIsInvoiceVisible(true)}
-        customerModalVisibleFn={() => setIsCustomerListVisible(true)}
-        dateInvoiceFn={() => setIsDateVisible(true)}
-        submitSummaryFormFn={async () => {
-          if (
-            invoiceFormInfo.customer &&
-            (invoiceFormInfo.cashPayment || invoiceFormInfo.onlinePayment) &&
-            invoiceFormInfo.date
-          ) {
-            await addSalesReportData(
-              selectedProducts,
-              invoiceFormInfo,
-              products,
-              updateProduct,
-              addSalesReport,
-              showToast,
-              user
-            );
-            setSelectedProductList([]);
-            setInvoiceFormInfo({
-              cashPayment: "",
-              onlinePayment: "",
-              customer: null,
-              date: null,
-              discount: "",
-              freebies: "",
-              deliveryFee: "",
-            });
-            showToast("success", "Invoice added successfully");
-          } else {
-            showToast(
-              "error",
-              "Incomplete Field",
-              "Please fill the missing fields"
-            );
-          }
-        }}
-      />
+      <View>
+        <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
+          <SummaryForm
+            invoiceFormInfo={invoiceFormInfo}
+            setInvoiceFormInfo={setInvoiceFormInfo}
+            deleteInputValuesFn={() =>
+              setInvoiceFormInfo({
+                cashPayment: "",
+                onlinePayment: "",
+                customer: null,
+                date: null,
+                discount: "",
+                freebies: "",
+                deliveryFee: "",
+              })
+            }
+            selectedProducts={selectedProducts}
+            previewInvoiceFn={() => setIsInvoiceVisible(true)}
+            customerModalVisibleFn={() => setIsCustomerListVisible(true)}
+            dateInvoiceFn={() => setIsDateVisible(true)}
+            timeInvoiceFn={() => setIsTimeVisible(true)}
+            submitSummaryFormFn={() =>
+              submitSummaryReport(
+                selectedProducts,
+                invoiceFormInfo,
+                setInvoiceFormInfo,
+                products,
+                updateProduct,
+                addSalesReport,
+                addSalesReportData,
+                showToast,
+                user,
+                setSelectedProductList
+              )
+            }
+          />
+        </KeyboardAwareScrollView>
+      </View>
 
       <InvoiceModal
         isInvoiceVisible={isInvoiceVisible}
@@ -196,19 +183,21 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
         navigation={navigation}
         setInvoiceFormInfo={setInvoiceFormInfo}
         user={user}
+        setIsLoadingCustomerFetch={setIsLoadingCustomerFetch}
+        showToast={showToast}
       />
       {isDateVisible && (
         <DateTimePicker
           value={invoiceFormInfo.date ? invoiceFormInfo.date : new Date()}
-          mode={mode}
-          negativeButton={{ label: "" }}
-          positiveButton={{ label: "next" }}
-          onChange={onChangeDateInvoice(
-            setIsDateVisible,
-            setInvoiceFormInfo,
-            mode,
-            setMode
-          )}
+          mode={"date"}
+          onChange={onChangeDateInvoice(setIsDateVisible, setInvoiceFormInfo)}
+        />
+      )}
+      {isTimeVisible && (
+        <DateTimePicker
+          value={invoiceFormInfo.date ? invoiceFormInfo.date : new Date()}
+          mode={"time"}
+          onChange={onChangeDateInvoice(setIsTimeVisible, setInvoiceFormInfo)}
         />
       )}
       <Toast position="bottom" autoHide visibilityTime={2000} />
@@ -221,7 +210,7 @@ export default InvoiceScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: wp(5),
+    padding: wp(4),
     justifyContent: "center",
     backgroundColor: "#F3F0E9",
   },

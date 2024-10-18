@@ -88,7 +88,11 @@ export const updateSalesReportData = async (
         }
       })
     );
-    showToast("success", "Sales report updated successfully");
+    showToast(
+      "success",
+      "Sales report updated successfully",
+      "Redirecting, please wait..."
+    );
   } catch (error) {
     showToast("error", "Error occured", "Try again later");
   }

@@ -34,6 +34,8 @@ const ProductScreen = () => {
         placeholder="Search a product..."
         value={searchQuery}
         onChangeText={(text) => setSearchQuery(text)}
+        setSearchBarValue={setSearchQuery}
+        searchBarValue={searchQuery}
       />
       {isLoading ? (
         <View style={{ flex: 1, justifyContent: "center" }}>

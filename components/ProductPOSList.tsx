@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { memo, useCallback } from "react";
 import { Product, SelectedProduct } from "../types/type";
 import {
   widthPercentageToDP as wp,
@@ -21,78 +21,81 @@ type ProductPOSListProps = {
   selectedProducts: SelectedProduct[];
   setSelectedProductList: (newProductList: SelectedProduct[]) => void;
 };
-const ProductPOSList: React.FC<ProductPOSListProps> = ({
-  data,
-  addSelectedProduct,
-  selectedProducts,
-  setSelectedProductList,
-}) => {
-  const { showToast } = useToastContext();
-  return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.labelContainer}>
-        <Text style={[styles.labelText, { flex: 3 }]}>Product name</Text>
-        <Text style={[styles.labelText, { flex: 1, textAlign: "center" }]}>
-          Price
-        </Text>
-        <Text style={[styles.labelText, { flex: 1, textAlign: "center" }]}>
-          Stock
-        </Text>
-      </View>
+const ProductPOSList: React.FC<ProductPOSListProps> = memo(
+  ({ data, addSelectedProduct, selectedProducts, setSelectedProductList }) => {
+    const { showToast } = useToastContext();
 
-      <FlatList
-        data={data}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.productContainer,
-              {
-                backgroundColor:
-                  item.stock !== 0
-                    ? selectedProducts.some(
-                        (selectedProduct) => selectedProduct.id === item.id
-                      )
-                      ? "#94e6b7"
-                      : "#F3F0E9"
-                    : "#D3D3D3",
-              },
-            ]}
-            activeOpacity={0.5}
-            onPress={
-              item.stock !== 0
-                ? () =>
-                    selectProduct(
-                      item,
-                      addSelectedProduct,
-                      selectedProducts,
-                      setSelectedProductList
+    const renderProductList = useCallback(
+      ({ item }: { item: Product }) => (
+        <TouchableOpacity
+          style={[
+            styles.productContainer,
+            {
+              backgroundColor:
+                item.stock !== 0
+                  ? selectedProducts.some(
+                      (selectedProduct) => selectedProduct.id === item.id
                     )
-                : () => {
-                    console.log(`${item.productName} is out of stock`);
-                    showToast(
-                      "info",
-                      "Out of Stock",
-                      `${item.productName} is out of stock`
-                    );
-                  }
-            }
-          >
-            <Text style={[styles.itemText, { flex: 3 }]}>
-              {item.productName}
-            </Text>
-            <Text style={[styles.itemText, { flex: 1, textAlign: "center" }]}>
-              ₱{item.sellPrice}
-            </Text>
-            <Text style={[styles.itemText, { flex: 1, textAlign: "center" }]}>
-              {item.stock.toString()}
-            </Text>
-          </TouchableOpacity>
-        )}
-      />
-      <Toast position="bottom" autoHide visibilityTime={2000} />
-    </View>
-  );
-};
+                    ? "#94e6b7"
+                    : "#F3F0E9"
+                  : "#D3D3D3",
+            },
+          ]}
+          activeOpacity={0.5}
+          onPress={
+            item.stock !== 0
+              ? () =>
+                  selectProduct(
+                    item,
+                    addSelectedProduct,
+                    selectedProducts,
+                    setSelectedProductList
+                  )
+              : () => {
+                  console.log(`${item.productName} is out of stock`);
+                  showToast(
+                    "info",
+                    "Out of Stock",
+                    `${item.productName} is out of stock`
+                  );
+                }
+          }
+        >
+          <Text style={[styles.itemText, { flex: 3 }]}>{item.productName}</Text>
+          <Text style={[styles.itemText, { flex: 1, textAlign: "center" }]}>
+            ₱{item.sellPrice}
+          </Text>
+          <Text style={[styles.itemText, { flex: 1, textAlign: "center" }]}>
+            {item.stock.toString()}
+          </Text>
+        </TouchableOpacity>
+      ),
+      [data, selectedProducts]
+    );
+    return (
+      <View style={{ flex: 1 }}>
+        <View style={styles.labelContainer}>
+          <Text style={[styles.labelText, { flex: 3 }]}>Product name</Text>
+          <Text style={[styles.labelText, { flex: 1, textAlign: "center" }]}>
+            Price
+          </Text>
+          <Text style={[styles.labelText, { flex: 1, textAlign: "center" }]}>
+            Stock
+          </Text>
+        </View>
+
+        <FlatList
+          data={data}
+          renderItem={renderProductList}
+          initialNumToRender={10}
+          maxToRenderPerBatch={5}
+          windowSize={5}
+        />
+        <Toast position="bottom" autoHide visibilityTime={2000} />
+      </View>
+    );
+  }
+);
 
 export default ProductPOSList;
 
