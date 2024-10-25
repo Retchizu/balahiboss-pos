@@ -1,7 +1,8 @@
 import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
+import { db, realTimeDb } from "../../firebaseConfig";
 import { ToastType } from "react-native-toast-message";
 import { Product, User } from "../../types/type";
+import { ref, set } from "firebase/database";
 
 export const handleBuyStock = async (
   stockToBuy: number,
@@ -18,11 +19,11 @@ export const handleBuyStock = async (
     }
     const getProductToUpdate = products.find((product) => product.id === id);
     if (getProductToUpdate) {
-      const productRef = doc(db, "users", user?.uid!, "products", id);
-      await updateDoc(productRef, {
-        stock: getProductToUpdate.stock + stockToBuy,
-      });
-      updateProduct(id, { stock: getProductToUpdate.stock + stockToBuy });
+      const productRef = ref(
+        realTimeDb,
+        `users/${user?.uid}/products/${getProductToUpdate.id}/stock`
+      );
+      await set(productRef, getProductToUpdate.stock + stockToBuy);
       showToast("success", "Stock added successfully");
     }
   } catch (error) {

@@ -156,7 +156,9 @@ const BluetoothDeviceListModal = ({
                   </View>
                 </View>
               ) : (
-                <Text style={styles.currentPrinterMessage}>Set a printer</Text>
+                <Text style={styles.currentPrinterMessage}>
+                  No current printer
+                </Text>
               )}
             </View>
           </View>
@@ -221,5 +223,9 @@ const styles = StyleSheet.create({
     padding: wp(5),
     marginVertical: hp(0.5),
   },
-  currentPrinterMessage: { fontFamily: "SoraSemiBold", fontSize: wp(4) },
+  currentPrinterMessage: {
+    fontFamily: "SoraLight",
+    fontSize: wp(4),
+    textAlign: "center",
+  },
 });

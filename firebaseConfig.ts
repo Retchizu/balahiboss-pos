@@ -6,6 +6,7 @@ import {
   initializeAuth,
 } from "firebase/auth";
 import { Firestore, getFirestore } from "firebase/firestore";
+import { Database, getDatabase } from "firebase/database";
 
 import {
   API_KEY,
@@ -28,7 +29,7 @@ const firebaseConfig = {
   appId: APP_ID,
 };
 
-let app: FirebaseApp, auth: Auth, db: Firestore;
+let app: FirebaseApp, auth: Auth, db: Firestore, realTimeDb: Database;
 if (!getApps().length) {
   try {
     app = initializeApp(firebaseConfig);
@@ -36,6 +37,7 @@ if (!getApps().length) {
       persistence: getReactNativePersistence(AsyncStorage),
     });
     db = getFirestore(app);
+    realTimeDb = getDatabase(app);
   } catch (error) {
     console.log("Error initializing app: " + error);
   }
@@ -43,6 +45,7 @@ if (!getApps().length) {
   app = getApp();
   auth = getAuth(app);
   db = getFirestore(app);
+  realTimeDb = getDatabase(app);
 }
 
-export { auth, db };
+export { auth, db, realTimeDb };

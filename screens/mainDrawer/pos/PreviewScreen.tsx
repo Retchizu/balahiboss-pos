@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import SelectedProductList from "../../../components/SelectedProductList";
 import { useSelectedProductContext } from "../../../context/SelectedProductContext";
 import {
@@ -9,10 +9,32 @@ import {
 import { deleteSelectedProduct } from "../../../methods/product-select-methods/deleteSelectedProduct";
 import Entypo from "@expo/vector-icons/Entypo";
 import { calculateTotalPrice } from "../../../methods/calculation-methods/calculateTotalPrice";
+import { useProductContext } from "../../../context/ProductContext";
+import { useToastContext } from "../../../context/ToastContext";
 
 const PreviewScreen = () => {
   const { selectedProducts, setSelectedProductList, updateSelectedProduct } =
     useSelectedProductContext();
+  const { products } = useProductContext();
+  const { showToast } = useToastContext();
+  useEffect(() => {
+    const productStockConflict = selectedProducts.filter((selectedProduct) => {
+      const findProduct = products.find(
+        (product) => product.id === selectedProduct.id
+      );
+      return findProduct?.stock === 0;
+    });
+    if (productStockConflict.length) {
+      setSelectedProductList([]);
+      showToast(
+        "info",
+        "Products out of stock",
+        productStockConflict
+          .map((productConflicted) => productConflicted.productName)
+          .join(", ")
+      );
+    }
+  }, [products]);
   return (
     <View style={[styles.container]}>
       <SelectedProductList

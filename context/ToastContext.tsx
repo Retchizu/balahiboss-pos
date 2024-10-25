@@ -21,11 +21,11 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({
       text2: text2,
       text1Style: {
         fontFamily: "SoraBold",
-        fontSize: wp(4),
+        fontSize: wp(3.5),
       },
       text2Style: {
         fontFamily: "SoraMedium",
-        fontSize: wp(3.5),
+        fontSize: wp(3),
       },
     });
   };

@@ -1,10 +1,7 @@
 import { View } from "react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import CustomerForm from "../../../components/CustomerForm";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { addCustomerData } from "../../../methods/data-methods/addCustomerData";
 import { useCustomerContext } from "../../../context/CustomerContext";
 import { handleInputChange } from "../../../methods/handleInputChange";
@@ -13,6 +10,7 @@ import { CommonActions } from "@react-navigation/native";
 import { useToastContext } from "../../../context/ToastContext";
 import Toast from "react-native-toast-message";
 import { useUserContext } from "../../../context/UserContext";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 
 const AddCustomerScreen = ({ navigation, route }: AddCustomerScreenProp) => {
   const params = route.params;
@@ -50,13 +48,15 @@ const AddCustomerScreen = ({ navigation, route }: AddCustomerScreenProp) => {
         backgroundColor: "#F3F0E9",
       }}
     >
-      <CustomerForm
-        customer={customer}
-        setCustomer={setCustomer}
-        buttonLabel="Add Customer"
-        formTitle="Add a customer"
-        submit={handleCustomerAddSubmit}
-      />
+      <KeyboardAvoidingView behavior="position">
+        <CustomerForm
+          customer={customer}
+          setCustomer={setCustomer}
+          buttonLabel="Add Customer"
+          formTitle="Add a customer"
+          submit={handleCustomerAddSubmit}
+        />
+      </KeyboardAvoidingView>
       <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );

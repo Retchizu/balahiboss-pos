@@ -1,31 +1,37 @@
 import { ActivityIndicator, StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { getProductData } from "../../../methods/data-methods/getProductData";
+import { useEffect, useState } from "react";
 import { useProductContext } from "../../../context/ProductContext";
 import ProductPOSList from "../../../components/ProductPOSList";
 import Searchbar from "../../../components/Searchbar";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { filterSearchForPoduct } from "../../../methods/search-filters/filterSearchForProduct";
 import { useSelectedProductContext } from "../../../context/SelectedProductContext";
 import Toast from "react-native-toast-message";
-import { useToastContext } from "../../../context/ToastContext";
 import { useUserContext } from "../../../context/UserContext";
+import { useProductOnChildAdded } from "../../../hooks/realtime-database-listeners/useProductOnChildAdded";
+import { useProductOnChildRemoved } from "../../../hooks/realtime-database-listeners/useProductOnChildRemoved";
+import { useProductOnChildChanged } from "../../../hooks/realtime-database-listeners/useProductOnChildChanged";
 
 const ProductScreen = () => {
-  const { products, setProductList } = useProductContext();
+  const { products, addProduct, setProductList, updateProduct } =
+    useProductContext();
   const [searchQuery, setSearchQuery] = useState("");
   const { selectedProducts, addSelectedProduct, setSelectedProductList } =
     useSelectedProductContext();
   const [isLoading, setIsLoading] = useState(false);
-  const { showToast } = useToastContext();
   const { user } = useUserContext();
 
   useEffect(() => {
-    getProductData(setProductList, setIsLoading, showToast, user);
-  }, []);
+    if (!products.length) {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+  }, [products]);
+
+  useProductOnChildRemoved(user, products, setProductList);
+  useProductOnChildAdded(user, products, addProduct);
+  useProductOnChildChanged(user, updateProduct);
 
   const filteredData = filterSearchForPoduct(products, searchQuery);
   return (

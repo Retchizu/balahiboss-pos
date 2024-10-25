@@ -1,7 +1,8 @@
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
+import { db, realTimeDb } from "../../firebaseConfig";
 import { Product, SalesReport, User } from "../../types/type";
 import { ToastType } from "react-native-toast-message";
+import { ref, set } from "firebase/database";
 
 export const deleteSalesReportData = async (
   salesReportId: string,
@@ -31,20 +32,25 @@ export const deleteSalesReportData = async (
         if (productInList) {
           const retrievedProductStock =
             productInList.stock + selectedProduct.quantity;
-          updateProduct(productInList.id, {
+          /*  updateProduct(productInList.id, {
             stock: retrievedProductStock,
-          });
+          }); */
 
-          const productRef = doc(
+          /*  const productRef = doc(
             db,
             "users",
             user?.uid!,
             "products",
             productInList.id
+          ); */
+          const productRef = ref(
+            realTimeDb,
+            `users/${user?.uid}/products/${selectedProduct.id}/stock`
           );
-          await updateDoc(productRef, {
+          await set(productRef, retrievedProductStock);
+          /*  await updateDoc(productRef, {
             stock: retrievedProductStock,
-          });
+          }); */
         }
         setSalesReportList(updatedData);
         console.log("Deleted Successfully");

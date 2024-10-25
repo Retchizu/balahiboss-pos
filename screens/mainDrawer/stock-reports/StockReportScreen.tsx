@@ -1,5 +1,5 @@
-import { Keyboard, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import { Keyboard, StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -16,6 +16,7 @@ import { useToastContext } from "../../../context/ToastContext";
 import CurrentStockTotalVIew from "../../../components/CurrentStockTotalVIew";
 import DateRangeSearch from "../../../components/DateRangeSearch";
 import { useUserContext } from "../../../context/UserContext";
+import { useKeyboardVisibilityListener } from "../../../hooks/useKeyboardVisibilityListener";
 
 const StockReportScreen = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -30,29 +31,10 @@ const StockReportScreen = () => {
   const { showToast } = useToastContext();
 
   const filteredData = filterSearchForPoduct(products, searchQuery);
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useUserContext();
 
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => {
-        setIsKeyboardVisible(true);
-      }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => {
-        setIsKeyboardVisible(false);
-      }
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
+  const { isKeyboardVisible } = useKeyboardVisibilityListener();
 
   return (
     <View style={styles.container}>

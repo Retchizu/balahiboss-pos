@@ -1,5 +1,5 @@
 import { StyleSheet, Image, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import InputForm from "../../components/InputForm";
 import {
   widthPercentageToDP as wp,

@@ -1,14 +1,11 @@
 import { StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   EditCustomerReportScreenProp,
   InvoiceForm,
 } from "../../../../types/type";
 import SummaryForm from "../../../../components/SummaryForm";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useSelectedProductInEditContext } from "../../../../context/SelectedProductInEditContext";
 import { useCustomerContext } from "../../../../context/CustomerContext";
 import CustomerListModal from "../../../../components/CustomerListModal";
@@ -124,6 +121,7 @@ const EditCustomerReportScreen = ({
         user={user}
         showToast={showToast}
         setIsLoadingCustomerFetch={setIsLoadingCustomerFetch}
+        isLoadingCustomerFetch={isLoadingCustomerFetch}
       />
       {isDateVisible && (
         <DateTimePicker

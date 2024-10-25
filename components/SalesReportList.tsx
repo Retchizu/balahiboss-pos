@@ -65,6 +65,7 @@ export default SalesReportList;
 
 const styles = StyleSheet.create({
   customerName: {
+    flex: 1,
     fontFamily: "SoraSemiBold",
     fontSize: wp(4),
   },

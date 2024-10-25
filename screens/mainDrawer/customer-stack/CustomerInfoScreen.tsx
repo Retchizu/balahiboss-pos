@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import { CustomerInfoScreenProp } from "../../../types/type";
 import {
   widthPercentageToDP as wp,

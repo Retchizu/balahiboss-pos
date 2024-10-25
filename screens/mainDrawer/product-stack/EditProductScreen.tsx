@@ -1,11 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import InputFormWithLabelHorizontal from "../../../components/InputFormWithLabelHorizontal";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@rneui/base";
 import {
@@ -20,6 +19,7 @@ import { useUserContext } from "../../../context/UserContext";
 import { handleBuyStock } from "../../../methods/product-manipulation-methods/handleBuyStock";
 import { handleSameProductData } from "../../../methods/product-manipulation-methods/handleSameProductData";
 import { handleBuyStockNavigation } from "../../../methods/product-manipulation-methods/handleBuyStockNavigation";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 const EditProductScreen = ({
   route,
@@ -42,9 +42,13 @@ const EditProductScreen = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.formContainer}>
-        <Text style={styles.headerTitleStyle}>Configure Product</Text>
-        <ScrollView>
+      <View>
+        <KeyboardAwareScrollView
+          showsVerticalScrollIndicator={false}
+          style={styles.formContainer}
+        >
+          <Text style={styles.headerTitleStyle}>Configure Product</Text>
+
           <InputFormWithLabelHorizontal
             formLabel="Product name"
             maxLength={35}
@@ -135,24 +139,24 @@ const EditProductScreen = ({
               handleInputChange("editStock", text, setProductInfo)
             }
           />
-        </ScrollView>
-        <Button
-          buttonStyle={styles.buttonStyle}
-          titleStyle={styles.titleStyle}
-          title="Confirm"
-          onPress={() => {
-            handleSameProductData(
-              products,
-              params.id,
-              updateProduct,
-              navigation,
-              productInfo,
-              showToast,
-              user
-            );
-          }}
-        />
+          <Button
+            buttonStyle={styles.buttonStyle}
+            titleStyle={styles.titleStyle}
+            title="Confirm"
+            onPress={() => {
+              handleSameProductData(
+                products,
+                params.id,
+                navigation,
+                productInfo,
+                showToast,
+                user
+              );
+            }}
+          />
+        </KeyboardAwareScrollView>
       </View>
+
       <Toast position="bottom" autoHide visibilityTime={2000} />
     </SafeAreaView>
   );

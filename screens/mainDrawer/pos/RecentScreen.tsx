@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -18,12 +18,15 @@ import { RecentScreenProp } from "../../../types/type";
 import { useToastContext } from "../../../context/ToastContext";
 import Toast from "react-native-toast-message";
 import { useUserContext } from "../../../context/UserContext";
+import { useRecentSalesReportManager } from "../../../hooks/useRecentSalesReportManager";
+import { useProductContext } from "../../../context/ProductContext";
 
 const RecentScreen = ({ navigation }: RecentScreenProp) => {
   const { salesReports, setSalesReportList } = useSalesReportContext();
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToastContext();
   const { user } = useUserContext();
+  const { products } = useProductContext();
   let startDate = new Date();
   let endDate = new Date();
 
@@ -36,18 +39,13 @@ const RecentScreen = ({ navigation }: RecentScreenProp) => {
       showToast,
       user
     );
-  }, []);
+  }, [products]);
 
-  const filterData = useMemo(() => {
-    startDate.setHours(0, 0, 0, 0);
-    endDate.setHours(23, 59, 59, 59);
-
-    return salesReports.filter(
-      (salesReport) =>
-        salesReport.invoiceForm.date! >= startDate &&
-        salesReport.invoiceForm.date! <= endDate
-    );
-  }, [salesReports]);
+  const sortedData = useRecentSalesReportManager(
+    startDate,
+    endDate,
+    salesReports
+  );
 
   return (
     <View style={styles.container}>
@@ -57,9 +55,9 @@ const RecentScreen = ({ navigation }: RecentScreenProp) => {
         <View style={{ flex: 1, justifyContent: "center" }}>
           <ActivityIndicator color={"#634F40"} size={wp(10)} />
         </View>
-      ) : filterData.length ? (
+      ) : sortedData.length ? (
         <FlatList
-          data={filterData}
+          data={sortedData}
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.customerInfoContainer}
@@ -117,6 +115,10 @@ const styles = StyleSheet.create({
     fontSize: wp(4),
     textAlign: "center",
     color: "#634F40",
+    marginBottom: hp(2),
+    borderBottomColor: "#634F40",
+    borderBottomWidth: wp(0.2),
+    padding: hp(1),
   },
   customerInfoContainer: {
     borderWidth: wp(0.3),

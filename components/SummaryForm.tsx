@@ -100,26 +100,25 @@ const SummaryForm = ({
           viewStyle={styles.viewstyleWithoutMargin}
         />
       </View>
-      <View style={[styles.viewWithRows, { alignItems: "center" }]}>
-        <ButtonFormWithLabel
-          formLabel="Customer"
-          title={invoiceFormInfo.customer?.customerName ?? "Select Customer"}
-          onPress={() => customerModalVisibleFn()}
-          viewStyle={styles.viewStyleWithMargin}
-        />
-        <InputFormWithLabel
-          formLabel="Delivery Fee"
-          textInputProp={{
-            placeholder: "Delivery Fee",
-            keyboardType: "numeric",
-            value: invoiceFormInfo.deliveryFee,
-            onChangeText: (text) =>
-              handleInputChange("deliveryFee", text, setInvoiceFormInfo),
-            contextMenuHidden: true,
-          }}
-          viewStyle={styles.viewstyleWithoutMargin}
-        />
-      </View>
+      <InputFormWithLabel
+        formLabel="Delivery Fee"
+        textInputProp={{
+          placeholder: "Delivery Fee",
+          keyboardType: "numeric",
+          value: invoiceFormInfo.deliveryFee,
+          onChangeText: (text) =>
+            handleInputChange("deliveryFee", text, setInvoiceFormInfo),
+          contextMenuHidden: true,
+        }}
+        viewStyle={styles.viewstyleWithoutMargin}
+      />
+      <ButtonFormWithLabel
+        formLabel="Customer"
+        title={invoiceFormInfo.customer?.customerName ?? "Select Customer"}
+        onPress={() => customerModalVisibleFn()}
+        viewStyle={styles.viewStyleWithMargin}
+      />
+
       <View style={styles.viewWithRows}>
         <ButtonFormWithLabel
           formLabel="Date"

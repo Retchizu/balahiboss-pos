@@ -1,5 +1,5 @@
 import { ToastType } from "react-native-toast-message";
-import { db } from "../../firebaseConfig";
+import { db, realTimeDb } from "../../firebaseConfig";
 import {
   InvoiceForm,
   Product,
@@ -8,6 +8,7 @@ import {
   User,
 } from "../../types/type";
 import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { ref, set } from "firebase/database";
 
 export const addSalesReportData = async (
   selectedProducts: SelectedProduct[],
@@ -28,27 +29,19 @@ export const addSalesReportData = async (
     );
 
     await Promise.all(
-      selectedProducts.map(async (item) => {
+      selectedProducts.map(async (selectedProduct) => {
         const itemInProductList = products.find(
-          (product) => product.id === item.id
+          (product) => product.id === selectedProduct.id
         );
         if (itemInProductList) {
-          const reduceStockInProduct = itemInProductList.stock - item.quantity;
-          const productRef = doc(
-            db,
-            "users",
-            user?.uid!,
-            "products",
-            itemInProductList.id
+          const reduceStockInProduct =
+            itemInProductList.stock - selectedProduct.quantity;
+
+          const productRef = ref(
+            realTimeDb,
+            `users/${user?.uid}/products/${itemInProductList.id}/stock`
           );
-
-          await updateDoc(productRef, {
-            stock: reduceStockInProduct,
-          });
-
-          updateProduct(itemInProductList.id, {
-            stock: reduceStockInProduct,
-          });
+          await set(productRef, reduceStockInProduct);
         }
       })
     );
@@ -57,6 +50,8 @@ export const addSalesReportData = async (
       invoiceForm: invoiceForm,
       selectedProduct: selectedProducts,
     };
+
+    console.log(newSalesReport);
 
     addSalesReport(newSalesReport);
     showToast("success", "Invoice added successfully");

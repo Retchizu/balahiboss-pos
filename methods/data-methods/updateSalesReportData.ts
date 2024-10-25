@@ -1,5 +1,5 @@
 import { ToastType } from "react-native-toast-message";
-import { db } from "../../firebaseConfig";
+import { db, realTimeDb } from "../../firebaseConfig";
 import {
   InvoiceForm,
   Product,
@@ -8,6 +8,7 @@ import {
   User,
 } from "../../types/type";
 import { doc, updateDoc } from "firebase/firestore";
+import { ref, set } from "firebase/database";
 
 export const updateSalesReportData = async (
   salesReportId: string,
@@ -42,21 +43,11 @@ export const updateSalesReportData = async (
         );
         if (itemInProductList) {
           const reduceStockInProduct = itemInProductList.stock - item.quantity;
-          const productRef = doc(
-            db,
-            "users",
-            user?.uid!,
-            "products",
-            itemInProductList.id
+          const productRef = ref(
+            realTimeDb,
+            `users/${user?.uid}/products/${itemInProductList.id}/stock`
           );
-
-          await updateDoc(productRef, {
-            stock: reduceStockInProduct,
-          });
-
-          updateProduct(itemInProductList.id, {
-            stock: reduceStockInProduct,
-          });
+          await set(productRef, reduceStockInProduct);
         }
       })
     );
@@ -71,19 +62,11 @@ export const updateSalesReportData = async (
             (selectedProduct) => selectedProduct.id === itemInProductList.id
           );
           if (!isInCurrentSelectedProducts) {
-            const productRef = doc(
-              db,
-              "users",
-              user?.uid!,
-              "products",
-              itemInProductList.id
+            const productRef = ref(
+              realTimeDb,
+              `users/${user?.uid}/products/${itemInProductList.id}/stock`
             );
-            await updateDoc(productRef, {
-              stock: itemInProductList.stock,
-            });
-            updateProduct(itemInProductList.id, {
-              stock: itemInProductList.stock,
-            });
+            await set(productRef, itemInProductList.stock);
           }
         }
       })

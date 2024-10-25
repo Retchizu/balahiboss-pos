@@ -87,7 +87,5 @@ export const submitSummaryReportInEdit = async (
     return () => {
       backHandler.remove();
     };
-  }, 1500);
-
-  setSelectedProductListInEdit([]);
+  }, 900);
 };

@@ -3,37 +3,42 @@ import {
   StyleSheet,
   Text,
   TextProps,
+  TouchableOpacity,
+  TouchableOpacityProps,
   View,
   ViewStyle,
 } from "react-native";
 import React from "react";
-import { Button, ButtonProps } from "@rneui/base";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
-type ButtonFormWithLabelProps = ButtonProps &
+type ButtonFormWithLabelProps = TouchableOpacityProps &
   TextProps & {
     formLabel: string;
     viewStyle?: StyleProp<ViewStyle>;
+    title: string;
   };
 
 const ButtonFormWithLabel: React.FC<ButtonFormWithLabelProps> = (props) => {
-  const { formLabel, viewStyle, ...restProps } = props;
-  const buttonProps: ButtonProps = restProps;
+  const { formLabel, viewStyle, title, ...restProps } = props;
   const textProps: TextProps = restProps;
+  const touchableOpacityProps: TouchableOpacityProps = restProps;
   return (
     <View style={viewStyle}>
       <Text style={styles.labelStyle} {...textProps}>
-        {formLabel}:{" "}
+        {formLabel}:
       </Text>
-      <Button
-        {...buttonProps}
-        containerStyle={styles.buttonContainerStyle}
-        titleStyle={styles.titleStyle}
-        buttonStyle={styles.buttonStyle}
-      />
+      <TouchableOpacity
+        {...touchableOpacityProps}
+        style={styles.buttonStyle}
+        activeOpacity={0.7}
+      >
+        <Text numberOfLines={1} style={styles.titleStyle}>
+          {title}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -53,11 +58,11 @@ const styles = StyleSheet.create({
     fontFamily: "SoraSemiBold",
     color: "#F3F0E9",
     fontSize: wp(3),
-    height: hp(2.7),
-    bottom: hp(0.5),
+    textAlign: "center",
   },
   buttonStyle: {
     backgroundColor: "#E6B794",
     borderRadius: wp(1.5),
+    padding: wp(1.5),
   },
 });

@@ -5,7 +5,7 @@ import {
   View,
   Text,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Searchbar from "../../../components/Searchbar";
 import {
   widthPercentageToDP as wp,
@@ -27,6 +27,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import FilterChoiceModalForSaleslist from "../../../components/FilterChoiceModalForSaleslist";
 import { choices } from "../../../methods/search-filters/chooseFilterTypeForSaleslist";
 import { useUserContext } from "../../../context/UserContext";
+import { useKeyboardVisibilityListener } from "../../../hooks/useKeyboardVisibilityListener";
 
 const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
   const { salesReports, setSalesReportList } = useSalesReportContext();
@@ -36,7 +37,6 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
     useState(false);
   const [isEndDatePickerVisible, setIsEndDatePickerVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToastContext();
   const { user } = useUserContext();
@@ -55,26 +55,7 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
     );
   }, []);
 
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => {
-        setIsKeyboardVisible(true);
-      }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => {
-        setIsKeyboardVisible(false);
-      }
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
-
+  const { isKeyboardVisible } = useKeyboardVisibilityListener();
   const filteredData = filterSearchForSalesReport(
     salesReports,
     searchQuery,

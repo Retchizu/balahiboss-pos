@@ -2,11 +2,11 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Product, ProductStackParamList, User } from "../../types/type";
 import { ToastType } from "react-native-toast-message";
 import { updateProductData } from "../data-methods/updateProductData";
+import { updateProductDataRealtime } from "../data-methods/updateProductDataRealtime";
 
 export const handleSameProductData = (
   products: Product[],
   id: string,
-  updateProduct: (productId: String, attribute: Partial<Product>) => void,
   navigation: NativeStackNavigationProp<
     ProductStackParamList,
     "EditProductScreen",
@@ -52,7 +52,7 @@ export const handleSameProductData = (
     previousProductData.stock === updatedProduct.stock &&
     previousProductData.lowStockThreshold === updatedProduct.lowStockThreshold;
   if (!isSameData) {
-    updateProductData(updatedProduct, updateProduct, showToast, user);
+    updateProductDataRealtime(updatedProduct, showToast, user);
     navigation.pop();
     navigation.replace("ProductInfoScreen", updatedProduct);
   } else {

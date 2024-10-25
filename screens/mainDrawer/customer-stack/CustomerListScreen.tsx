@@ -1,11 +1,10 @@
 import {
   ActivityIndicator,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Searchbar from "../../../components/Searchbar";
 import {
   widthPercentageToDP as wp,

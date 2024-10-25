@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   customerInfoContainer: {
     borderWidth: wp(0.3),
     borderColor: "#634F40",
-    padding: wp(1),
+    padding: wp(1.5),
     marginVertical: hp(0.5),
   },
 });

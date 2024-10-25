@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -38,7 +38,7 @@ const LowStockReportScreen = () => {
         </Text>
       </View>
     ),
-    [lowStockProducts]
+    [products]
   );
 
   return (

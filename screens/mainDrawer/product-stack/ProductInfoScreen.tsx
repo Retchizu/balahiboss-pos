@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { useState } from "react";
 import { ProductInfoScreenProp } from "../../../types/type";
 import {
   widthPercentageToDP as wp,
@@ -9,30 +9,23 @@ import InfoContainerHorizontal from "../../../components/InfoContainerHorizontal
 import Entypo from "@expo/vector-icons/Entypo";
 import { Button } from "@rneui/base";
 import ConfirmationModal from "../../../components/ConfirmationModal";
-import { deleteProductData } from "../../../methods/data-methods/deleteProductData";
-import { useProductContext } from "../../../context/ProductContext";
 import Toast from "react-native-toast-message";
 import { useToastContext } from "../../../context/ToastContext";
 import { useUserContext } from "../../../context/UserContext";
+import { deleteProductDataRealtime } from "../../../methods/data-methods/deleteProductDataRealtiime";
 
 const ProductInfoScreen = ({ route, navigation }: ProductInfoScreenProp) => {
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
     useState(false);
-  const { setProductList, products } = useProductContext();
   const params = route.params;
 
   const { showToast } = useToastContext();
   const { user } = useUserContext();
+  const [_, setToggleToast] = useState(0);
 
   const handleDeleteProduct = async () => {
     navigation.goBack();
-    await deleteProductData(
-      params.id,
-      setProductList,
-      products,
-      showToast,
-      user
-    );
+    await deleteProductDataRealtime(params.id, showToast, user, setToggleToast);
   };
 
   return (

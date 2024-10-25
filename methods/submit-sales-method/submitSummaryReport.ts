@@ -27,11 +27,17 @@ export const submitSummaryReport = async (
   user: User | null,
   setSelectedProductList: (products: SelectedProduct[]) => void
 ) => {
-  if (
-    invoiceFormInfo.customer &&
-    (invoiceFormInfo.cashPayment || invoiceFormInfo.onlinePayment) &&
-    invoiceFormInfo.date
-  ) {
+  if (!selectedProducts.length) {
+    showToast(
+      "error",
+      "Invalid invoice",
+      "Cart is empty or item is out of stock."
+    );
+    return;
+  }
+
+  const { customer, cashPayment, onlinePayment, date } = invoiceFormInfo;
+  if (customer && (cashPayment || onlinePayment) && date) {
     await addSalesReportData(
       selectedProducts,
       invoiceFormInfo,

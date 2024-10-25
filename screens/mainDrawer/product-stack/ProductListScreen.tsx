@@ -1,5 +1,5 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useState } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { useState } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,

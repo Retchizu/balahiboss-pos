@@ -1,10 +1,7 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { useState } from "react";
 import Searchbar from "../../../../components/Searchbar";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import ProductPOSList from "../../../../components/ProductPOSList";
 
 import { useSelectedProductInEditContext } from "../../../../context/SelectedProductInEditContext";

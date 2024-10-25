@@ -1,10 +1,6 @@
 import { Image } from "react-native";
-import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { SplashScreenProp } from "../../types/type";
 import { loadFont } from "../../methods/auth-methods/loadFont";
 import { useUserContext } from "../../context/UserContext";

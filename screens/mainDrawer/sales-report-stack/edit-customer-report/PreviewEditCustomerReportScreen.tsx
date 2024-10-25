@@ -1,5 +1,4 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useState } from "react";
 import Entypo from "@expo/vector-icons/Entypo";
 import SelectedProductList from "../../../../components/SelectedProductList";
 import { useSelectedProductInEditContext } from "../../../../context/SelectedProductInEditContext";

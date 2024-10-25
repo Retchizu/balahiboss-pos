@@ -1,14 +1,12 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { useState } from "react";
 import AddProductForm from "../../../components/AddProductForm";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import { addProductData } from "../../../methods/data-methods/addProductData";
-import { useProductContext } from "../../../context/ProductContext";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useToastContext } from "../../../context/ToastContext";
 import { useUserContext } from "../../../context/UserContext";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
+import { addProductDataRealtime } from "../../../methods/data-methods/addProductDataRealtime";
+import Toast from "react-native-toast-message";
 
 const AddProductScreen = () => {
   const [productInfo, setProductInfo] = useState({
@@ -17,12 +15,12 @@ const AddProductScreen = () => {
     stockPrice: "",
     lowStockThreshold: "2",
   });
-  const { addProduct } = useProductContext();
   const { showToast } = useToastContext();
   const { user } = useUserContext();
+  const [_, setToggleToast] = useState(0);
 
   const handleAddProductSubmit = async () => {
-    await addProductData(productInfo, addProduct, showToast, user);
+    await addProductDataRealtime(productInfo, showToast, user, setToggleToast);
     setProductInfo({
       productName: "",
       sellPrice: "",
@@ -30,14 +28,18 @@ const AddProductScreen = () => {
       lowStockThreshold: "2",
     });
   };
+
   return (
     <View style={styles.container}>
-      <AddProductForm
-        setProductInfo={setProductInfo}
-        buttonLabel="Add Product"
-        submit={handleAddProductSubmit}
-        productInfo={productInfo}
-      />
+      <KeyboardAvoidingView behavior="position">
+        <AddProductForm
+          setProductInfo={setProductInfo}
+          buttonLabel="Add Product"
+          submit={handleAddProductSubmit}
+          productInfo={productInfo}
+        />
+        <Toast position="bottom" autoHide visibilityTime={2000} />
+      </KeyboardAvoidingView>
     </View>
   );
 };

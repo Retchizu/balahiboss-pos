@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Modal,
   ScrollView,
@@ -38,6 +39,7 @@ type CustomerListModalProp = {
   setInvoiceFormInfo: React.Dispatch<React.SetStateAction<InvoiceForm>>;
   user: User | null;
   setIsLoadingCustomerFetch: React.Dispatch<React.SetStateAction<boolean>>;
+  isLoadingCustomerFetch: boolean;
   showToast: (type: ToastType, text1: string, text2?: string) => void;
 };
 
@@ -53,6 +55,7 @@ const CustomerListModal = memo(
     setInvoiceFormInfo,
     user,
     setIsLoadingCustomerFetch,
+    isLoadingCustomerFetch,
     showToast,
   }: CustomerListModalProp) => {
     useEffect(() => {
@@ -126,13 +129,21 @@ const CustomerListModal = memo(
                 </TouchableOpacity>
               )}
             </View>
-            <FlatList
-              data={customers}
-              renderItem={renderCustomerList}
-              initialNumToRender={10}
-              maxToRenderPerBatch={5}
-              windowSize={5}
-            />
+            {isLoadingCustomerFetch ? (
+              <ActivityIndicator
+                color={"#634F40"}
+                size={wp(10)}
+                style={{ flex: 1 }}
+              />
+            ) : (
+              <FlatList
+                data={customers}
+                renderItem={renderCustomerList}
+                initialNumToRender={10}
+                maxToRenderPerBatch={5}
+                windowSize={5}
+              />
+            )}
           </View>
           <Toast position="bottom" autoHide visibilityTime={2000} />
         </View>
