@@ -15,7 +15,7 @@ type InvoiceInfoProp = {
 };
 const InvoiceProductsInfo: React.FC<InvoiceInfoProp> = ({ params }) => {
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <Text style={styles.productsBoughtStyle}>Products Bought</Text>
 
       <View style={styles.rowFormat}>
@@ -27,7 +27,6 @@ const InvoiceProductsInfo: React.FC<InvoiceInfoProp> = ({ params }) => {
       </View>
 
       <FlatList
-        style={{ flex: 1 }}
         data={params.selectedProducts}
         renderItem={({ item }) => (
           <View style={styles.rowFormat}>
