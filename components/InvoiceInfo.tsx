@@ -15,6 +15,7 @@ type InvoiceInfoProp = {
 };
 
 const InvoiceInfo: React.FC<InvoiceInfoProp> = ({ params }) => {
+  console.log(params.discount);
   return (
     <View>
       <InfoHorizontal
@@ -45,6 +46,7 @@ const InvoiceInfo: React.FC<InvoiceInfoProp> = ({ params }) => {
         label="Total amount"
         value={`₱${calculateTotalPrice(
           params.selectedProducts,
+          undefined,
           parseFloat(params.discount.trim() ? params.discount : "0")
         ).toFixed(2)}`}
       />

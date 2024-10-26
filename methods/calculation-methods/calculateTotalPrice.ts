@@ -10,8 +10,8 @@ export const calculateTotalPrice = (
     const calculatePrice = selectedProduct.sellPrice * selectedProduct.quantity;
     total += calculatePrice;
   });
+  console.log(total, "before disc");
   if (deliveryFee) total += deliveryFee;
   if (discount) total -= discount;
-
   return total;
 };
