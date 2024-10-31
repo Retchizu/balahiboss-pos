@@ -20,6 +20,7 @@ export type DrawerParamList = {
   SalesReportStackScreen: undefined;
   StockReportScreen: undefined;
   LowStockReportScreen: undefined;
+  DraftStackScreen: undefined;
 };
 
 export type CustomerStackParamList = {
@@ -58,6 +59,22 @@ export type CustomerReportParams = {
   selectedProducts: SelectedProduct[];
 };
 
+export type DraftInfoParams = {
+  id: string;
+  draftTitle: string;
+  selectedProduct: SelectedProduct[];
+  invoiceForm: {
+    cashPayment: string;
+    onlinePayment: string;
+    customer: Customer | null;
+    date: string | null;
+    discount: string;
+    freebies: string;
+    deliveryFee: string;
+  };
+  createdAt: string;
+};
+
 export type EditCustomerReportTabParamList = {
   EditCustomerReportScreen: CustomerReportParams;
   PreviewEditCustomerReportScreen: CustomerReportParams;
@@ -68,6 +85,12 @@ export type SalesReportStackParamList = {
   SalesReportScreen: undefined;
   CustomerReportScreen: CustomerReportParams & { fromSales: boolean };
   EditCustomerReportTabScreen: CustomerReportParams;
+};
+
+export type DraftStackParamList = {
+  DraftScreen: undefined;
+  DraftInfoScreen: DraftInfoParams;
+  InvoiceScreen: undefined;
 };
 
 export type User = {
@@ -110,6 +133,14 @@ export type SalesReport = {
   invoiceForm: InvoiceForm;
 };
 
+export type InvoiceDraft = {
+  id: string;
+  draftTitle: string;
+  selectedProduct: SelectedProduct[];
+  invoiceForm: InvoiceForm;
+  createdAt: Date;
+};
+
 export type Device = {
   address: string;
   name: string;
@@ -132,6 +163,16 @@ export type SplashScreenProp = NativeStackScreenProps<
 export type SignInScreenProp = NativeStackScreenProps<
   AuthStackParamList,
   "SignInScreen"
+>;
+
+export type DraftScreenProp = NativeStackScreenProps<
+  DraftStackParamList,
+  "DraftScreen"
+>;
+
+export type DraftInfoScreenProp = NativeStackScreenProps<
+  DraftStackParamList,
+  "DraftInfoScreen"
 >;
 
 export type CustomerListScreenProp = NativeStackScreenProps<
@@ -189,6 +230,7 @@ export type EditCustomerReportScreenProp = BottomTabScreenProps<
   EditCustomerReportTabParamList,
   "EditCustomerReportScreen"
 >;
+
 /* export type ProductListEditCustomerReportScreenProp = BottomTabScreenProps<
   EditCustomerReportTabParamList,
   "ProductListEditCustomerReportScreen"

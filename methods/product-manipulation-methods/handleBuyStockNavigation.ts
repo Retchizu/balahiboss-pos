@@ -16,7 +16,8 @@ export const handleBuyStockNavigation = (
     "EditProductScreen",
     undefined
   >,
-  showToast: (type: ToastType, text1: string, text2?: string) => void
+  showToast: (type: ToastType, text1: string, text2?: string) => void,
+  setToggleToast: React.Dispatch<React.SetStateAction<number>>
 ) => {
   const getProductToUpdate = products.find((product) => product.id === id);
   if (productInfo.buyStock.trim() && getProductToUpdate) {
@@ -34,7 +35,7 @@ export const handleBuyStockNavigation = (
     setProductInfo((prev) => ({ ...prev, buyStock: "" }));
     if (isNaN(updatedProduct.stock)) {
       showToast("error", "Stock value required", "Can not buy stock");
-      return;
+      setToggleToast((prev) => prev + 1);
     }
     navigation.pop();
     navigation.replace("ProductInfoScreen", updatedProduct);

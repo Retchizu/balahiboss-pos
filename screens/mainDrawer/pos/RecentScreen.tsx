@@ -108,11 +108,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F3F0E9",
     paddingHorizontal: wp(5),
-    paddingVertical: hp(1),
+    paddingBottom: hp(1),
   },
   headerTitle: {
     fontFamily: "SoraBold",
-    fontSize: wp(4),
+    fontSize: wp(5),
     textAlign: "center",
     color: "#634F40",
     marginBottom: hp(2),

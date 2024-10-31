@@ -37,10 +37,9 @@ const EditCustomerReportScreen = ({
     discount: invoiceForm.discount,
     freebies: invoiceForm.freebies,
   });
-  const { selectedProductsInEdit, setSelectedProductListInEdit } =
-    useSelectedProductInEditContext();
+  const { selectedProductsInEdit } = useSelectedProductInEditContext();
   const { setProductListInEdit, productsInEdit } = useProductInEditContext();
-  const { products, updateProduct, setProductList } = useProductContext();
+  const { products } = useProductContext();
   const { updateSalesReport } = useSalesReportContext();
 
   //for customers in modal
@@ -95,13 +94,11 @@ const EditCustomerReportScreen = ({
             submitSummaryFormFn={() =>
               submitSummaryReportInEdit(
                 selectedProductsInEdit,
-                setSelectedProductListInEdit,
                 invoiceFormInfoEdit,
                 navigation,
                 updateSalesReportData,
                 invoiceForm,
                 productsInEdit,
-                updateProduct,
                 updateSalesReport,
                 showToast,
                 user

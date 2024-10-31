@@ -14,7 +14,6 @@ import { BackHandler } from "react-native";
 
 export const submitSummaryReportInEdit = async (
   selectedProductsInEdit: SelectedProduct[],
-  setSelectedProductListInEdit: (newProductList: SelectedProduct[]) => void,
   invoiceFormInfoEdit: InvoiceForm,
   navigation: BottomTabNavigationProp<
     EditCustomerReportTabParamList,
@@ -26,7 +25,7 @@ export const submitSummaryReportInEdit = async (
     invoiceForm: InvoiceForm,
     selectedProducts: SelectedProduct[],
     products: Product[],
-    updateProduct: (productId: String, attribute: Partial<Product>) => void,
+
     updateSalesReport: (
       reportId: String,
       attribute: Partial<SalesReport>
@@ -37,7 +36,6 @@ export const submitSummaryReportInEdit = async (
   ) => Promise<void>,
   invoiceForm: Readonly<CustomerReportParams>,
   productsInEdit: Product[],
-  updateProduct: (productId: String, attribute: Partial<Product>) => void,
   updateSalesReport: (
     reportId: String,
     attribute: Partial<SalesReport>
@@ -50,7 +48,6 @@ export const submitSummaryReportInEdit = async (
     invoiceFormInfoEdit,
     selectedProductsInEdit,
     productsInEdit,
-    updateProduct,
     updateSalesReport,
     invoiceForm.selectedProducts,
     showToast,

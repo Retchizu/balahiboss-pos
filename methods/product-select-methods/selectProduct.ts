@@ -9,7 +9,7 @@ export const selectProduct = (
   if (
     !selectedProducts.some((selectedProduct) => selectedProduct.id === item.id)
   ) {
-    addSelectedProduct({ ...item, quantity: 1 });
+    addSelectedProduct({ ...item, quantity: item.stock === 0.5 ? 0.5 : 1 });
   } else {
     setSelectedProductList(
       selectedProducts.filter((product) => product.id !== item.id)

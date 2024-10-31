@@ -1,5 +1,4 @@
 import { StyleSheet, Text, View, FlatList } from "react-native";
-import React from "react";
 import { SelectedProduct } from "../types/type";
 import { calculatePrice } from "../methods/calculation-methods/calculatePrice";
 import Entypo from "@expo/vector-icons/Entypo";

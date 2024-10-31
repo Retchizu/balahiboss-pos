@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React from "react";
 import { readableDate } from "../methods/time-methods/readableDate";
 import { CustomerReportParams } from "../types/type";
@@ -15,7 +15,6 @@ type InvoiceInfoProp = {
 };
 
 const InvoiceInfo: React.FC<InvoiceInfoProp> = ({ params }) => {
-  console.log(params.discount);
   return (
     <View>
       <InfoHorizontal

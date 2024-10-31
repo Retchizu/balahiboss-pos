@@ -1,11 +1,10 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { useState } from "react";
 import { CustomerReportScreenProp } from "../../../types/type";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { calculatePrice } from "../../../methods/calculation-methods/calculatePrice";
 import { Button } from "@rneui/base";
 import Entypo from "@expo/vector-icons/Entypo";
 import ConfirmationModal from "../../../components/ConfirmationModal";
@@ -27,10 +26,11 @@ const CustomerReportScreen = ({
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
     useState(false);
   const { salesReports, setSalesReportList } = useSalesReportContext();
-  const { products, updateProduct } = useProductContext();
+  const { products } = useProductContext();
   const { setSelectedProductListInEdit } = useSelectedProductInEditContext();
   const { user } = useUserContext();
   const { showToast } = useToastContext();
+
   return (
     <View
       style={[
@@ -52,7 +52,20 @@ const CustomerReportScreen = ({
             buttonStyle={styles.buttonStyle}
             onPress={() => {
               navigation.navigate("EditCustomerReportTabScreen", params);
-              setSelectedProductListInEdit(params.selectedProducts);
+              setSelectedProductListInEdit(
+                params.selectedProducts.map((selectedProduct) => {
+                  const productInCurrentList = products.find(
+                    (product) => product.id === selectedProduct.id
+                  );
+                  return productInCurrentList
+                    ? {
+                        ...selectedProduct,
+                        stock:
+                          selectedProduct.quantity + productInCurrentList.stock,
+                      }
+                    : selectedProduct;
+                })
+              );
             }}
           />
         )}
@@ -68,12 +81,10 @@ const CustomerReportScreen = ({
             salesReports,
             setSalesReportList,
             products,
-            updateProduct,
             showToast,
             user
           );
           setIsConfirmationModalVisible(false);
-          navigation.goBack();
         }}
         confirmationTitle="Delete this report?"
         confirmationDescription={`Delete purchase info of ${params.customer?.customerName}`}

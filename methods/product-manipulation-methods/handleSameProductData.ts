@@ -1,7 +1,6 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Product, ProductStackParamList, User } from "../../types/type";
 import { ToastType } from "react-native-toast-message";
-import { updateProductData } from "../data-methods/updateProductData";
 import { updateProductDataRealtime } from "../data-methods/updateProductDataRealtime";
 
 export const handleSameProductData = (

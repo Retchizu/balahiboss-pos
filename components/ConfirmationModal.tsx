@@ -5,7 +5,6 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Button } from "@rneui/base";
-import Entypo from "@expo/vector-icons/Entypo";
 
 type ConfirmationModalProp = {
   isVisible: boolean;

@@ -21,7 +21,6 @@ const EditCustomerScreen = ({ route, navigation }: EditCustomerScreenProp) => {
   const { showToast } = useToastContext();
   const { user } = useUserContext();
 
-  console.log(navigation.getState());
   const handleCustomerUpdateSubmit = () => {
     updateCustomerData(customerId, customer, updateCustomer, showToast, user);
 

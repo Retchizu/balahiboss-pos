@@ -1,4 +1,4 @@
-import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { deleteDoc, doc } from "firebase/firestore";
 import { db, realTimeDb } from "../../firebaseConfig";
 import { Product, SalesReport, User } from "../../types/type";
 import { ToastType } from "react-native-toast-message";
@@ -9,7 +9,6 @@ export const deleteSalesReportData = async (
   salesReports: SalesReport[],
   setSalesReportList: (newSalesReportList: SalesReport[]) => void,
   products: Product[],
-  updateProduct: (productId: String, attribute: Partial<Product>) => void,
   showToast: (type: ToastType, text1: string, text2?: string) => void,
   user: User | null
 ) => {

@@ -36,9 +36,10 @@ const EditProductScreen = ({
     buyStock: "",
     editStock: params.stock.toString(),
   });
-  const { updateProduct, products } = useProductContext();
+  const { products } = useProductContext();
   const { showToast } = useToastContext();
   const { user } = useUserContext();
+  const [_, toggleToast] = useState(0);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -110,11 +111,11 @@ const EditProductScreen = ({
               onPress={() => {
                 handleBuyStock(
                   parseFloat(productInfo.buyStock),
-                  updateProduct,
                   products,
                   params.id,
                   showToast,
-                  user
+                  user,
+                  toggleToast
                 );
 
                 handleBuyStockNavigation(
@@ -123,7 +124,8 @@ const EditProductScreen = ({
                   productInfo,
                   setProductInfo,
                   navigation,
-                  showToast
+                  showToast,
+                  toggleToast
                 );
               }}
             />

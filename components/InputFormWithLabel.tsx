@@ -4,15 +4,11 @@ import {
   TextInputProps,
   View,
   TextInput,
-  ViewProps,
   StyleProp,
   ViewStyle,
 } from "react-native";
 import React from "react";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 
 type InputFormWithLabelProps = {
   formLabel: string;
@@ -26,10 +22,7 @@ const InputFormWithLabel: React.FC<InputFormWithLabelProps> = (props) => {
     <View style={viewStyle}>
       <Text style={styles.labelStyle}>{formLabel}: </Text>
       <View style={styles.textInputContainer}>
-        <TextInput
-          {...textInputProp}
-          style={{ fontFamily: "SoraRegular", fontSize: wp(4) }}
-        />
+        <TextInput {...textInputProp} style={styles.inputStyle} />
       </View>
     </View>
   );
@@ -46,6 +39,11 @@ const styles = StyleSheet.create({
   },
   labelStyle: {
     fontFamily: "SoraMedium",
-    fontSize: wp(3.7),
+    fontSize: wp(4.5),
+  },
+  inputStyle: {
+    fontFamily: "SoraRegular",
+    fontSize: wp(4),
+    padding: wp(1),
   },
 });

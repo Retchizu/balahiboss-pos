@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   labelStyle: {
     flex: 1.5,
     fontFamily: "SoraMedium",
-    fontSize: wp(3.5),
+    fontSize: wp(4.5),
   },
   buttonContainerStyle: {
     flex: 2.5,
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   titleStyle: {
     fontFamily: "SoraSemiBold",
     color: "#F3F0E9",
-    fontSize: wp(3),
+    fontSize: wp(4),
     textAlign: "center",
   },
   buttonStyle: {

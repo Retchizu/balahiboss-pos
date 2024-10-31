@@ -7,6 +7,7 @@ import ProductPOSList from "../../../../components/ProductPOSList";
 import { useSelectedProductInEditContext } from "../../../../context/SelectedProductInEditContext";
 import { filterSearchForPoduct } from "../../../../methods/search-filters/filterSearchForProduct";
 import { useProductInEditContext } from "../../../../context/ProductInEditContext";
+import { Product } from "../../../../types/type";
 
 const ProductListEditCustomerReportScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");

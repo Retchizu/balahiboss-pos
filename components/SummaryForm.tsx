@@ -26,6 +26,7 @@ type SummaryFormProps = {
   submitSummaryFormFn: () => Promise<void>;
   selectedProducts: SelectedProduct[];
   customerModalVisibleFn: () => void;
+  setIsSaveModalVisible?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const SummaryForm = ({
@@ -38,11 +39,12 @@ const SummaryForm = ({
   dateInvoiceFn,
   timeInvoiceFn,
   submitSummaryFormFn,
+  setIsSaveModalVisible,
 }: SummaryFormProps) => {
   return (
     <View style={styles.summaryFormContainer}>
       <View style={styles.summaryHeaderContainer}>
-        <Text style={{ fontFamily: "SoraSemiBold", fontSize: wp(5) }}>
+        <Text style={{ fontFamily: "SoraSemiBold", fontSize: wp(6) }}>
           Invoice Form
         </Text>
         <View
@@ -51,24 +53,35 @@ const SummaryForm = ({
             alignItems: "center",
           }}
         >
+          {setIsSaveModalVisible && (
+            <TouchableOpacity
+              style={{
+                marginHorizontal: wp(1.5),
+              }}
+              onPress={() => setIsSaveModalVisible(true)}
+            >
+              <Fontisto name="save" size={28} color="#634F40" />
+            </TouchableOpacity>
+          )}
+
           <TouchableOpacity
             activeOpacity={0.7}
-            style={{ marginHorizontal: wp(2) }}
+            style={{ marginHorizontal: wp(1.5) }}
             onPress={() => deleteInputValuesFn()}
           >
             <MaterialCommunityIcons
               name="tag-minus"
-              size={26}
+              size={28}
               color="#634F40"
             />
           </TouchableOpacity>
           {previewInvoiceFn && (
             <TouchableOpacity
               activeOpacity={0.7}
-              style={{ marginHorizontal: wp(1) }}
+              style={{ marginHorizontal: wp(1.5) }}
               onPress={() => previewInvoiceFn()}
             >
-              <Fontisto name="preview" size={26} color="#634F40" />
+              <Fontisto name="preview" size={28} color="#634F40" />
             </TouchableOpacity>
           )}
         </View>
@@ -209,14 +222,12 @@ export default SummaryForm;
 
 const styles = StyleSheet.create({
   summaryFormContainer: {
-    borderWidth: wp(0.3),
-    borderColor: "#634F40",
     padding: wp(2),
   },
   titleStyle: {
     fontFamily: "SoraSemiBold",
     color: "#F3F0E9",
-    fontSize: wp(3.5),
+    fontSize: wp(4),
   },
   buttonStyle: {
     backgroundColor: "#E6B794",
@@ -234,7 +245,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: "SoraMedium",
-    fontSize: wp(3.7),
+    fontSize: wp(4.5),
   },
   viewWithRows: {
     flexDirection: "row",

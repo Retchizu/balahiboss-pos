@@ -17,7 +17,6 @@ import { calculateTotalPrice } from "../methods/calculation-methods/calculateTot
 import Entypo from "@expo/vector-icons/Entypo";
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
-import { handlePrint } from "../methods/print-methods/handlePrint";
 import Toast, { ToastType } from "react-native-toast-message";
 import { connectToBluetooth } from "../methods/print-methods/connectToBluetooth";
 

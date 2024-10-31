@@ -4,10 +4,7 @@ import ProductScreen from "../screens/mainDrawer/pos/ProductScreen";
 import PreviewScreen from "../screens/mainDrawer/pos/PreviewScreen";
 import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { InvoiceStackScreen } from "./InvoiceStack";
 import { RecentStackScreen } from "./RecentStack";
 

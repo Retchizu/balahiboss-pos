@@ -17,13 +17,22 @@ import Toast from "react-native-toast-message";
 import { useToastContext } from "../../../context/ToastContext";
 import BluetoothDeviceListModal from "../../../components/BluetoothDeviceListModal";
 import { useUserContext } from "../../../context/UserContext";
-import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import {
+  KeyboardAvoidingView,
+  KeyboardAwareScrollView,
+} from "react-native-keyboard-controller";
 import { submitSummaryReport } from "../../../methods/submit-sales-method/submitSummaryReport";
 import { useInvoiceForm } from "../../../hooks/invoice-hooks/useInvoiceForm";
 import { useBluetoothPrinter } from "../../../hooks/invoice-hooks/useBluetoothPrinter";
 import { useCustomerListManager } from "../../../hooks/invoice-hooks/useCustomerListManager";
+import SaveDraftModal from "../../../components/SaveDraftModal";
+import { useDraftContext } from "../../../context/DraftContext";
+import { handleSaveDraft } from "../../../methods/handleSaveDraft";
 
-const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
+const InvoiceScreen: React.FC<InvoiceScreenProp> = ({
+  navigation,
+  route,
+}: InvoiceScreenProp) => {
   const params = route.params;
 
   //context
@@ -35,8 +44,7 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
   const { user } = useUserContext();
 
   //custom hooks
-  const { invoiceFormInfo, setInvoiceFormInfo, resetForm } =
-    useInvoiceForm(params);
+  const { invoiceForm, setInvoiceForm, resetForm } = useInvoiceForm(params);
   const { pairedDevices, setPairedDevices, currentPrinter, setCurrentPrinter } =
     useBluetoothPrinter();
 
@@ -62,6 +70,11 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
   const [isDateVisible, setIsDateVisible] = useState(false);
   const [isTimeVisible, setIsTimeVisible] = useState(false);
 
+  //save modal
+  const [isSaveModalVisible, setIsSaveModalVisible] = useState(false);
+  const [draftTitle, setDraftTitle] = useState("");
+  const { addDraft } = useDraftContext();
+
   if (permissionResponse === null) {
     requestPermission();
   }
@@ -70,25 +83,31 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
     <View
       style={[
         styles.container,
-        { opacity: isInvoiceVisible || isCustomerListVisible ? 0.1 : 1 },
+        {
+          opacity:
+            isInvoiceVisible || isCustomerListVisible || isSaveModalVisible
+              ? 0.1
+              : 1,
+        },
       ]}
     >
       <View>
         <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
           <SummaryForm
-            invoiceFormInfo={invoiceFormInfo}
-            setInvoiceFormInfo={setInvoiceFormInfo}
+            invoiceFormInfo={invoiceForm}
+            setInvoiceFormInfo={setInvoiceForm}
             deleteInputValuesFn={() => resetForm()}
             selectedProducts={selectedProducts}
             previewInvoiceFn={() => setIsInvoiceVisible(true)}
             customerModalVisibleFn={() => setIsCustomerListVisible(true)}
+            setIsSaveModalVisible={setIsSaveModalVisible}
             dateInvoiceFn={() => setIsDateVisible(true)}
             timeInvoiceFn={() => setIsTimeVisible(true)}
             submitSummaryFormFn={() =>
               submitSummaryReport(
                 selectedProducts,
-                invoiceFormInfo,
-                setInvoiceFormInfo,
+                invoiceForm,
+                setInvoiceForm,
                 products,
                 updateProduct,
                 addSalesReport,
@@ -106,8 +125,8 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
         isInvoiceVisible={isInvoiceVisible}
         setIsInvoiceVisible={setIsInvoiceVisible}
         selectedProducts={selectedProducts}
-        deliveryFee={invoiceFormInfo.deliveryFee}
-        discount={invoiceFormInfo.discount}
+        deliveryFee={invoiceForm.deliveryFee}
+        discount={invoiceForm.discount}
         showToast={showToast}
         setIsBluetoothDeviceListModalVisible={
           setIsBluetoothDeviceListModalVisible
@@ -124,9 +143,9 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
         }
         setIsInvoiceModalVisible={setIsInvoiceVisible}
         pairedDevices={pairedDevices}
-        deliveryFee={invoiceFormInfo.deliveryFee}
-        discount={invoiceFormInfo.discount}
-        invoiceDate={invoiceFormInfo.date!}
+        deliveryFee={invoiceForm.deliveryFee}
+        discount={invoiceForm.discount}
+        invoiceDate={invoiceForm.date!}
         selectedProducts={selectedProducts}
         showToast={showToast}
         currentPrinter={currentPrinter}
@@ -142,24 +161,45 @@ const InvoiceScreen = ({ navigation, route }: InvoiceScreenProp) => {
         searchQuery={customerSearchQuery}
         setSearchQuery={setCustomerSearchQuery}
         navigation={navigation}
-        setInvoiceFormInfo={setInvoiceFormInfo}
+        setInvoiceFormInfo={setInvoiceForm}
         user={user}
         setIsLoadingCustomerFetch={setIsLoadingCustomerFetch}
         isLoadingCustomerFetch={isLoadingCustomerFetch}
         showToast={showToast}
       />
+
+      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={900}>
+        <SaveDraftModal
+          isVisible={isSaveModalVisible}
+          setIsVisible={setIsSaveModalVisible}
+          draftTitle={draftTitle}
+          setDraftTitle={setDraftTitle}
+          confirmFn={() =>
+            handleSaveDraft(
+              draftTitle,
+              user,
+              invoiceForm,
+              selectedProducts,
+              addDraft,
+              showToast,
+              setIsSaveModalVisible,
+              setDraftTitle
+            )
+          }
+        />
+      </KeyboardAvoidingView>
       {isDateVisible && (
         <DateTimePicker
-          value={invoiceFormInfo.date ? invoiceFormInfo.date : new Date()}
+          value={invoiceForm.date ? invoiceForm.date : new Date()}
           mode={"date"}
-          onChange={onChangeDateInvoice(setIsDateVisible, setInvoiceFormInfo)}
+          onChange={onChangeDateInvoice(setIsDateVisible, setInvoiceForm)}
         />
       )}
       {isTimeVisible && (
         <DateTimePicker
-          value={invoiceFormInfo.date ? invoiceFormInfo.date : new Date()}
+          value={invoiceForm.date ? invoiceForm.date : new Date()}
           mode={"time"}
-          onChange={onChangeDateInvoice(setIsTimeVisible, setInvoiceFormInfo)}
+          onChange={onChangeDateInvoice(setIsTimeVisible, setInvoiceForm)}
         />
       )}
     </View>
@@ -171,7 +211,7 @@ export default InvoiceScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: wp(8),
+    paddingHorizontal: wp(4),
     justifyContent: "center",
     backgroundColor: "#F3F0E9",
   },

@@ -15,7 +15,6 @@ export const updateSalesReportData = async (
   invoiceForm: InvoiceForm,
   selectedProducts: SelectedProduct[],
   products: Product[],
-  updateProduct: (productId: String, attribute: Partial<Product>) => void,
   updateSalesReport: (
     reportId: String,
     attribute: Partial<SalesReport>

@@ -1,6 +1,6 @@
 import { ToastType } from "react-native-toast-message";
-import { Product, User } from "../../types/type";
-import { ref, remove, set } from "firebase/database";
+import { User } from "../../types/type";
+import { ref, set } from "firebase/database";
 import { realTimeDb } from "../../firebaseConfig";
 
 export const deleteProductDataRealtime = async (
@@ -16,8 +16,8 @@ export const deleteProductDataRealtime = async (
     );
 
     await set(productRef, null);
-    setToggleToast((prev) => prev + 1);
     showToast("success", "Product deleted successfully");
+    setToggleToast((prev) => prev + 1);
   } catch (error) {
     showToast("error", "Error Occured", "Try again later");
   }

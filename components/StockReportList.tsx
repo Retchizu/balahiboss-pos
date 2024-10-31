@@ -1,6 +1,6 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import React, { memo, useCallback } from "react";
-import { Product, SalesReport, SelectedProduct } from "../types/type";
+import { memo, useCallback } from "react";
+import { Product, SalesReport } from "../types/type";
 import { calculateTotalStockSold } from "../methods/calculation-methods/calculateTotalStockSold";
 import { calculateTotalStockAmount } from "../methods/calculation-methods/calculateTotalStockAmount";
 import {
@@ -44,7 +44,7 @@ const StockReportList = ({ data, salesReport }: StockReportListProp) => {
     [salesReport, data]
   );
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, paddingBottom: hp(1) }}>
       <View
         style={{
           flexDirection: "row",

@@ -23,9 +23,10 @@ const ProductInfoScreen = ({ route, navigation }: ProductInfoScreenProp) => {
   const { user } = useUserContext();
   const [_, setToggleToast] = useState(0);
 
-  const handleDeleteProduct = async () => {
-    navigation.goBack();
-    await deleteProductDataRealtime(params.id, showToast, user, setToggleToast);
+  const handleDeleteProduct = () => {
+    navigation.pop();
+    navigation.replace("ProductListScreen");
+    deleteProductDataRealtime(params.id, showToast, user, setToggleToast);
   };
 
   return (

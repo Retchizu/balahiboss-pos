@@ -1,20 +1,12 @@
-import { useState, useEffect } from "react";
-import { InvoiceForm } from "../../types/type";
+import { useEffect } from "react";
+import { useInvoiceContext } from "../../context/InvoiceContext";
 
 export const useInvoiceForm = (params: any) => {
-  const [invoiceFormInfo, setInvoiceFormInfo] = useState<InvoiceForm>({
-    cashPayment: "",
-    onlinePayment: "",
-    customer: null,
-    date: null,
-    discount: "",
-    freebies: "",
-    deliveryFee: "",
-  });
+  const { invoiceForm, setInvoiceForm } = useInvoiceContext();
 
   useEffect(() => {
     if (params) {
-      setInvoiceFormInfo((prev) => ({
+      setInvoiceForm((prev) => ({
         ...prev,
         customer: params,
       }));
@@ -22,7 +14,7 @@ export const useInvoiceForm = (params: any) => {
   }, [params]);
 
   const resetForm = () => {
-    setInvoiceFormInfo({
+    setInvoiceForm({
       cashPayment: "",
       onlinePayment: "",
       customer: null,
@@ -34,8 +26,8 @@ export const useInvoiceForm = (params: any) => {
   };
 
   return {
-    invoiceFormInfo,
-    setInvoiceFormInfo,
+    invoiceForm,
+    setInvoiceForm,
     resetForm,
   };
 };

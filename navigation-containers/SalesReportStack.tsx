@@ -1,8 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import {
-  EditCustomerReportTabScreenProp,
-  SalesReportStackParamList,
-} from "../types/type";
+import { SalesReportStackParamList } from "../types/type";
 import { EditCustomerReportTabScreen } from "./EditCustomerReportTab";
 import SalesReportListScreen from "../screens/mainDrawer/sales-report-stack/SalesReportListScreen";
 import CustomerReportScreen from "../screens/mainDrawer/sales-report-stack/CustomerReportScreen";
