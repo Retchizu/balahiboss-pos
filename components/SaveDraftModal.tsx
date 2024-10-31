@@ -6,6 +6,7 @@ import {
 } from "react-native-responsive-screen";
 import { Button } from "@rneui/base";
 import Toast from "react-native-toast-message";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 
 type SaveDraftModalType = {
   isVisible: boolean;
@@ -28,34 +29,36 @@ const SaveDraftModal: React.FC<SaveDraftModalType> = ({
       onRequestClose={() => setIsVisible(false)}
     >
       <View style={styles.mainContainer}>
-        <View style={styles.childContainer}>
-          <View style={styles.headerContainer}>
-            <Text style={styles.headerTitleStyle}>Save Invoice</Text>
-          </View>
+        <KeyboardAvoidingView behavior="position">
+          <View style={styles.childContainer}>
+            <View style={styles.headerContainer}>
+              <Text style={styles.headerTitleStyle}>Save Invoice</Text>
+            </View>
 
-          <View style={{ padding: wp(3) }}>
-            <Text style={styles.draftTitleStyle}>Invoice draft title:</Text>
-            <TextInput
-              style={styles.draftInputStyle}
-              placeholder="Draft title"
-              value={draftTitle}
-              onChangeText={(text) => setDraftTitle(text)}
-            />
+            <View style={{ padding: wp(3) }}>
+              <Text style={styles.draftTitleStyle}>Invoice draft title:</Text>
+              <TextInput
+                style={styles.draftInputStyle}
+                placeholder="Draft title"
+                value={draftTitle}
+                onChangeText={(text) => setDraftTitle(text)}
+              />
 
-            <View style={styles.buttonContainer}>
-              <Button
-                buttonStyle={styles.buttonStyle}
-                title={"Cancel"}
-                onPress={() => setIsVisible(false)}
-              />
-              <Button
-                buttonStyle={styles.buttonStyle}
-                title={"Confirm"}
-                onPress={() => confirmFn()}
-              />
+              <View style={styles.buttonContainer}>
+                <Button
+                  buttonStyle={styles.buttonStyle}
+                  title={"Cancel"}
+                  onPress={() => setIsVisible(false)}
+                />
+                <Button
+                  buttonStyle={styles.buttonStyle}
+                  title={"Confirm"}
+                  onPress={() => confirmFn()}
+                />
+              </View>
             </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
         <Toast position="bottom" autoHide visibilityTime={2000} />
       </View>
     </Modal>

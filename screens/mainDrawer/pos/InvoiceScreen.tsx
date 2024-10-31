@@ -168,26 +168,25 @@ const InvoiceScreen: React.FC<InvoiceScreenProp> = ({
         showToast={showToast}
       />
 
-      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={900}>
-        <SaveDraftModal
-          isVisible={isSaveModalVisible}
-          setIsVisible={setIsSaveModalVisible}
-          draftTitle={draftTitle}
-          setDraftTitle={setDraftTitle}
-          confirmFn={() =>
-            handleSaveDraft(
-              draftTitle,
-              user,
-              invoiceForm,
-              selectedProducts,
-              addDraft,
-              showToast,
-              setIsSaveModalVisible,
-              setDraftTitle
-            )
-          }
-        />
-      </KeyboardAvoidingView>
+      <SaveDraftModal
+        isVisible={isSaveModalVisible}
+        setIsVisible={setIsSaveModalVisible}
+        draftTitle={draftTitle}
+        setDraftTitle={setDraftTitle}
+        confirmFn={() =>
+          handleSaveDraft(
+            draftTitle,
+            user,
+            invoiceForm,
+            selectedProducts,
+            addDraft,
+            showToast,
+            setIsSaveModalVisible,
+            setDraftTitle
+          )
+        }
+      />
+
       {isDateVisible && (
         <DateTimePicker
           value={invoiceForm.date ? invoiceForm.date : new Date()}
