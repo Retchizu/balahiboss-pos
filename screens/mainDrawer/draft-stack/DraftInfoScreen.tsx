@@ -72,7 +72,7 @@ const DraftInfoScreen = ({ navigation, route }: DraftInfoScreenProp) => {
             onPress={() => {
               setInvoiceForm({
                 ...invoiceForm,
-                date: new Date(invoiceForm.date!),
+                date: invoiceForm.date ? new Date(invoiceForm.date) : null,
               });
               setSelectedProductList(selectedProduct);
               navigation.navigate("InvoiceScreen");

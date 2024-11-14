@@ -1,36 +1,36 @@
 import {
   ActivityIndicator,
-  Keyboard,
   StyleSheet,
   View,
   Text,
+  TouchableOpacity,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Searchbar from "../../../components/Searchbar";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import SalesReportList from "../../../components/SalesReportList";
-import { useSalesReportContext } from "../../../context/SalesReportContext";
 import { SalesReportListScreenProp } from "../../../types/type";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { onChangeDateRange } from "../../../methods/time-methods/onChangeDate";
-import { getSalesReportData } from "../../../methods/data-methods/getSalesReportData";
 import SalesReportView from "../../../components/SalesReportView";
 import { filterSearchForSalesReport } from "../../../methods/search-filters/filterSearchForSalesReport";
 import { useToastContext } from "../../../context/ToastContext";
 import Toast from "react-native-toast-message";
 import DateRangeSearch from "../../../components/DateRangeSearch";
-import { Button } from "@rneui/base";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FilterChoiceModalForSaleslist from "../../../components/FilterChoiceModalForSaleslist";
 import { choices } from "../../../methods/search-filters/chooseFilterTypeForSaleslist";
 import { useUserContext } from "../../../context/UserContext";
 import { useKeyboardVisibilityListener } from "../../../hooks/useKeyboardVisibilityListener";
+import { useGetSalesReport } from "../../../hooks/sales-report-hooks/useGetSalesReport";
+import FileNameModal from "../../../components/FileNameModal";
+import { salesReportsToExcel } from "../../../methods/convert-to-excel-methods/salesReportsToExcel";
 
 const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
-  const { salesReports, setSalesReportList } = useSalesReportContext();
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [isStartDatePickerVisible, setIsStartDatePickerVisible] =
@@ -44,26 +44,36 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
   const [isNameFilter, setIsNameFilter] = useState(true);
   const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
 
-  useEffect(() => {
-    getSalesReportData(
-      new Date(),
-      new Date(),
-      setSalesReportList,
-      setIsLoading,
-      showToast,
-      user
-    );
-  }, []);
-
+  const { salesReports, setSalesReportList } = useGetSalesReport(
+    setIsLoading,
+    showToast,
+    user
+  );
   const { isKeyboardVisible } = useKeyboardVisibilityListener();
   const filteredData = filterSearchForSalesReport(
     salesReports,
     searchQuery,
     isNameFilter
   );
+
+  type choiceType = { key: number; choiceName: string };
+  const choices: choiceType[] = [
+    {
+      key: 3,
+      choiceName: "Convert Sales Report to Excel",
+    },
+  ];
+
+  const [isFileModalVisible, setIsFileModalVisible] = useState(false);
+  const [fileName, setFileName] = useState("");
+  const [isConversionLoading, setIsConversionLoading] = useState(false);
+
   return (
     <View
-      style={[styles.container, { opacity: isFilterModalVisible ? 0.1 : 1 }]}
+      style={[
+        styles.container,
+        { opacity: isFilterModalVisible || isFileModalVisible ? 0.1 : 1 },
+      ]}
     >
       <View style={styles.headerContainer}>
         <Searchbar
@@ -73,12 +83,26 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
           setSearchBarValue={setSearchQuery}
           searchBarValue={searchQuery}
         />
-        <Button
-          buttonStyle={[styles.buttonStyle, { backgroundColor: "#F3F0E9" }]}
-          icon={<AntDesign name="filter" size={24} color="#634F40" />}
-          containerStyle={{ paddingHorizontal: wp(1) }}
+        <TouchableOpacity
           onPress={() => setIsFilterModalVisible(true)}
-        />
+          activeOpacity={0.7}
+          style={styles.headerButtons}
+        >
+          <AntDesign name="filter" size={26} color="#634F40" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          style={styles.headerButtons}
+          onPress={() => {
+            setIsFileModalVisible(true);
+          }}
+        >
+          <MaterialCommunityIcons
+            name="microsoft-excel"
+            size={26}
+            color="#634F40"
+          />
+        </TouchableOpacity>
       </View>
 
       <DateRangeSearch
@@ -130,6 +154,29 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
         setIsNameFilter={setIsNameFilter}
       />
       {!isKeyboardVisible && <SalesReportView salesReportList={filteredData} />}
+      <FileNameModal
+        choice={choices[0]}
+        fileName={fileName}
+        setFileName={setFileName}
+        conversionLoading={isConversionLoading}
+        isFileNameVisible={isFileModalVisible}
+        onFileModalClose={() => {
+          setIsFileModalVisible(false);
+          setFileName("");
+        }}
+        confirmFn={async () => {
+          await salesReportsToExcel(
+            salesReports,
+            startDate,
+            endDate,
+            fileName,
+            showToast,
+            setIsConversionLoading
+          );
+          setIsFileModalVisible(false);
+          setFileName("");
+        }}
+      />
       <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
@@ -144,19 +191,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(5),
     paddingVertical: hp(1),
   },
-  buttonStyle: {
-    backgroundColor: "#E6B794",
-    borderRadius: wp(1.5),
-  },
   titleStyle: {
     fontFamily: "SoraSemiBold",
     fontSize: wp(3.5),
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    marginBottom: hp(1),
   },
   messageStyle: {
     fontFamily: "SoraBold",
@@ -166,6 +203,9 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingRight: wp(10),
+    paddingRight: wp(15),
+  },
+  headerButtons: {
+    paddingHorizontal: wp(1),
   },
 });

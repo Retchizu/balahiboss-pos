@@ -13,6 +13,6 @@ export const chooseFilterTypeForSaleslist = (
 };
 
 export const choices = [
-  { key: 1, choiceName: "Search by customer name" },
-  { key: 2, choiceName: "Search by product name" },
+  { key: 1, choiceName: "Customer name" },
+  { key: 2, choiceName: "Product name" },
 ];

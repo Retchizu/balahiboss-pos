@@ -31,7 +31,7 @@ const InvoiceInfo: React.FC<InvoiceInfoProp> = ({ params }) => {
       />
       <InfoHorizontal
         label="Date bought"
-        value={readableDate(new Date(params.date!))}
+        value={params.date ? readableDate(new Date(params.date)) : ""}
       />
       <InfoHorizontal
         label="Discount"

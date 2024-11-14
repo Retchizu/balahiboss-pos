@@ -5,6 +5,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import Entypo from "@expo/vector-icons/Entypo";
 import { chooseFilterTypeForSaleslist } from "../methods/search-filters/chooseFilterTypeForSaleslist";
 
 type FilterChoiceModalForSaleslistProp = {
@@ -36,6 +37,18 @@ const FilterChoiceModalForSaleslist = ({
         }}
       >
         <View style={styles.childContainer}>
+          <Entypo
+            name="cross"
+            size={32}
+            color="#634F40"
+            style={{
+              marginTop: hp(1),
+              alignSelf: "flex-end",
+              paddingRight: wp(2),
+              paddingBottom: hp(1),
+            }}
+            onPress={() => setIsFilterModalVisible(false)}
+          />
           <Text style={styles.modalTitle}>Search bar filters by:</Text>
           {choices.map((item) => (
             <View key={item.key} style={styles.choiceBorder}>
@@ -51,10 +64,10 @@ const FilterChoiceModalForSaleslist = ({
               >
                 <Text style={styles.choiceTitle}>{item.choiceName}</Text>
                 {isNameFilter && item.key == 1 ? (
-                  <AntDesign name="check" size={18} color="#634F40" />
+                  <AntDesign name="check" size={24} color="#634F40" />
                 ) : null}
                 {!isNameFilter && item.key == 2 ? (
-                  <AntDesign name="check" size={18} color="#634F40" />
+                  <AntDesign name="check" size={24} color="#634F40" />
                 ) : null}
               </TouchableOpacity>
             </View>
@@ -75,19 +88,18 @@ const styles = StyleSheet.create({
     borderBottomWidth: wp(0.2),
   },
   modalTitle: {
-    marginTop: hp(2),
     marginHorizontal: wp(3),
-    fontSize: wp(4),
+    fontSize: wp(5.5),
     marginBottom: hp(2),
     fontFamily: "SoraSemiBold",
   },
   choiceTitle: {
     fontFamily: "SoraRegular",
-    fontSize: wp(3.5),
+    fontSize: wp(5.5),
   },
   childContainer: {
     backgroundColor: "#F3F0E9",
-    height: hp(20),
+    height: hp(30),
     width: wp(70),
     borderRadius: wp(3),
     shadowColor: "#000",

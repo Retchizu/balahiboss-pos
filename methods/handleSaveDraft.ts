@@ -18,27 +18,17 @@ export const handleSaveDraft = async (
   setDraftTitle: React.Dispatch<React.SetStateAction<string>>
 ) => {
   if (draftTitle.trim()) {
-    const { cashPayment, onlinePayment, customer, date } = invoiceFormInfo;
-    if (
-      (cashPayment || onlinePayment) &&
-      customer &&
-      date &&
-      selectedProducts.length
-    ) {
-      addDraftData(
-        user,
-        draftTitle,
-        invoiceFormInfo,
-        selectedProducts,
-        new Date(),
-        addDraft,
-        showToast
-      );
-      setIsSaveModalVisible(false);
-      setDraftTitle("");
-    } else {
-      showToast("error", "Please complete the invoice form");
-    }
+    addDraftData(
+      user,
+      draftTitle,
+      invoiceFormInfo,
+      selectedProducts,
+      new Date(),
+      addDraft,
+      showToast
+    );
+    setIsSaveModalVisible(false);
+    setDraftTitle("");
   } else {
     showToast("error", "Please provide a title");
   }

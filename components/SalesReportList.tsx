@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useCallback } from "react";
 import { SalesReport, SalesReportStackParamList } from "../types/type";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { readableDate } from "../methods/time-methods/readableDate";
@@ -23,39 +23,46 @@ type SalesReportListProp = {
 };
 
 const SalesReportList = ({ data, navigation }: SalesReportListProp) => {
+  const renderSalesReportList = useCallback(
+    ({ item }: { item: SalesReport }) => (
+      <TouchableOpacity
+        style={styles.customerInfoContainer}
+        activeOpacity={0.5}
+        onPress={() =>
+          navigation.navigate("CustomerReportScreen", {
+            id: item.id,
+            cashPayment: item.invoiceForm.cashPayment,
+            onlinePayment: item.invoiceForm.onlinePayment,
+            customer: item.invoiceForm.customer,
+            date: item.invoiceForm.date
+              ? item.invoiceForm.date.toISOString()
+              : null,
+            deliveryFee: item.invoiceForm.deliveryFee,
+            discount: item.invoiceForm.discount,
+            freebies: item.invoiceForm.freebies,
+            selectedProducts: item.selectedProduct,
+            fromSales: true,
+          })
+        }
+      >
+        <Text style={styles.customerName}>
+          {item.invoiceForm.customer?.customerName}
+        </Text>
+        <Text style={styles.timeStyle}>
+          {readableDate(item.invoiceForm.date!)}
+        </Text>
+      </TouchableOpacity>
+    ),
+    [data]
+  );
   return (
     <View style={{ flex: 1 }}>
       <FlatList
         data={data}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.customerInfoContainer}
-            activeOpacity={0.5}
-            onPress={() =>
-              navigation.navigate("CustomerReportScreen", {
-                id: item.id,
-                cashPayment: item.invoiceForm.cashPayment,
-                onlinePayment: item.invoiceForm.onlinePayment,
-                customer: item.invoiceForm.customer,
-                date: item.invoiceForm.date
-                  ? item.invoiceForm.date.toISOString()
-                  : null,
-                deliveryFee: item.invoiceForm.deliveryFee,
-                discount: item.invoiceForm.discount,
-                freebies: item.invoiceForm.freebies,
-                selectedProducts: item.selectedProduct,
-                fromSales: true,
-              })
-            }
-          >
-            <Text style={styles.customerName}>
-              {item.invoiceForm.customer?.customerName}
-            </Text>
-            <Text style={styles.timeStyle}>
-              {readableDate(item.invoiceForm.date!)}
-            </Text>
-          </TouchableOpacity>
-        )}
+        renderItem={renderSalesReportList}
+        windowSize={5}
+        maxToRenderPerBatch={5}
+        initialNumToRender={10}
       />
     </View>
   );
