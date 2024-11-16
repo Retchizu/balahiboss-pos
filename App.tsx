@@ -5,25 +5,29 @@ import { MainDrawerScreen } from "./navigation-containers/MainDrawer";
 import { ToastProvider } from "./context/ToastContext";
 import { UserProvider } from "./context/UserContext";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+import { StatusBar } from "expo-status-bar";
 
 const MainStack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <KeyboardProvider>
-        <ToastProvider>
-          <UserProvider>
-            <MainStack.Navigator screenOptions={{ headerShown: false }}>
-              <MainStack.Screen name="Auth Screen" component={AuthScreen} />
-              <MainStack.Screen
-                name="DrawerScreen"
-                component={MainDrawerScreen}
-              />
-            </MainStack.Navigator>
-          </UserProvider>
-        </ToastProvider>
-      </KeyboardProvider>
-    </NavigationContainer>
+    <>
+      <NavigationContainer>
+        <KeyboardProvider>
+          <ToastProvider>
+            <UserProvider>
+              <MainStack.Navigator screenOptions={{ headerShown: false }}>
+                <MainStack.Screen name="Auth Screen" component={AuthScreen} />
+                <MainStack.Screen
+                  name="DrawerScreen"
+                  component={MainDrawerScreen}
+                />
+              </MainStack.Navigator>
+            </UserProvider>
+          </ToastProvider>
+        </KeyboardProvider>
+      </NavigationContainer>
+      <StatusBar backgroundColor="#F0D8B8" />
+    </>
   );
 }

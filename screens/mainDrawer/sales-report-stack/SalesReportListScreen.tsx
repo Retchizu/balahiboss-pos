@@ -29,6 +29,7 @@ import { useKeyboardVisibilityListener } from "../../../hooks/useKeyboardVisibil
 import { useGetSalesReport } from "../../../hooks/sales-report-hooks/useGetSalesReport";
 import FileNameModal from "../../../components/FileNameModal";
 import { salesReportsToExcel } from "../../../methods/convert-to-excel-methods/salesReportsToExcel";
+import { useGetCustomers } from "../../../hooks/customer-hooks/useGetCustomers";
 
 const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -49,20 +50,13 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
     showToast,
     user
   );
+  const { customers } = useGetCustomers(user, setIsLoading, showToast);
   const { isKeyboardVisible } = useKeyboardVisibilityListener();
   const filteredData = filterSearchForSalesReport(
     salesReports,
     searchQuery,
     isNameFilter
   );
-
-  type choiceType = { key: number; choiceName: string };
-  const choices: choiceType[] = [
-    {
-      key: 3,
-      choiceName: "Convert Sales Report to Excel",
-    },
-  ];
 
   const [isFileModalVisible, setIsFileModalVisible] = useState(false);
   const [fileName, setFileName] = useState("");
@@ -154,8 +148,9 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
         setIsNameFilter={setIsNameFilter}
       />
       {!isKeyboardVisible && <SalesReportView salesReportList={filteredData} />}
+      <Toast position="bottom" autoHide visibilityTime={2000} />
       <FileNameModal
-        choice={choices[0]}
+        choiceKey={3}
         fileName={fileName}
         setFileName={setFileName}
         conversionLoading={isConversionLoading}
@@ -165,19 +160,22 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
           setFileName("");
         }}
         confirmFn={async () => {
-          await salesReportsToExcel(
-            salesReports,
-            startDate,
-            endDate,
-            fileName,
-            showToast,
-            setIsConversionLoading
-          );
-          setIsFileModalVisible(false);
-          setFileName("");
+          setIsConversionLoading(true);
+          setTimeout(async () => {
+            await salesReportsToExcel(
+              customers,
+              salesReports,
+              startDate,
+              endDate,
+              fileName,
+              showToast,
+              setIsConversionLoading,
+              setIsFileModalVisible
+            );
+            setFileName("");
+          }, 100);
         }}
       />
-      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

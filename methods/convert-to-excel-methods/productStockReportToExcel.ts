@@ -1,5 +1,5 @@
 import { ToastType } from "react-native-toast-message";
-import { Product } from "../../types/type";
+import { choiceType, Product } from "../../types/type";
 import { calculateTotalStockAmount } from "../calculation-methods/calculateTotalStockAmount";
 import * as XLXS from "xlsx";
 import * as FileSystem from "expo-file-system";
@@ -8,7 +8,11 @@ import * as Sharing from "expo-sharing";
 export const productStockReportToExcel = async (
   products: Product[],
   fileName: string,
-  showToast: (type: ToastType, text1: string, text2?: string) => void
+  showToast: (type: ToastType, text1: string, text2?: string) => void,
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  setFileModalVisibility: React.Dispatch<React.SetStateAction<boolean>>,
+  setIsConversionOptionsVisible: React.Dispatch<React.SetStateAction<boolean>>,
+  setChoiceSelected: React.Dispatch<React.SetStateAction<choiceType | null>>
 ) => {
   if (fileName.trim()) {
     try {
@@ -55,8 +59,13 @@ export const productStockReportToExcel = async (
     } catch (error) {
       showToast("error", "Something went wrong", "Try again later");
       console.log(error);
+    } finally {
+      setFileModalVisibility(false);
+      setIsConversionOptionsVisible(false);
+      setChoiceSelected(null);
     }
   } else {
-    showToast("error", "Please add a file name");
+    showToast("info", "Please add a file name");
+    setLoading(false);
   }
 };

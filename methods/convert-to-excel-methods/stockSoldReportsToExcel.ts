@@ -1,4 +1,4 @@
-import { Product, SalesReport } from "../../types/type";
+import { choiceType, Product, SalesReport } from "../../types/type";
 import * as XLXS from "xlsx";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
@@ -6,6 +6,7 @@ import { ToastType } from "react-native-toast-message";
 import { generateDateRangeArray } from "./generateDateRangeArray";
 import { format } from "date-fns";
 import { calculateDailyStockSold } from "../calculation-methods/calculateDailyStockSold";
+import React from "react";
 
 export const stockSoldReportToExcel = async (
   products: Product[],
@@ -14,11 +15,13 @@ export const stockSoldReportToExcel = async (
   endDate: Date | null,
   fileName: string,
   showToast: (type: ToastType, text1: string, text2?: string) => void,
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  setFileModalVisibility: React.Dispatch<React.SetStateAction<boolean>>,
+  setIsConversionOptionsVisible: React.Dispatch<React.SetStateAction<boolean>>,
+  setChoiceSelected: React.Dispatch<React.SetStateAction<choiceType | null>>
 ) => {
   if (fileName.trim()) {
     try {
-      setLoading(true);
       const dates = generateDateRangeArray(startDate, endDate);
       const dataToExcel: {
         Product_Name: string;
@@ -67,8 +70,12 @@ export const stockSoldReportToExcel = async (
       console.log(error);
     } finally {
       setLoading(false);
+      setFileModalVisibility(false);
+      setIsConversionOptionsVisible(false);
+      setChoiceSelected(null);
     }
   } else {
     showToast("info", "Please provide a file name");
+    setLoading(false);
   }
 };

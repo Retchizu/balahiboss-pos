@@ -13,7 +13,7 @@ type FileNameModalProp = {
   fileName: string;
   setFileName: React.Dispatch<React.SetStateAction<string>>;
   confirmFn: () => Promise<void>;
-  choice: { key: number; choiceName: string } | null;
+  choiceKey: number;
   conversionLoading: boolean;
   onFileModalClose: () => void;
 };
@@ -23,14 +23,12 @@ const FileNameModal: React.FC<FileNameModalProp> = ({
   fileName,
   setFileName,
   confirmFn,
-  choice,
+  choiceKey,
   conversionLoading,
   onFileModalClose,
 }) => {
-  const getReportType = (
-    choice: { key: number; choiceName: string } | null
-  ) => {
-    switch (choice?.key) {
+  const getReportType = (choiceKey: number) => {
+    switch (choiceKey) {
       case 1:
         return "Stock Sold";
       case 2:
@@ -54,7 +52,7 @@ const FileNameModal: React.FC<FileNameModalProp> = ({
           <View style={styles.childContainer}>
             <View style={styles.headerView}>
               <Text style={{ fontFamily: "SoraMedium", fontSize: wp(5.5) }}>
-                Export {getReportType(choice)} Report to Excel
+                Export {getReportType(choiceKey)} Report to Excel
               </Text>
             </View>
             <View style={styles.bodyView}>
@@ -81,9 +79,9 @@ const FileNameModal: React.FC<FileNameModalProp> = ({
               </View>
             </View>
           </View>
-          <Toast position="bottom" autoHide visibilityTime={2000} />
         </KeyboardAvoidingView>
       </View>
+      <Toast position="bottom" autoHide visibilityTime={2000} />
     </Modal>
   );
 };

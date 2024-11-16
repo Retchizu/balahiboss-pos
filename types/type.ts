@@ -154,7 +154,7 @@ export type ProductInfoType = {
   buyStock: string;
   editStock: string;
 };
-
+export type choiceType = { key: number; choiceName: string };
 export type SplashScreenProp = NativeStackScreenProps<
   AuthStackParamList,
   "SplashScreen"

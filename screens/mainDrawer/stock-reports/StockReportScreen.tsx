@@ -22,6 +22,7 @@ import { useGetSalesReport } from "../../../hooks/sales-report-hooks/useGetSales
 import FileNameModal from "../../../components/FileNameModal";
 import ConversionOptionsModal from "../../../components/ConversionOptionsModal";
 import { productStockReportToExcel } from "../../../methods/convert-to-excel-methods/productStockReportToExcel";
+import { choiceType } from "../../../types/type";
 
 const StockReportScreen = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -52,7 +53,6 @@ const StockReportScreen = () => {
   const [isConversionOptionsVisible, setIsConversionOptionsVisible] =
     useState(false);
 
-  type choiceType = { key: number; choiceName: string };
   const choices: choiceType[] = [
     {
       key: 1,
@@ -114,33 +114,46 @@ const StockReportScreen = () => {
         setSelectedChoice={setChoiceSelected}
         setIsFileNameVisible={setIsFileModalVisible}
       />
+
+      <Toast position="bottom" autoHide visibilityTime={2000} />
       <FileNameModal
         isFileNameVisible={isFileModalVisible}
         fileName={fileName}
         setFileName={setFileName}
         confirmFn={async () => {
-          switch (choiceSelected?.key) {
-            case 1:
-              await stockSoldReportToExcel(
-                products,
-                salesReports,
-                startDate,
-                endDate,
-                fileName,
-                showToast,
-                setIsConversionLoading
-              );
-              break;
-            case 2:
-              await productStockReportToExcel(products, fileName, showToast);
-              break;
-          }
-          setIsFileModalVisible(false);
-          setIsConversionOptionsVisible(false);
-          setChoiceSelected(null);
-          setFileName("");
+          setIsConversionLoading(true);
+          setTimeout(async () => {
+            switch (choiceSelected?.key) {
+              case 1:
+                await stockSoldReportToExcel(
+                  products,
+                  salesReports,
+                  startDate,
+                  endDate,
+                  fileName,
+                  showToast,
+                  setIsConversionLoading,
+                  setIsFileModalVisible,
+                  setIsConversionOptionsVisible,
+                  setChoiceSelected
+                );
+                break;
+              case 2:
+                await productStockReportToExcel(
+                  products,
+                  fileName,
+                  showToast,
+                  setIsConversionLoading,
+                  setIsFileModalVisible,
+                  setIsConversionOptionsVisible,
+                  setChoiceSelected
+                );
+                break;
+            }
+            setFileName("");
+          }, 100);
         }}
-        choice={choiceSelected}
+        choiceKey={choiceSelected?.key!}
         conversionLoading={isConversionLoading}
         onFileModalClose={() => {
           setIsConversionOptionsVisible(true);
@@ -148,8 +161,6 @@ const StockReportScreen = () => {
           setFileName("");
         }}
       />
-      <Toast position="bottom" autoHide visibilityTime={2000} />
-
       {isStartDatePickerVisible && (
         <DateTimePicker
           value={startDate ? startDate : new Date()}

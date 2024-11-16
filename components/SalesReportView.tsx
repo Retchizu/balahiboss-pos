@@ -1,9 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { SalesReport } from "../types/type";
 import { calculateTotalPrice } from "../methods/calculation-methods/calculateTotalPrice";
 import { calculateOverallTotalPrice } from "../methods/calculation-methods/calculateOverallTotalPrice";
