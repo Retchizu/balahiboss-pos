@@ -90,7 +90,7 @@ export type SalesReportStackParamList = {
 export type DraftStackParamList = {
   DraftScreen: undefined;
   DraftInfoScreen: DraftInfoParams;
-  InvoiceScreen: undefined;
+  POSScreen: { screen: string };
 };
 
 export type User = {

@@ -75,7 +75,9 @@ const DraftInfoScreen = ({ navigation, route }: DraftInfoScreenProp) => {
                 date: invoiceForm.date ? new Date(invoiceForm.date) : null,
               });
               setSelectedProductList(selectedProduct);
-              navigation.navigate("InvoiceScreen");
+              navigation.navigate("POSScreen", {
+                screen: "InvoiceStackScreen",
+              });
             }}
           />
         </View>

@@ -76,6 +76,7 @@ const CustomerReportScreen = ({
         setIsVisible={setIsConfirmationModalVisible}
         cancelFn={() => setIsConfirmationModalVisible(false)}
         confirmFn={() => {
+          navigation.pop();
           deleteSalesReportData(
             params.id,
             salesReports,

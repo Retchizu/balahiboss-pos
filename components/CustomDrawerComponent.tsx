@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View, ImageBackground } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -23,38 +23,49 @@ const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
   const { signUser, user } = useUserContext();
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Image
-        source={require("../assets/icon-transparent.png")}
-        style={{ width: wp(30), height: wp(30), alignSelf: "center" }}
-      />
-      <Text style={styles.drawerHeaderTitle}>Retchi POS</Text>
-      <Text style={styles.displayNameStyle}>{user?.displayName}</Text>
-      <DrawerContentScrollView scrollEnabled={false}>
-        <DrawerItemList {...props} />
-      </DrawerContentScrollView>
-
-      <View
-        style={{
-          marginBottom: hp(1),
-          flexDirection: "row",
-          borderTopWidth: wp(0.2),
-          borderColor: "#634F40",
-          paddingHorizontal: wp(3.5),
-        }}
+      <ImageBackground
+        source={require("../assets/buybuy.png")}
+        style={{ flex: 1 }}
+        resizeMode="cover"
       >
-        <Ionicons
-          name="exit-outline"
-          size={26}
-          color="#634F40"
-          style={{ alignSelf: "center", top: hp(0.2) }}
+        <View></View>
+        <Image
+          source={require("../assets/icon-transparent.png")}
+          style={{
+            width: wp(25),
+            height: wp(25),
+            alignSelf: "center",
+          }}
         />
+        <Text style={styles.drawerHeaderTitle}>Retchi POS</Text>
+        <Text style={styles.displayNameStyle}>{user?.displayName}</Text>
+        <DrawerContentScrollView scrollEnabled={false}>
+          <DrawerItemList {...props} />
+        </DrawerContentScrollView>
 
-        <DrawerItem
-          style={{ flex: 1 }}
-          label={() => <Text style={styles.drawerLabelStyle}>Sign out</Text>}
-          onPress={() => signOut(navigation, signUser, showToast)}
-        />
-      </View>
+        <View
+          style={{
+            marginBottom: hp(1),
+            flexDirection: "row",
+            borderTopWidth: wp(0.2),
+            borderColor: "#634F40",
+            paddingHorizontal: wp(3.5),
+          }}
+        >
+          <Ionicons
+            name="exit-outline"
+            size={26}
+            color="#634F40"
+            style={{ alignSelf: "center", top: hp(0.2) }}
+          />
+
+          <DrawerItem
+            style={{ flex: 1 }}
+            label={() => <Text style={styles.drawerLabelStyle}>Sign out</Text>}
+            onPress={() => signOut(navigation, signUser, showToast)}
+          />
+        </View>
+      </ImageBackground>
     </SafeAreaView>
   );
 };

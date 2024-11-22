@@ -5,6 +5,7 @@ import { SplashScreenProp } from "../../types/type";
 import { loadFont } from "../../methods/auth-methods/loadFont";
 import { useUserContext } from "../../context/UserContext";
 import { useAuthStateListenerAutoSignIn } from "../../hooks/useAuthStateListenerAutoSignIn";
+import { StatusBar } from "expo-status-bar";
 
 const SplashScreen = ({ navigation }: SplashScreenProp) => {
   const result = loadFont();
@@ -25,6 +26,7 @@ const SplashScreen = ({ navigation }: SplashScreenProp) => {
         source={require("../../assets/icon-transparent.png")}
         style={{ height: wp(70), width: wp(70) }}
       />
+      <StatusBar hidden />
     </SafeAreaView>
   );
 };

@@ -25,7 +25,9 @@ export const getDraftData = async (
           draftTitle,
           invoiceForm: {
             ...invoiceForm,
-            date: convertTimestampToDate(invoiceForm.date),
+            date: invoiceForm.date
+              ? convertTimestampToDate(invoiceForm.date)
+              : null,
           },
           selectedProduct,
           createdAt: convertTimestampToDate(createdAt),
