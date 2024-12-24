@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import { useState } from "react";
-import { CustomerReportScreenProp } from "../../../types/type";
+import { CustomerReportScreenProp, SelectedProduct } from "../../../types/type";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -53,8 +53,7 @@ const CustomerReportScreen = ({
             buttonStyle={styles.buttonStyle}
             onPress={() => {
               navigation.navigate("EditCustomerReportTabScreen");
-              console.log(currentSalesReport);
-              setSelectedProductListInEdit(
+              /*  setSelectedProductListInEdit(
                 currentSalesReport!.selectedProducts.map((selectedProduct) => {
                   const productInCurrentList = products.find(
                     (product) => product.id === selectedProduct.id
@@ -67,7 +66,32 @@ const CustomerReportScreen = ({
                       }
                     : selectedProduct;
                 })
+              ); */
+              const selectedProductsForEditMap = new Map<
+                string,
+                SelectedProduct
+              >();
+              currentSalesReport!.selectedProducts.forEach(
+                (selectedProduct) => {
+                  const productInCurrentList = products.find(
+                    (product) => product.id === selectedProduct.id
+                  );
+
+                  selectedProductsForEditMap.set(
+                    selectedProduct.id,
+                    productInCurrentList
+                      ? {
+                          ...selectedProduct,
+                          stock:
+                            selectedProduct.quantity +
+                            productInCurrentList?.stock,
+                        }
+                      : selectedProduct
+                  );
+                }
               );
+
+              setSelectedProductListInEdit(selectedProductsForEditMap);
             }}
           />
         )}

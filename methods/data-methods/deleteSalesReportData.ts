@@ -23,39 +23,38 @@ export const deleteSalesReportData = async (
       (element) => element.id !== salesReportId
     );
 
-    const salesReportPromises = currentSalesReport?.selectedProduct.map(
-      async (selectedProduct) => {
-        const productInList = products.find(
-          (product) => product.id === selectedProduct.id
-        );
-        if (productInList) {
-          const retrievedProductStock =
-            productInList.stock + selectedProduct.quantity;
-          /*  updateProduct(productInList.id, {
+    const salesReportPromises = Array.from(
+      currentSalesReport!.selectedProduct.values()
+    ).map(async (selectedProduct) => {
+      const productInList = products.find(
+        (product) => product.id === selectedProduct.id
+      );
+      if (productInList) {
+        const retrievedProductStock =
+          productInList.stock + selectedProduct.quantity;
+        /*  updateProduct(productInList.id, {
             stock: retrievedProductStock,
           }); */
 
-          /*  const productRef = doc(
+        /*  const productRef = doc(
             db,
             "users",
             user?.uid!,
             "products",
             productInList.id
           ); */
-          const productRef = ref(
-            realTimeDb,
-            `users/${user?.uid}/products/${selectedProduct.id}/stock`
-          );
-          await set(productRef, retrievedProductStock);
-          /*  await updateDoc(productRef, {
+        const productRef = ref(
+          realTimeDb,
+          `users/${user?.uid}/products/${selectedProduct.id}/stock`
+        );
+        await set(productRef, retrievedProductStock);
+        /*  await updateDoc(productRef, {
             stock: retrievedProductStock,
           }); */
-        }
-        setSalesReportList(updatedData);
-        console.log("Deleted Successfully");
-        showToast("success", "Invoice deleted sucessfully");
       }
-    );
+      setSalesReportList(updatedData);
+      showToast("success", "Invoice deleted sucessfully");
+    });
 
     await Promise.all(salesReportPromises || []);
   } catch (error) {

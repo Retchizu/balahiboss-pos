@@ -9,17 +9,17 @@ import {
 import { Button } from "@rneui/base";
 
 type SelectedProductListProps = {
-  data: SelectedProduct[];
+  data: Map<string, SelectedProduct>;
   updateSelectedProduct: (
-    productId: String,
+    productId: string,
     attribute: Partial<SelectedProduct>
   ) => void;
-  setSeletectedProduct: (newSelectedProducts: SelectedProduct[]) => void;
+  deleteSelectedProduct: (productId: string) => void;
 };
 const SelectedProductList = ({
   data,
   updateSelectedProduct,
-  setSeletectedProduct,
+  deleteSelectedProduct,
 }: SelectedProductListProps) => {
   return (
     <View style={{ flex: 1 }}>
@@ -28,20 +28,16 @@ const SelectedProductList = ({
         <Text style={[styles.labelText, { flex: 1.7 }]}>Price</Text>
         <Text style={[styles.labelText, { flex: 1 }]}>Qty</Text>
       </View>
-      {data.length ? (
+      {data.size ? (
         <FlatList
           removeClippedSubviews={false}
-          data={data}
+          data={Array.from(data.values())}
           renderItem={({ item }) => (
             <View style={styles.previewListContainer}>
               <Text
                 style={[styles.itemText, { flex: 2.5 }]}
                 onPress={() => {
-                  setSeletectedProduct(
-                    data.filter(
-                      (selectedProduct) => selectedProduct.id !== item.id
-                    )
-                  );
+                  deleteSelectedProduct(item.id);
                 }}
               >
                 {item.productName}

@@ -6,15 +6,16 @@ import {
   SelectedProduct,
   User,
 } from "../../types/type";
+import { clearSelectedProduct } from "../product-select-methods/clearSelectedProduct";
 
 export const submitSummaryReport = async (
-  selectedProducts: SelectedProduct[],
+  selectedProducts: Map<string, SelectedProduct>,
   invoiceFormInfo: InvoiceForm,
   setInvoiceFormInfo: React.Dispatch<React.SetStateAction<InvoiceForm>>,
   products: Product[],
   addSalesReport: (newReport: SalesReport) => void,
   addSalesReportData: (
-    selectedProducts: SelectedProduct[],
+    selectedProducts: Map<string, SelectedProduct>,
     invoiceForm: InvoiceForm,
     products: Product[],
     addSalesReport: (newReport: SalesReport) => void,
@@ -23,9 +24,11 @@ export const submitSummaryReport = async (
   ) => Promise<void>,
   showToast: (type: ToastType, text1: string, text2?: string) => void,
   user: User | null,
-  setSelectedProductList: (products: SelectedProduct[]) => void
+  setSelectedProductList: (
+    newSelectedProductList: Map<string, SelectedProduct>
+  ) => void
 ) => {
-  if (!selectedProducts.length) {
+  if (!selectedProducts.size) {
     showToast(
       "error",
       "Invalid invoice",
@@ -44,7 +47,7 @@ export const submitSummaryReport = async (
       showToast,
       user
     );
-    setSelectedProductList([]);
+    clearSelectedProduct(setSelectedProductList);
     setInvoiceFormInfo({
       cashPayment: "",
       onlinePayment: "",

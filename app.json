@@ -2,7 +2,7 @@
   "expo": {
     "name": "Retchi",
     "slug": "retchi",
-    "version": "3.4.0.24",
+    "version": "3.5.0.25",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -22,7 +22,7 @@
         "android.permission.ACCESS_MEDIA_LOCATION"
       ],
       "package": "com.retchizu.retchi",
-      "versionCode": 23
+      "versionCode": 24
     },
     "web": {
       "favicon": "./assets/favicon.png"

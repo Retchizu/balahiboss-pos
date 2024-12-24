@@ -1,7 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import React from "react";
 import { readableDate } from "../methods/time-methods/readableDate";
-import { CustomerReportParams } from "../types/type";
+import { CustomerReportParams, SelectedProduct } from "../types/type";
 import InfoHorizontal from "./InfoHorizontal";
 import { calculateTotalProfit } from "../methods/calculation-methods/calculateTotalProfit";
 import { calculateTotalPrice } from "../methods/calculation-methods/calculateTotalPrice";
@@ -44,7 +44,7 @@ const InvoiceInfo: React.FC<InvoiceInfoProp> = ({ params }) => {
       <InfoHorizontal
         label="Total amount"
         value={`₱${calculateTotalPrice(
-          params.selectedProducts,
+          params.selectedProducts as Map<string, SelectedProduct>,
           undefined,
           parseFloat(params.discount.trim() ? params.discount : "0")
         ).toFixed(2)}`}
@@ -52,7 +52,7 @@ const InvoiceInfo: React.FC<InvoiceInfoProp> = ({ params }) => {
       <InfoHorizontal
         label="Total profit"
         value={`₱${calculateTotalProfit(
-          params.selectedProducts,
+          params.selectedProducts as Map<string, SelectedProduct>,
           parseFloat(params.discount.trim() ? params.discount : "0"),
           parseFloat(params.freebies.trim() ? params.freebies : "0")
         ).toFixed(2)}`}

@@ -27,7 +27,7 @@ const InvoiceProductsInfo: React.FC<InvoiceInfoProp> = ({ params }) => {
       </View>
 
       <FlatList
-        data={params.selectedProducts}
+        data={Array.from(params.selectedProducts.values())}
         renderItem={({ item }) => (
           <View style={styles.rowFormat}>
             <Text style={[styles.invoiceValue, { flex: 2 }]}>

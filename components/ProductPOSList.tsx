@@ -18,11 +18,12 @@ import Toast from "react-native-toast-message";
 type ProductPOSListProps = {
   data: Product[];
   addSelectedProduct: (newProduct: SelectedProduct) => void;
-  selectedProducts: SelectedProduct[];
-  setSelectedProductList: (newProductList: SelectedProduct[]) => void;
+  selectedProducts: Map<string, SelectedProduct>;
+  deleteSelectedProduct: (productId: string) => void;
 };
+
 const ProductPOSList: React.FC<ProductPOSListProps> = memo(
-  ({ data, addSelectedProduct, selectedProducts, setSelectedProductList }) => {
+  ({ data, addSelectedProduct, selectedProducts, deleteSelectedProduct }) => {
     const { showToast } = useToastContext();
 
     const renderProductList = useCallback(
@@ -33,9 +34,9 @@ const ProductPOSList: React.FC<ProductPOSListProps> = memo(
             {
               backgroundColor:
                 item.stock !== 0
-                  ? selectedProducts.some(
+                  ? /* selectedProducts.some(
                       (selectedProduct) => selectedProduct.id === item.id
-                    )
+                    ) */ selectedProducts.has(item.id)
                     ? "#94e6b7"
                     : "#F3F0E9"
                   : "#D3D3D3",
@@ -49,7 +50,7 @@ const ProductPOSList: React.FC<ProductPOSListProps> = memo(
                     item,
                     addSelectedProduct,
                     selectedProducts,
-                    setSelectedProductList
+                    deleteSelectedProduct
                   )
               : () => {
                   showToast(

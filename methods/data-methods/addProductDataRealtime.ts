@@ -1,6 +1,6 @@
 import { ToastType } from "react-native-toast-message";
 import { Product, User } from "../../types/type";
-import { onChildAdded, push, ref, set } from "firebase/database";
+import { push, ref, set } from "firebase/database";
 import { realTimeDb } from "../../firebaseConfig";
 import React from "react";
 

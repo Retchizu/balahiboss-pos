@@ -6,26 +6,34 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { deleteSelectedProduct } from "../../../methods/product-select-methods/deleteSelectedProduct";
+import { clearSelectedProduct } from "../../../methods/product-select-methods/clearSelectedProduct";
 import Entypo from "@expo/vector-icons/Entypo";
 import { calculateTotalPrice } from "../../../methods/calculation-methods/calculateTotalPrice";
 import { useProductContext } from "../../../context/ProductContext";
 import { useToastContext } from "../../../context/ToastContext";
 
 const PreviewScreen = () => {
-  const { selectedProducts, setSelectedProductList, updateSelectedProduct } =
-    useSelectedProductContext();
+  const {
+    selectedProducts,
+    deleteSelectedProduct,
+    updateSelectedProduct,
+    setSelectedProductList,
+  } = useSelectedProductContext();
   const { products } = useProductContext();
   const { showToast } = useToastContext();
+
   useEffect(() => {
-    const productStockConflict = selectedProducts.filter((selectedProduct) => {
-      const findProduct = products.find(
-        (product) => product.id === selectedProduct.id
-      );
-      return findProduct?.stock === 0;
-    });
+    //TODO: fix toast
+    const productStockConflict = Array.from(selectedProducts.values()).filter(
+      (selectedProduct) => {
+        const findProduct = products.find(
+          (product) => product.id === selectedProduct.id
+        );
+        return findProduct?.stock === 0;
+      }
+    );
     if (productStockConflict.length) {
-      setSelectedProductList([]);
+      clearSelectedProduct(setSelectedProductList);
       showToast(
         "info",
         "Products out of stock",
@@ -40,7 +48,7 @@ const PreviewScreen = () => {
       <SelectedProductList
         data={selectedProducts}
         updateSelectedProduct={updateSelectedProduct}
-        setSeletectedProduct={setSelectedProductList}
+        deleteSelectedProduct={deleteSelectedProduct}
       />
       <View style={styles.footerStyle}>
         <Text style={styles.totalStyle}>
@@ -49,7 +57,7 @@ const PreviewScreen = () => {
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => {
-            deleteSelectedProduct(setSelectedProductList);
+            clearSelectedProduct(setSelectedProductList);
           }}
         >
           <Entypo name="trash" size={26} color="#634F40" />

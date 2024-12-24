@@ -24,7 +24,7 @@ type SummaryFormProps = {
   dateInvoiceFn: () => void;
   timeInvoiceFn: () => void;
   submitSummaryFormFn: () => Promise<void>;
-  selectedProducts: SelectedProduct[];
+  selectedProducts: Map<string, SelectedProduct>;
   customerModalVisibleFn: () => void;
   setIsSaveModalVisible?: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;

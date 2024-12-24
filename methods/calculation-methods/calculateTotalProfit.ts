@@ -1,12 +1,12 @@
 import { SelectedProduct } from "../../types/type";
 
 export const calculateTotalProfit = (
-  selectedProducts: SelectedProduct[],
+  selectedProducts: Map<string, SelectedProduct>,
   discount?: number,
   freebies?: number
 ) => {
   let total = 0;
-  if (selectedProducts.length === 0) return 0;
+  if (selectedProducts.size === 0) return 0;
 
   selectedProducts.forEach((selectedProduct) => {
     total +=

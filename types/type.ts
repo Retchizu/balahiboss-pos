@@ -56,13 +56,13 @@ export type CustomerReportParams = {
   discount: string;
   freebies: string;
   deliveryFee: string;
-  selectedProducts: SelectedProduct[];
+  selectedProducts: Map<string, SelectedProduct> | SelectedProduct[];
 };
 
 export type DraftInfoParams = {
   id: string;
   draftTitle: string;
-  selectedProduct: SelectedProduct[];
+  selectedProduct: Map<string, SelectedProduct> | SelectedProduct[];
   invoiceForm: {
     cashPayment: string;
     onlinePayment: string;
@@ -129,14 +129,14 @@ export type InvoiceForm = {
 
 export type SalesReport = {
   id: string;
-  selectedProduct: SelectedProduct[];
+  selectedProduct: Map<string, SelectedProduct>;
   invoiceForm: InvoiceForm;
 };
 
 export type InvoiceDraft = {
   id: string;
   draftTitle: string;
-  selectedProduct: SelectedProduct[];
+  selectedProduct: Map<string, SelectedProduct>;
   invoiceForm: InvoiceForm;
   createdAt: Date;
 };

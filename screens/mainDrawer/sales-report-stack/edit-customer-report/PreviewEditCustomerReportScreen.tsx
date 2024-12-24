@@ -3,7 +3,7 @@ import Entypo from "@expo/vector-icons/Entypo";
 import SelectedProductList from "../../../../components/SelectedProductList";
 import { useSelectedProductInEditContext } from "../../../../context/SelectedProductInEditContext";
 import { calculateTotalPrice } from "../../../../methods/calculation-methods/calculateTotalPrice";
-import { deleteSelectedProduct } from "../../../../methods/product-select-methods/deleteSelectedProduct";
+import { clearSelectedProduct } from "../../../../methods/product-select-methods/clearSelectedProduct";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -13,6 +13,7 @@ const PreviewEditCustomerReportScreen = () => {
   const {
     selectedProductsInEdit,
     updateSelectedProductInEdit,
+    deleteSelectedProductInEdit,
     setSelectedProductListInEdit,
   } = useSelectedProductInEditContext();
 
@@ -21,7 +22,7 @@ const PreviewEditCustomerReportScreen = () => {
       <SelectedProductList
         data={selectedProductsInEdit}
         updateSelectedProduct={updateSelectedProductInEdit}
-        setSeletectedProduct={setSelectedProductListInEdit}
+        deleteSelectedProduct={deleteSelectedProductInEdit}
       />
       <View style={styles.footerStyle}>
         <Text style={styles.totalStyle}>
@@ -29,7 +30,7 @@ const PreviewEditCustomerReportScreen = () => {
         </Text>
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={() => deleteSelectedProduct(setSelectedProductListInEdit)}
+          onPress={() => clearSelectedProduct(setSelectedProductListInEdit)}
         >
           <Entypo name="trash" size={26} color="#634F40" />
         </TouchableOpacity>
