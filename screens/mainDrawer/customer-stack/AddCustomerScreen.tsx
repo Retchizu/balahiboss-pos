@@ -21,6 +21,8 @@ const AddCustomerScreen = ({ navigation, route }: AddCustomerScreenProp) => {
   const { addCustomer } = useCustomerContext();
   const { showToast } = useToastContext();
   const { user } = useUserContext();
+  const [loading, setLoading] = useState(false);
+
   const handleCustomerAddSubmit = async () => {
     const customerData = await addCustomerData(
       customer,
@@ -54,7 +56,12 @@ const AddCustomerScreen = ({ navigation, route }: AddCustomerScreenProp) => {
           setCustomer={setCustomer}
           buttonLabel="Add Customer"
           formTitle="Add a customer"
-          submit={handleCustomerAddSubmit}
+          submit={async () => {
+            setLoading(true);
+            await handleCustomerAddSubmit();
+            setLoading(false);
+          }}
+          loading={loading}
         />
       </KeyboardAvoidingView>
       <Toast position="bottom" autoHide visibilityTime={2000} />

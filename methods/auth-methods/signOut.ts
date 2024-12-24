@@ -28,7 +28,6 @@ export const signOut = async (
         routes: [{ name: "Auth Screen" }],
       })
     );
-    showToast("info", "Signed out successfully");
   } catch (error) {
     showToast("error", "Something went wrong", "Try again later");
   }

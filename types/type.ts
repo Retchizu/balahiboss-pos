@@ -25,16 +25,16 @@ export type DrawerParamList = {
 
 export type CustomerStackParamList = {
   AddCustomerScreen: Boolean;
-  CustomerInfoScreen: Customer;
+  CustomerInfoScreen: undefined;
   CustomerListScreen: undefined;
-  EditCustomerScreen: Customer;
+  EditCustomerScreen: undefined;
 };
 
 export type ProductStackParamList = {
   AddProductScreen: undefined;
-  EditProductScreen: Product;
+  EditProductScreen: undefined;
   ProductListScreen: undefined;
-  ProductInfoScreen: Product;
+  ProductInfoScreen: undefined;
 };
 
 export type InvoiceStackParamList = {
@@ -44,7 +44,7 @@ export type InvoiceStackParamList = {
 
 export type RecentStackParamList = {
   RecentScreen: undefined;
-  CustomerReportScreen: CustomerReportParams & { fromSales: boolean };
+  CustomerReportScreen: undefined;
 };
 
 export type CustomerReportParams = {
@@ -76,15 +76,15 @@ export type DraftInfoParams = {
 };
 
 export type EditCustomerReportTabParamList = {
-  EditCustomerReportScreen: CustomerReportParams;
-  PreviewEditCustomerReportScreen: CustomerReportParams;
-  ProductListEditCustomerReportScreen: CustomerReportParams;
+  EditCustomerReportScreen: undefined;
+  PreviewEditCustomerReportScreen: undefined;
+  ProductListEditCustomerReportScreen: undefined;
 };
 
 export type SalesReportStackParamList = {
   SalesReportScreen: undefined;
-  CustomerReportScreen: CustomerReportParams & { fromSales: boolean };
-  EditCustomerReportTabScreen: CustomerReportParams;
+  CustomerReportScreen: undefined;
+  EditCustomerReportTabScreen: undefined;
 };
 
 export type DraftStackParamList = {
@@ -184,11 +184,6 @@ export type CustomerInfoScreenProp = NativeStackScreenProps<
   CustomerStackParamList,
   "CustomerInfoScreen"
 >;
-export type EditCustomerScreenProp = NativeStackScreenProps<
-  CustomerStackParamList,
-  "EditCustomerScreen"
->;
-
 export type ProductListScreenProp = NativeStackScreenProps<
   ProductStackParamList,
   "ProductListScreen"
@@ -197,10 +192,6 @@ export type ProductListScreenProp = NativeStackScreenProps<
 export type ProductInfoScreenProp = NativeStackScreenProps<
   ProductStackParamList,
   "ProductInfoScreen"
->;
-export type EditProductInfoScreenProp = NativeStackScreenProps<
-  ProductStackParamList,
-  "EditProductScreen"
 >;
 
 export type InvoiceScreenProp = NativeStackScreenProps<
@@ -236,8 +227,3 @@ export type EditCustomerReportScreenProp = BottomTabScreenProps<
   "ProductListEditCustomerReportScreen"
 >;
  */
-export type EditCustomerReportTabScreenProp = {
-  route: {
-    params: CustomerReportParams;
-  };
-};

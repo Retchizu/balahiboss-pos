@@ -6,7 +6,11 @@ import {
   View,
 } from "react-native";
 import React, { useCallback } from "react";
-import { SalesReport, SalesReportStackParamList } from "../types/type";
+import {
+  CustomerReportParams,
+  SalesReport,
+  SalesReportStackParamList,
+} from "../types/type";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { readableDate } from "../methods/time-methods/readableDate";
 import {
@@ -20,16 +24,28 @@ type SalesReportListProp = {
     SalesReportStackParamList,
     "SalesReportScreen"
   >;
+  setCurrentSalesReport: React.Dispatch<
+    React.SetStateAction<
+      | (CustomerReportParams & {
+          fromSales: boolean;
+        })
+      | null
+    >
+  >;
 };
 
-const SalesReportList = ({ data, navigation }: SalesReportListProp) => {
+const SalesReportList = ({
+  data,
+  navigation,
+  setCurrentSalesReport,
+}: SalesReportListProp) => {
   const renderSalesReportList = useCallback(
     ({ item }: { item: SalesReport }) => (
       <TouchableOpacity
         style={styles.customerInfoContainer}
         activeOpacity={0.5}
-        onPress={() =>
-          navigation.navigate("CustomerReportScreen", {
+        onPress={() => {
+          const convertSalesReportToCustomerParams = {
             id: item.id,
             cashPayment: item.invoiceForm.cashPayment,
             onlinePayment: item.invoiceForm.onlinePayment,
@@ -37,13 +53,15 @@ const SalesReportList = ({ data, navigation }: SalesReportListProp) => {
             date: item.invoiceForm.date
               ? item.invoiceForm.date.toISOString()
               : null,
-            deliveryFee: item.invoiceForm.deliveryFee,
             discount: item.invoiceForm.discount,
             freebies: item.invoiceForm.freebies,
+            deliveryFee: item.invoiceForm.deliveryFee,
             selectedProducts: item.selectedProduct,
             fromSales: true,
-          })
-        }
+          };
+          setCurrentSalesReport(convertSalesReportToCustomerParams);
+          navigation.navigate("CustomerReportScreen");
+        }}
       >
         <Text style={styles.customerName}>
           {item.invoiceForm.customer?.customerName}

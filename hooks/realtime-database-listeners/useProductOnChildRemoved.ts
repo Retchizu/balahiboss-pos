@@ -11,7 +11,7 @@ export const useProductOnChildRemoved = (
   const handleOnChildRemoved = useCallback(() => {
     const productRef = ref(realTimeDb, `users/${user?.uid}/products`);
     onChildRemoved(productRef, (data) => {
-      console.log("onChildRemoved called");
+      // console.log("onChildRemoved called");
       const productToDelete = products.find(
         (product) => product.id === data.key!
       );

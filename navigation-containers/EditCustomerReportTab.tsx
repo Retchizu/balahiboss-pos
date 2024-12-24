@@ -1,16 +1,11 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import {
-  EditCustomerReportTabParamList,
-  EditCustomerReportTabScreenProp,
-} from "../types/type";
+import { EditCustomerReportTabParamList } from "../types/type";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import EditCustomerReportScreen from "../screens/mainDrawer/sales-report-stack/edit-customer-report/EditCustomerReportScreen";
 import ProductListEditCustomerReportScreen from "../screens/mainDrawer/sales-report-stack/edit-customer-report/ProductListEditCustomerReportScreen";
 import PreviewEditCustomerReportScreen from "../screens/mainDrawer/sales-report-stack/edit-customer-report/PreviewEditCustomerReportScreen";
@@ -18,10 +13,7 @@ import PreviewEditCustomerReportScreen from "../screens/mainDrawer/sales-report-
 const EditCustomerReportTab =
   createBottomTabNavigator<EditCustomerReportTabParamList>();
 
-export const EditCustomerReportTabScreen = ({
-  route,
-}: EditCustomerReportTabScreenProp) => {
-  const params = route.params;
+export const EditCustomerReportTabScreen = () => {
   return (
     <EditCustomerReportTab.Navigator
       screenOptions={{
@@ -51,7 +43,6 @@ export const EditCustomerReportTabScreen = ({
           tabBarIcon: () => <AntDesign name="form" size={24} color="#634F40" />,
           tabBarLabel: "Edit Invoice",
         }}
-        initialParams={params}
       />
       <EditCustomerReportTab.Screen
         name="ProductListEditCustomerReportScreen"
@@ -60,7 +51,6 @@ export const EditCustomerReportTabScreen = ({
           tabBarIcon: () => <Entypo name="box" size={24} color="#634F40" />,
           tabBarLabel: "Product List",
         }}
-        initialParams={params}
       />
       <EditCustomerReportTab.Screen
         name="PreviewEditCustomerReportScreen"
@@ -71,7 +61,6 @@ export const EditCustomerReportTabScreen = ({
           ),
           tabBarLabel: "Cart",
         }}
-        initialParams={params}
       />
     </EditCustomerReportTab.Navigator>
   );

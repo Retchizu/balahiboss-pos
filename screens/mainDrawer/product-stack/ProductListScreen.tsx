@@ -11,11 +11,13 @@ import ProductList from "../../../components/ProductList";
 import { useProductContext } from "../../../context/ProductContext";
 import { filterSearchForPoduct } from "../../../methods/search-filters/filterSearchForProduct";
 import Toast from "react-native-toast-message";
+import { useCurrentProductContext } from "../../../context/CurrentProductContext";
 
 const ProductListScreen = ({ navigation }: ProductListScreenProp) => {
   const [searchQuery, setSearchQuery] = useState("");
   const { products } = useProductContext();
   const filteredData = filterSearchForPoduct(products, searchQuery);
+  const { setCurrentProduct } = useCurrentProductContext();
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -33,7 +35,11 @@ const ProductListScreen = ({ navigation }: ProductListScreenProp) => {
           <Fontisto name="shopping-basket-add" size={24} color="#634F40" />
         </TouchableOpacity>
       </View>
-      <ProductList data={filteredData} navigation={navigation} />
+      <ProductList
+        data={filteredData}
+        navigation={navigation}
+        setCurrentProduct={setCurrentProduct}
+      />
       <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );

@@ -52,7 +52,6 @@ const ProductPOSList: React.FC<ProductPOSListProps> = memo(
                     setSelectedProductList
                   )
               : () => {
-                  console.log(`${item.productName} is out of stock`);
                   showToast(
                     "info",
                     "Out of Stock",

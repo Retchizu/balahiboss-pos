@@ -17,12 +17,13 @@ import { useUserContext } from "../../../context/UserContext";
 import { useToastContext } from "../../../context/ToastContext";
 import InvoiceInfo from "../../../components/InvoiceInfo";
 import InvoiceProductsInfo from "../../../components/InvoiceProductsInfo";
+import { useCurrentSalesReportContext } from "../../../context/CurrentSalesReportContext";
 
 const CustomerReportScreen = ({
   route,
   navigation,
 }: CustomerReportScreenProp) => {
-  const params = route.params;
+  const { currentSalesReport } = useCurrentSalesReportContext();
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
     useState(false);
   const { salesReports, setSalesReportList } = useSalesReportContext();
@@ -38,22 +39,23 @@ const CustomerReportScreen = ({
         { opacity: isConfirmationModalVisible ? 0.1 : 1 },
       ]}
     >
-      <InvoiceInfo params={params} />
-      <InvoiceProductsInfo params={params} />
+      <InvoiceInfo params={currentSalesReport!} />
+      <InvoiceProductsInfo params={currentSalesReport!} />
       <View style={styles.buttonContainer}>
         <Button
           icon={<Entypo name="trash" size={24} color="#F3F0E9" />}
           buttonStyle={styles.buttonStyle}
           onPress={() => setIsConfirmationModalVisible(true)}
         />
-        {params.fromSales && (
+        {currentSalesReport!.fromSales && (
           <Button
             icon={<Entypo name="edit" size={24} color="#F3F0E9" />}
             buttonStyle={styles.buttonStyle}
             onPress={() => {
-              navigation.navigate("EditCustomerReportTabScreen", params);
+              navigation.navigate("EditCustomerReportTabScreen");
+              console.log(currentSalesReport);
               setSelectedProductListInEdit(
-                params.selectedProducts.map((selectedProduct) => {
+                currentSalesReport!.selectedProducts.map((selectedProduct) => {
                   const productInCurrentList = products.find(
                     (product) => product.id === selectedProduct.id
                   );
@@ -78,7 +80,7 @@ const CustomerReportScreen = ({
         confirmFn={() => {
           navigation.pop();
           deleteSalesReportData(
-            params.id,
+            currentSalesReport!.id,
             salesReports,
             setSalesReportList,
             products,
@@ -88,7 +90,9 @@ const CustomerReportScreen = ({
           setIsConfirmationModalVisible(false);
         }}
         confirmationTitle="Delete this report?"
-        confirmationDescription={`Delete purchase info of ${params.customer?.customerName}`}
+        confirmationDescription={`Delete purchase info of ${
+          currentSalesReport!.customer?.customerName
+        }`}
       />
     </View>
   );

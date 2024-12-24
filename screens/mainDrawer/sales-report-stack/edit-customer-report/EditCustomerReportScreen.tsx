@@ -1,9 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { useEffect, useState } from "react";
-import {
-  EditCustomerReportScreenProp,
-  InvoiceForm,
-} from "../../../../types/type";
+import { InvoiceForm } from "../../../../types/type";
 import SummaryForm from "../../../../components/SummaryForm";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useSelectedProductInEditContext } from "../../../../context/SelectedProductInEditContext";
@@ -21,21 +18,19 @@ import { useUserContext } from "../../../../context/UserContext";
 import { filterSearchForCustomer } from "../../../../methods/search-filters/fitlerSearchForCustomer";
 import Toast from "react-native-toast-message";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { submitSummaryReportInEdit } from "../../../../methods/submit-sales-method/submitSummaryReportInEdit";
+import { useCurrentSalesReportContext } from "../../../../context/CurrentSalesReportContext";
 
-const EditCustomerReportScreen = ({
-  route,
-  navigation,
-}: EditCustomerReportScreenProp) => {
-  const invoiceForm = route.params;
+const EditCustomerReportScreen = () => {
+  const { currentSalesReport, updateCurrentSalesReport } =
+    useCurrentSalesReportContext();
   const [invoiceFormInfoEdit, setInvoiceFormInfoEdit] = useState<InvoiceForm>({
-    cashPayment: invoiceForm.cashPayment,
-    onlinePayment: invoiceForm.onlinePayment,
-    customer: invoiceForm.customer,
-    date: invoiceForm.date ? new Date(invoiceForm.date) : null,
-    deliveryFee: invoiceForm.deliveryFee,
-    discount: invoiceForm.discount,
-    freebies: invoiceForm.freebies,
+    cashPayment: currentSalesReport!.cashPayment,
+    onlinePayment: currentSalesReport!.onlinePayment,
+    customer: currentSalesReport!.customer,
+    date: currentSalesReport!.date ? new Date(currentSalesReport!.date) : null,
+    deliveryFee: currentSalesReport!.deliveryFee,
+    discount: currentSalesReport!.discount,
+    freebies: currentSalesReport!.freebies,
   });
   const { selectedProductsInEdit } = useSelectedProductInEditContext();
   const { setProductListInEdit, productsInEdit } = useProductInEditContext();
@@ -53,6 +48,8 @@ const EditCustomerReportScreen = ({
 
   const { showToast } = useToastContext();
   const { user } = useUserContext();
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setProductListInEditScreen(
@@ -91,19 +88,33 @@ const EditCustomerReportScreen = ({
                 deliveryFee: "",
               })
             }
-            submitSummaryFormFn={() =>
-              submitSummaryReportInEdit(
+            loading={loading}
+            submitSummaryFormFn={async () => {
+              setLoading(true);
+              await updateSalesReportData(
+                currentSalesReport!.id,
+                invoiceFormInfoEdit,
+                selectedProductsInEdit,
+                productsInEdit,
+                updateSalesReport,
+                currentSalesReport!.selectedProducts,
+                updateCurrentSalesReport,
+                showToast,
+                user
+              );
+              setLoading(false);
+              /*  submitSummaryReportInEdit(
                 selectedProductsInEdit,
                 invoiceFormInfoEdit,
                 navigation,
                 updateSalesReportData,
-                invoiceForm,
+                currentSalesReport!,
                 productsInEdit,
                 updateSalesReport,
                 showToast,
                 user
-              )
-            }
+              ) */
+            }}
           />
         </KeyboardAwareScrollView>
       </View>

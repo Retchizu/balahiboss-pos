@@ -7,10 +7,7 @@ import {
 } from "react-native-responsive-screen";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@rneui/base";
-import {
-  EditProductInfoScreenProp,
-  ProductInfoType,
-} from "../../../types/type";
+import { ProductInfoType } from "../../../types/type";
 import { useProductContext } from "../../../context/ProductContext";
 import { handleInputChange } from "../../../methods/handleInputChange";
 import { useToastContext } from "../../../context/ToastContext";
@@ -18,28 +15,25 @@ import Toast from "react-native-toast-message";
 import { useUserContext } from "../../../context/UserContext";
 import { handleBuyStock } from "../../../methods/product-manipulation-methods/handleBuyStock";
 import { handleSameProductData } from "../../../methods/product-manipulation-methods/handleSameProductData";
-import { handleBuyStockNavigation } from "../../../methods/product-manipulation-methods/handleBuyStockNavigation";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { useCurrentProductContext } from "../../../context/CurrentProductContext";
 
-const EditProductScreen = ({
-  route,
-  navigation,
-}: EditProductInfoScreenProp) => {
-  const params = route.params;
+const EditProductScreen = () => {
+  const { currentProduct, updateCurrentProduct } = useCurrentProductContext();
   const [productInfo, setProductInfo] = useState<ProductInfoType>({
-    productName: params.productName,
-    stockPrice: params.stockPrice.toString(),
-    sellPrice: params.sellPrice.toString(),
-    lowStockThreshold: params.lowStockThreshold
-      ? params.lowStockThreshold.toString()
+    productName: currentProduct!.productName,
+    stockPrice: currentProduct!.stockPrice.toString(),
+    sellPrice: currentProduct!.sellPrice.toString(),
+    lowStockThreshold: currentProduct!.lowStockThreshold
+      ? currentProduct!.lowStockThreshold.toString()
       : "0",
     buyStock: "",
-    editStock: params.stock.toString(),
+    editStock: currentProduct!.stock.toString(),
   });
+
   const { products } = useProductContext();
   const { showToast } = useToastContext();
   const { user } = useUserContext();
-  const [_, toggleToast] = useState(0);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -112,21 +106,28 @@ const EditProductScreen = ({
                 handleBuyStock(
                   parseFloat(productInfo.buyStock),
                   products,
-                  params.id,
+                  currentProduct!.id,
                   showToast,
-                  user,
-                  toggleToast
+                  user
                 );
+                if (
+                  productInfo.buyStock.trim() &&
+                  !isNaN(parseFloat(productInfo.buyStock))
+                ) {
+                  updateCurrentProduct({
+                    stock:
+                      currentProduct!.stock + parseFloat(productInfo.buyStock),
+                  });
 
-                handleBuyStockNavigation(
-                  products,
-                  params.id,
-                  productInfo,
-                  setProductInfo,
-                  navigation,
-                  showToast,
-                  toggleToast
-                );
+                  handleInputChange(
+                    "editStock",
+                    (
+                      currentProduct!.stock + parseFloat(productInfo.buyStock)
+                    ).toString(),
+                    setProductInfo
+                  );
+                  handleInputChange("buyStock", "0", setProductInfo);
+                }
               }}
             />
           </View>
@@ -148,8 +149,8 @@ const EditProductScreen = ({
             onPress={() => {
               handleSameProductData(
                 products,
-                params.id,
-                navigation,
+                currentProduct!.id,
+                updateCurrentProduct,
                 productInfo,
                 showToast,
                 user

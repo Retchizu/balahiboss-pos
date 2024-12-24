@@ -11,7 +11,7 @@ export const useProductOnChildChanged = (
     const productRef = ref(realTimeDb, `users/${user?.uid}/products/`);
     const handleOnChildChanged = () =>
       onChildChanged(productRef, (data) => {
-        console.log("onChildChanged called");
+        // console.log("onChildChanged called");
         updateProduct(data.key!, {
           productName: data.val().productName,
           stockPrice: data.val().stockPrice,

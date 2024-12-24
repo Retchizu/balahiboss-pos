@@ -27,6 +27,7 @@ type SummaryFormProps = {
   selectedProducts: SelectedProduct[];
   customerModalVisibleFn: () => void;
   setIsSaveModalVisible?: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: boolean;
 };
 
 const SummaryForm = ({
@@ -40,6 +41,7 @@ const SummaryForm = ({
   timeInvoiceFn,
   submitSummaryFormFn,
   setIsSaveModalVisible,
+  loading,
 }: SummaryFormProps) => {
   return (
     <View style={styles.summaryFormContainer}>
@@ -213,6 +215,7 @@ const SummaryForm = ({
         buttonStyle={styles.buttonStyle}
         titleStyle={styles.titleStyle}
         onPress={async () => await submitSummaryFormFn()}
+        loading={loading}
       />
     </View>
   );

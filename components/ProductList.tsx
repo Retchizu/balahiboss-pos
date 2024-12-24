@@ -19,15 +19,23 @@ type ProductListProp = {
     ProductStackParamList,
     "ProductListScreen"
   >;
+  setCurrentProduct: React.Dispatch<React.SetStateAction<Product | null>>;
 };
 
-const ProductList = ({ data, navigation }: ProductListProp) => {
+const ProductList = ({
+  data,
+  navigation,
+  setCurrentProduct,
+}: ProductListProp) => {
   const renderProductList = useCallback(
     ({ item }: { item: Product }) => (
       <TouchableOpacity
         style={styles.productContainer}
         activeOpacity={0.5}
-        onPress={() => navigation.navigate("ProductInfoScreen", item)}
+        onPress={() => {
+          setCurrentProduct(item);
+          navigation.navigate("ProductInfoScreen");
+        }}
       >
         <Text style={styles.productTitle}>{item.productName}</Text>
         <Text style={styles.productDetail}>Price: ₱{item.sellPrice}</Text>

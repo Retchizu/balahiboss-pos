@@ -1,7 +1,6 @@
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import { useState } from "react";
 import CustomerForm from "../../../components/CustomerForm";
-import { EditCustomerScreenProp } from "../../../types/type";
 import { updateCustomerData } from "../../../methods/data-methods/updateCustomerData";
 import { useCustomerContext } from "../../../context/CustomerContext";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
@@ -9,28 +8,20 @@ import { useToastContext } from "../../../context/ToastContext";
 import Toast from "react-native-toast-message";
 import { useUserContext } from "../../../context/UserContext";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { useCurrentCustomerContext } from "../../../context/CurrentCustomerContext";
 
-const EditCustomerScreen = ({ route, navigation }: EditCustomerScreenProp) => {
-  const customerId = route.params.id;
+const EditCustomerScreen = () => {
+  const { currentCustomer, updateCurrentCustomer } =
+    useCurrentCustomerContext();
   const [customer, setCustomer] = useState({
-    customerName: route.params.customerName,
-    customerInfo: route.params.customerInfo,
+    customerName: currentCustomer!.customerName,
+    customerInfo: currentCustomer!.customerInfo,
   });
 
   const { updateCustomer } = useCustomerContext();
   const { showToast } = useToastContext();
   const { user } = useUserContext();
-
-  const handleCustomerUpdateSubmit = () => {
-    updateCustomerData(customerId, customer, updateCustomer, showToast, user);
-
-    navigation.pop();
-    navigation.replace("CustomerInfoScreen", {
-      id: customerId,
-      customerName: customer.customerName,
-      customerInfo: customer.customerInfo,
-    });
-  };
+  const [loading, setLoading] = useState(false);
 
   return (
     <View
@@ -48,7 +39,19 @@ const EditCustomerScreen = ({ route, navigation }: EditCustomerScreenProp) => {
             buttonLabel="Update Customer"
             formTitle="Update a customer"
             setCustomer={setCustomer}
-            submit={() => handleCustomerUpdateSubmit()}
+            submit={async () => {
+              setLoading(true);
+              await updateCustomerData(
+                currentCustomer!.id,
+                customer,
+                updateCurrentCustomer,
+                updateCustomer,
+                showToast,
+                user
+              );
+              setLoading(false);
+            }}
+            loading={loading}
           />
           <Toast position="bottom" autoHide visibilityTime={2000} />
         </KeyboardAwareScrollView>
@@ -58,5 +61,3 @@ const EditCustomerScreen = ({ route, navigation }: EditCustomerScreenProp) => {
 };
 
 export default EditCustomerScreen;
-
-const styles = StyleSheet.create({});

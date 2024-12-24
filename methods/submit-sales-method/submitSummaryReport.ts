@@ -12,13 +12,11 @@ export const submitSummaryReport = async (
   invoiceFormInfo: InvoiceForm,
   setInvoiceFormInfo: React.Dispatch<React.SetStateAction<InvoiceForm>>,
   products: Product[],
-  updateProduct: (productId: string, attribute: Partial<Product>) => void,
   addSalesReport: (newReport: SalesReport) => void,
   addSalesReportData: (
     selectedProducts: SelectedProduct[],
     invoiceForm: InvoiceForm,
     products: Product[],
-    updateProduct: (productId: string, attribute: Partial<Product>) => void,
     addSalesReport: (newReport: SalesReport) => void,
     showToast: (type: ToastType, text1: string, text2?: string) => void,
     user: User | null
@@ -42,7 +40,6 @@ export const submitSummaryReport = async (
       selectedProducts,
       invoiceFormInfo,
       products,
-      updateProduct,
       addSalesReport,
       showToast,
       user

@@ -20,8 +20,10 @@ import Toast from "react-native-toast-message";
 import { useUserContext } from "../../../context/UserContext";
 import { useRecentSalesReportManager } from "../../../hooks/useRecentSalesReportManager";
 import { useProductContext } from "../../../context/ProductContext";
+import { useCurrentSalesReportContext } from "../../../context/CurrentSalesReportContext";
 
 const RecentScreen = ({ navigation }: RecentScreenProp) => {
+  const { setCurrentSalesReport } = useCurrentSalesReportContext();
   const { salesReports, setSalesReportList } = useSalesReportContext();
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToastContext();
@@ -62,8 +64,8 @@ const RecentScreen = ({ navigation }: RecentScreenProp) => {
             <TouchableOpacity
               style={styles.customerInfoContainer}
               activeOpacity={0.5}
-              onPress={() =>
-                navigation.navigate("CustomerReportScreen", {
+              onPress={() => {
+                const convertSalesReportToCustomerParams = {
                   id: item.id,
                   cashPayment: item.invoiceForm.cashPayment,
                   onlinePayment: item.invoiceForm.onlinePayment,
@@ -71,13 +73,15 @@ const RecentScreen = ({ navigation }: RecentScreenProp) => {
                   date: item.invoiceForm.date
                     ? item.invoiceForm.date.toISOString()
                     : null,
-                  deliveryFee: item.invoiceForm.deliveryFee,
                   discount: item.invoiceForm.discount,
                   freebies: item.invoiceForm.freebies,
+                  deliveryFee: item.invoiceForm.deliveryFee,
                   selectedProducts: item.selectedProduct,
                   fromSales: false,
-                })
-              }
+                };
+                setCurrentSalesReport(convertSalesReportToCustomerParams);
+                navigation.navigate("CustomerReportScreen");
+              }}
             >
               <Text style={styles.customerName}>
                 {item.invoiceForm.customer?.customerName}

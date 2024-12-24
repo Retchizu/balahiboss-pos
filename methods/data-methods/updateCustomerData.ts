@@ -6,6 +6,7 @@ import { doc, updateDoc } from "firebase/firestore";
 export const updateCustomerData = async (
   customerId: String,
   customerInfo: { customerName: string; customerInfo: string },
+  updateCurrentCustomer: (attribute: Partial<Customer>) => void,
   updateCustomer: (customerId: String, attribute: Partial<Customer>) => void,
   showToast: (type: ToastType, text1: string, text2?: string) => void,
   user: User | null
@@ -24,6 +25,10 @@ export const updateCustomerData = async (
         customerInfo: customerInfo.customerInfo,
       });
       updateCustomer(customerId, {
+        customerName: customerInfo.customerName,
+        customerInfo: customerInfo.customerInfo,
+      });
+      updateCurrentCustomer({
         customerName: customerInfo.customerName,
         customerInfo: customerInfo.customerInfo,
       });
