@@ -1,7 +1,7 @@
 import { SelectedProduct } from "../../types/type";
 
 export const calculateTotalPrice = (
-  selectedProducts: SelectedProduct[],
+  selectedProducts: Map<string, SelectedProduct>,
   deliveryFee?: number,
   discount?: number
 ) => {

@@ -11,7 +11,7 @@ export const handleSaveDraft = async (
   draftTitle: string,
   user: User | null,
   invoiceFormInfo: InvoiceForm,
-  selectedProducts: SelectedProduct[],
+  selectedProducts: Map<string, SelectedProduct>,
   addDraft: (newDraft: InvoiceDraft) => void,
   showToast: (type: ToastType, text1: string, text2?: string) => void,
   setIsSaveModalVisible: React.Dispatch<React.SetStateAction<boolean>>,

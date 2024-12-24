@@ -15,7 +15,7 @@ import {
 } from "../time-methods/readableTime";
 
 export const handlePrint = async (
-  selectedProducts: SelectedProduct[],
+  selectedProducts: Map<string, SelectedProduct>,
   discount: string,
   deliveryFee: string,
   invoiceDate: Date,

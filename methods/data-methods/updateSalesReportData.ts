@@ -14,13 +14,13 @@ import { ref, set } from "firebase/database";
 export const updateSalesReportData = async (
   salesReportId: string,
   invoiceForm: InvoiceForm,
-  selectedProducts: SelectedProduct[],
+  selectedProducts: Map<string, SelectedProduct>,
   products: Product[],
   updateSalesReport: (
     reportId: String,
     attribute: Partial<SalesReport>
   ) => void,
-  originalSelectedProducts: SelectedProduct[],
+  originalSelectedProducts: Map<string, SelectedProduct>,
   updateCurrentSalesReport: (
     attribute: Partial<
       CustomerReportParams & {
@@ -32,9 +32,11 @@ export const updateSalesReportData = async (
   user: User | null
 ) => {
   try {
+    console.log("originalSelectedProducts", originalSelectedProducts);
+    console.log("selectedProducts", selectedProducts);
     const salesReportRef = doc(db, "users", user?.uid!, "sales", salesReportId);
     await updateDoc(salesReportRef, {
-      selectedProducts: selectedProducts,
+      selectedProducts: Array.from(selectedProducts.values()),
       invoiceForm: invoiceForm,
     });
 
@@ -44,7 +46,7 @@ export const updateSalesReportData = async (
     });
     //reduce the stock of added product to original products
     await Promise.all(
-      selectedProducts.map(async (item) => {
+      Array.from(selectedProducts.values()).map(async (item) => {
         const itemInProductList = products.find(
           (product) => product.id === item.id
         );
@@ -58,15 +60,16 @@ export const updateSalesReportData = async (
         }
       })
     );
-    //return the stock of remove product to original products
+
+    // Return the stock of removed products to original products
     await Promise.all(
-      originalSelectedProducts.map(async (item) => {
+      Array.from(originalSelectedProducts.values()).map(async (item) => {
         const itemInProductList = products.find(
           (product) => product.id === item.id
         );
         if (itemInProductList) {
-          const isInCurrentSelectedProducts = selectedProducts.find(
-            (selectedProduct) => selectedProduct.id === itemInProductList.id
+          const isInCurrentSelectedProducts = selectedProducts.has(
+            itemInProductList.id
           );
           if (!isInCurrentSelectedProducts) {
             const productRef = ref(
@@ -94,5 +97,6 @@ export const updateSalesReportData = async (
     showToast("success", "Sales report updated successfully");
   } catch (error) {
     showToast("error", "Error occured", "Try again later");
+    console.log(error);
   }
 };

@@ -11,7 +11,7 @@ import { addDoc, collection } from "firebase/firestore";
 import { ref, set } from "firebase/database";
 
 export const addSalesReportData = async (
-  selectedProducts: SelectedProduct[],
+  selectedProducts: Map<string, SelectedProduct>,
   invoiceForm: InvoiceForm,
   products: Product[],
   addSalesReport: (newReport: SalesReport) => void,
@@ -22,16 +22,17 @@ export const addSalesReportData = async (
     const salesReportRef = await addDoc(
       collection(db, "users", user?.uid!, "sales"),
       {
-        selectedProducts: selectedProducts,
+        selectedProducts: Array.from(selectedProducts.values()),
         invoiceForm: invoiceForm,
       }
     );
 
     await Promise.all(
-      selectedProducts.map(async (selectedProduct) => {
+      Array.from(selectedProducts.values()).map(async (selectedProduct) => {
         const itemInProductList = products.find(
           (product) => product.id === selectedProduct.id
         );
+
         if (itemInProductList) {
           const reduceStockInProduct =
             itemInProductList.stock - selectedProduct.quantity;
@@ -54,6 +55,5 @@ export const addSalesReportData = async (
     showToast("success", "Invoice added successfully");
   } catch (error) {
     showToast("error", "Error occured", `${(error as Error).message}`);
-    console.log(`${(error as Error).message}`);
   }
 };

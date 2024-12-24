@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { useEffect, useState } from "react";
-import { InvoiceForm } from "../../../../types/type";
+import { InvoiceForm, SelectedProduct } from "../../../../types/type";
 import SummaryForm from "../../../../components/SummaryForm";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useSelectedProductInEditContext } from "../../../../context/SelectedProductInEditContext";
@@ -91,13 +91,25 @@ const EditCustomerReportScreen = () => {
             loading={loading}
             submitSummaryFormFn={async () => {
               setLoading(true);
+              const currentSalesReportSelectedProductsMap = new Map<
+                string,
+                SelectedProduct
+              >();
+              currentSalesReport!.selectedProducts.forEach(
+                (selectedProduct) => {
+                  currentSalesReportSelectedProductsMap.set(
+                    selectedProduct.id,
+                    selectedProduct
+                  );
+                }
+              );
               await updateSalesReportData(
                 currentSalesReport!.id,
                 invoiceFormInfoEdit,
                 selectedProductsInEdit,
                 productsInEdit,
                 updateSalesReport,
-                currentSalesReport!.selectedProducts,
+                currentSalesReportSelectedProductsMap,
                 updateCurrentSalesReport,
                 showToast,
                 user

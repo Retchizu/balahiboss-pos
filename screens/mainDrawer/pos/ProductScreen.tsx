@@ -16,7 +16,7 @@ const ProductScreen = () => {
   const { products, addProduct, setProductList, updateProduct } =
     useProductContext();
   const [searchQuery, setSearchQuery] = useState("");
-  const { selectedProducts, addSelectedProduct, setSelectedProductList } =
+  const { selectedProducts, addSelectedProduct, deleteSelectedProduct } =
     useSelectedProductContext();
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useUserContext();
@@ -52,7 +52,7 @@ const ProductScreen = () => {
           data={filteredData}
           addSelectedProduct={addSelectedProduct}
           selectedProducts={selectedProducts}
-          setSelectedProductList={setSelectedProductList}
+          deleteSelectedProduct={deleteSelectedProduct}
         />
       )}
 

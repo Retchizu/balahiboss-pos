@@ -74,7 +74,11 @@ const DraftInfoScreen = ({ navigation, route }: DraftInfoScreenProp) => {
                 ...invoiceForm,
                 date: invoiceForm.date ? new Date(invoiceForm.date) : null,
               });
-              setSelectedProductList(selectedProduct);
+              const selectedProductMap = new Map();
+              selectedProduct.forEach((selectedProduct) => {
+                selectedProductMap.set(selectedProduct.id, selectedProduct);
+              });
+              setSelectedProductList(selectedProductMap);
               navigation.navigate("POSScreen", {
                 screen: "InvoiceStackScreen",
               });

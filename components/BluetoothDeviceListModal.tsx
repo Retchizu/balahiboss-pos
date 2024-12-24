@@ -26,7 +26,7 @@ type BluetoothDeviceListModalProp = {
     React.SetStateAction<boolean>
   >;
   pairedDevices: Device[];
-  selectedProducts: SelectedProduct[];
+  selectedProducts: Map<string, SelectedProduct>;
   deliveryFee: string;
   discount: string;
   invoiceDate: Date;

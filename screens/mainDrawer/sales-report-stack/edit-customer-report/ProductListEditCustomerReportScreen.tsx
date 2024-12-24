@@ -14,7 +14,7 @@ const ProductListEditCustomerReportScreen = () => {
   const {
     selectedProductsInEdit,
     addSelectedProductInEdit,
-    setSelectedProductListInEdit,
+    deleteSelectedProductInEdit,
   } = useSelectedProductInEditContext();
 
   const { productsInEdit } = useProductInEditContext();
@@ -35,7 +35,7 @@ const ProductListEditCustomerReportScreen = () => {
       <ProductPOSList
         selectedProducts={selectedProductsInEdit}
         addSelectedProduct={addSelectedProductInEdit}
-        setSelectedProductList={setSelectedProductListInEdit}
+        deleteSelectedProduct={deleteSelectedProductInEdit}
         data={filteredProductData}
       />
     </View>

@@ -68,6 +68,7 @@ const DraftScreen = ({ navigation, route }: DraftScreenProp) => {
           } else {
             navigation.navigate("DraftInfoScreen", {
               ...item,
+              selectedProduct: Array.from(item.selectedProduct.values()),
               invoiceForm: {
                 ...item.invoiceForm,
                 date: item.invoiceForm.date

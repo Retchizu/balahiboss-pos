@@ -12,19 +12,20 @@ export const addDraftData = async (
   user: User | null,
   draftTitle: string,
   invoiceForm: InvoiceForm,
-  selectedProduct: SelectedProduct[],
+  selectedProduct: Map<string, SelectedProduct>,
   createdAt: Date,
   addDraft: (newDraft: InvoiceDraft) => void,
   showToast: (type: ToastType, text1: string, text2?: string) => void
 ) => {
   try {
     if (user) {
+      const selectedProductArray = Array.from(selectedProduct.values());
       const draftRef = await addDoc(
         collection(db, "users", user.uid, "drafts"),
         {
           draftTitle,
           invoiceForm,
-          selectedProduct,
+          selectedProduct: selectedProductArray,
           createdAt,
         }
       );

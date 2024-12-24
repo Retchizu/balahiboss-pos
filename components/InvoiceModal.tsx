@@ -26,7 +26,7 @@ type InvoiceFormProps = {
     React.SetStateAction<boolean>
   >;
   setIsInvoiceVisible: React.Dispatch<SetStateAction<boolean>>;
-  selectedProducts: SelectedProduct[];
+  selectedProducts: Map<string, SelectedProduct>;
   deliveryFee: string;
   discount: string;
   showToast: (type: ToastType, text1: string, text2?: string) => void;
@@ -95,7 +95,7 @@ const InvoiceModal = ({
             </Text>
           </View>
           <FlatList
-            data={selectedProducts}
+            data={Array.from(selectedProducts.values())}
             renderItem={({ item }) => (
               <View style={styles.rowFormat}>
                 <Text style={[styles.invoiceValue, { flex: 2 }]}>

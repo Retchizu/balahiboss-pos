@@ -2,13 +2,16 @@ import { createContext, ReactNode, useContext, useState } from "react";
 import { SelectedProduct } from "../types/type";
 
 type SelectedProductInEditContextType = {
-  selectedProductsInEdit: SelectedProduct[];
+  selectedProductsInEdit: Map<string, SelectedProduct>;
   addSelectedProductInEdit: (newProduct: SelectedProduct) => void;
   updateSelectedProductInEdit: (
-    productId: String,
+    productId: string,
     attribute: Partial<SelectedProduct>
   ) => void;
-  setSelectedProductListInEdit: (newProductList: SelectedProduct[]) => void;
+  deleteSelectedProductInEdit: (productId: string) => void;
+  setSelectedProductListInEdit: (
+    newProductList: Map<string, SelectedProduct>
+  ) => void;
 };
 
 const SelectedProductInEditContext = createContext<
@@ -19,27 +22,41 @@ export const SelectedProductInEditProvider: React.FC<{
   children: ReactNode;
 }> = ({ children }) => {
   const [selectedProductsInEdit, setSelectedProductsInEdit] = useState<
-    SelectedProduct[]
-  >([]);
+    Map<string, SelectedProduct>
+  >(new Map());
 
   const addSelectedProductInEdit = (newSelectedProduct: SelectedProduct) => {
-    setSelectedProductsInEdit((prevSelectedProducts) => [
-      ...prevSelectedProducts,
-      newSelectedProduct,
-    ]);
+    setSelectedProductsInEdit((prevSelectedProducts) => {
+      const currentMap = new Map(prevSelectedProducts);
+      currentMap.set(newSelectedProduct.id, newSelectedProduct);
+      return currentMap;
+    });
   };
+
   const updateSelectedProductInEdit = (
-    productId: String,
+    productId: string,
     attribute: Partial<SelectedProduct>
   ) => {
-    setSelectedProductsInEdit((prevSelectedProducts) =>
-      prevSelectedProducts.map((product) =>
-        product.id === productId ? { ...product, ...attribute } : product
-      )
-    );
+    setSelectedProductsInEdit((prevSelectedProducts) => {
+      const currentMap = new Map(prevSelectedProducts);
+      const existingProduct = currentMap.get(productId);
+      if (existingProduct) {
+        currentMap.set(productId, { ...existingProduct, ...attribute });
+      }
+      return currentMap;
+    });
   };
+
+  const deleteSelectedProductInEdit = (productId: string) => {
+    setSelectedProductsInEdit((prevSelectedProducts) => {
+      const currentMap = new Map(prevSelectedProducts);
+      currentMap.delete(productId);
+      return currentMap;
+    });
+  };
+
   const setSelectedProductListInEdit = (
-    newSelectedProductList: SelectedProduct[]
+    newSelectedProductList: Map<string, SelectedProduct>
   ) => {
     setSelectedProductsInEdit(newSelectedProductList);
   };
@@ -49,8 +66,9 @@ export const SelectedProductInEditProvider: React.FC<{
       value={{
         selectedProductsInEdit,
         addSelectedProductInEdit,
-        setSelectedProductListInEdit,
         updateSelectedProductInEdit,
+        deleteSelectedProductInEdit,
+        setSelectedProductListInEdit,
       }}
     >
       {children}
