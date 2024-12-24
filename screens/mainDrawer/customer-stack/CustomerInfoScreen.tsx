@@ -13,14 +13,15 @@ import { useCustomerContext } from "../../../context/CustomerContext";
 import Toast from "react-native-toast-message";
 import { useToastContext } from "../../../context/ToastContext";
 import { useUserContext } from "../../../context/UserContext";
+import { useCurrentCustomerContext } from "../../../context/CurrentCustomerContext";
 
-const CustomerInfoScreen = ({ navigation, route }: CustomerInfoScreenProp) => {
+const CustomerInfoScreen = ({ navigation }: CustomerInfoScreenProp) => {
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
     useState(false);
   const { customers, setCustomerList } = useCustomerContext();
   const { showToast } = useToastContext();
   const { user } = useUserContext();
-  const params = route.params;
+  const { currentCustomer } = useCurrentCustomerContext();
   return (
     <View
       style={[
@@ -30,11 +31,11 @@ const CustomerInfoScreen = ({ navigation, route }: CustomerInfoScreenProp) => {
     >
       <View style={styles.infoStyle}>
         <Text style={styles.labelStyle}>Customer Name: </Text>
-        <Text style={styles.valueStyle}>{params.customerName}</Text>
+        <Text style={styles.valueStyle}>{currentCustomer!.customerName}</Text>
       </View>
       <Text style={styles.labelStyle}>Customer Info </Text>
       <View style={styles.infoBox}>
-        <Text style={styles.valueStyle}>{params.customerInfo}</Text>
+        <Text style={styles.valueStyle}>{currentCustomer!.customerInfo}</Text>
       </View>
       <View style={styles.buttonContainer}>
         <Button
@@ -45,19 +46,19 @@ const CustomerInfoScreen = ({ navigation, route }: CustomerInfoScreenProp) => {
         <Button
           icon={<Entypo name="edit" size={24} color="#F3F0E9" />}
           buttonStyle={styles.buttonStyle}
-          onPress={() => navigation.navigate("EditCustomerScreen", params)}
+          onPress={() => navigation.navigate("EditCustomerScreen")}
         />
       </View>
 
       <ConfirmationModal
         isVisible={isConfirmationModalVisible}
-        confirmationTitle={`Delete Customer "${params.customerName}"`}
+        confirmationTitle={`Delete Customer "${currentCustomer!.customerName}"`}
         confirmationDescription="Are you sure you want to delete this customer?"
         cancelFn={() => setIsConfirmationModalVisible(false)}
         confirmFn={async () => {
           navigation.goBack();
           await deleteCustomerData(
-            params.id,
+            currentCustomer!.id,
             customers,
             setCustomerList,
             showToast,

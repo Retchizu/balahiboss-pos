@@ -30,6 +30,7 @@ import { useGetSalesReport } from "../../../hooks/sales-report-hooks/useGetSales
 import FileNameModal from "../../../components/FileNameModal";
 import { salesReportsToExcel } from "../../../methods/convert-to-excel-methods/salesReportsToExcel";
 import { useGetCustomers } from "../../../hooks/customer-hooks/useGetCustomers";
+import { useCurrentSalesReportContext } from "../../../context/CurrentSalesReportContext";
 
 const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -61,6 +62,8 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
   const [isFileModalVisible, setIsFileModalVisible] = useState(false);
   const [fileName, setFileName] = useState("");
   const [isConversionLoading, setIsConversionLoading] = useState(false);
+
+  const { setCurrentSalesReport } = useCurrentSalesReportContext();
 
   return (
     <View
@@ -116,7 +119,11 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
           <ActivityIndicator color={"#634F40"} size={wp(10)} />
         </View>
       ) : filteredData.length ? (
-        <SalesReportList data={filteredData} navigation={navigation} />
+        <SalesReportList
+          data={filteredData}
+          navigation={navigation}
+          setCurrentSalesReport={setCurrentSalesReport}
+        />
       ) : (
         <View style={{ flex: 1, justifyContent: "center" }}>
           <Text style={styles.messageStyle}>No sales found at this time.</Text>

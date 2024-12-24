@@ -6,11 +6,7 @@ import { updateProductDataRealtime } from "../data-methods/updateProductDataReal
 export const handleSameProductData = (
   products: Product[],
   id: string,
-  navigation: NativeStackNavigationProp<
-    ProductStackParamList,
-    "EditProductScreen",
-    undefined
-  >,
+  updateCurrentProduct: (attribute: Partial<Product>) => void,
   productInfo: {
     productName: string;
     stockPrice: string;
@@ -50,12 +46,9 @@ export const handleSameProductData = (
     previousProductData.sellPrice === updatedProduct.sellPrice &&
     previousProductData.stock === updatedProduct.stock &&
     previousProductData.lowStockThreshold === updatedProduct.lowStockThreshold;
+
   if (!isSameData) {
     updateProductDataRealtime(updatedProduct, showToast, user);
-    navigation.pop();
-    navigation.replace("ProductInfoScreen", updatedProduct);
-  } else {
-    navigation.pop();
-    navigation.replace("ProductInfoScreen", updatedProduct);
+    updateCurrentProduct(updatedProduct);
   }
 };

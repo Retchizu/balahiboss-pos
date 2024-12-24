@@ -19,15 +19,23 @@ type CustomerListProp = {
     CustomerStackParamList,
     "CustomerListScreen"
   >;
+  setCurrentCustomer: React.Dispatch<React.SetStateAction<Customer | null>>;
 };
 
-const CustomerList = ({ data, navigation }: CustomerListProp) => {
+const CustomerList = ({
+  data,
+  navigation,
+  setCurrentCustomer,
+}: CustomerListProp) => {
   const renderCustomerList = useCallback(
     ({ item }: { item: Customer }) => (
       <TouchableOpacity
         style={styles.customerInfoContainer}
         activeOpacity={0.5}
-        onPress={() => navigation.navigate("CustomerInfoScreen", item)}
+        onPress={() => {
+          setCurrentCustomer(item);
+          navigation.navigate("CustomerInfoScreen");
+        }}
       >
         <Text
           numberOfLines={1}

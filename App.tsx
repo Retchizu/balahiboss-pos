@@ -6,12 +6,13 @@ import { ToastProvider } from "./context/ToastContext";
 import { UserProvider } from "./context/UserContext";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { StatusBar } from "expo-status-bar";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const MainStack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <>
+    <SafeAreaView style={{ flex: 1 }}>
       <NavigationContainer>
         <KeyboardProvider>
           <ToastProvider>
@@ -28,6 +29,6 @@ export default function App() {
         </KeyboardProvider>
       </NavigationContainer>
       <StatusBar backgroundColor="#F0D8B8" />
-    </>
+    </SafeAreaView>
   );
 }

@@ -10,7 +10,6 @@ import { handleInputChange } from "../../methods/handleInputChange";
 import { Button } from "@rneui/base";
 import { signIn } from "../../methods/auth-methods/signIn";
 import { SignInScreenProp } from "../../types/type";
-import Toast from "react-native-toast-message";
 import { useToastContext } from "../../context/ToastContext";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import * as Google from "expo-auth-session/providers/google";
@@ -36,8 +35,9 @@ const SignInScreen = ({ navigation }: SignInScreenProp) => {
   const { showToast } = useToastContext();
   const { signUser } = useUserContext();
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
-  useGoogleSignIn(response);
+  useGoogleSignIn(response, setGoogleLoading);
   useAuthStateListenerSignIn(navigation, signUser);
 
   return (
@@ -77,7 +77,10 @@ const SignInScreen = ({ navigation }: SignInScreenProp) => {
           title={"Sign In With Google"}
           buttonStyle={[styles.buttonStyle, { backgroundColor: "#DB4437" }]}
           titleStyle={[styles.titleStyle, { color: "#F3F0E9" }]}
-          onPress={() => promptAsync()}
+          onPress={() => {
+            setGoogleLoading(true);
+            promptAsync();
+          }}
           icon={
             <AntDesign
               name="google"
@@ -86,8 +89,8 @@ const SignInScreen = ({ navigation }: SignInScreenProp) => {
               style={{ paddingHorizontal: wp(2) }}
             />
           }
+          loading={googleLoading}
         />
-        <Toast position="bottom" autoHide visibilityTime={2000} />
       </KeyboardAvoidingView>
     </View>
   );

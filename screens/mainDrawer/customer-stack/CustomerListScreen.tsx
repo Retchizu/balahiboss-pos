@@ -4,7 +4,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useState } from "react";
+import React, { useState } from "react";
 import Searchbar from "../../../components/Searchbar";
 import {
   widthPercentageToDP as wp,
@@ -18,6 +18,7 @@ import Toast from "react-native-toast-message";
 import { useUserContext } from "../../../context/UserContext";
 import { useToastContext } from "../../../context/ToastContext";
 import { useGetCustomers } from "../../../hooks/customer-hooks/useGetCustomers";
+import { useCurrentCustomerContext } from "../../../context/CurrentCustomerContext";
 
 const CustomerListScreen = ({ navigation }: CustomerListScreenProp) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,6 +27,7 @@ const CustomerListScreen = ({ navigation }: CustomerListScreenProp) => {
   const { showToast } = useToastContext();
 
   const { customers } = useGetCustomers(user, setIsLoading, showToast);
+  const { setCurrentCustomer } = useCurrentCustomerContext();
 
   const filteredData = filterSearchForCustomer(customers, searchQuery);
   return (
@@ -51,7 +53,11 @@ const CustomerListScreen = ({ navigation }: CustomerListScreenProp) => {
         </View>
       ) : (
         <>
-          <CustomerList data={filteredData} navigation={navigation} />
+          <CustomerList
+            data={filteredData}
+            navigation={navigation}
+            setCurrentCustomer={setCurrentCustomer}
+          />
         </>
       )}
 

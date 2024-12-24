@@ -7,14 +7,13 @@ import {
   SelectedProduct,
   User,
 } from "../../types/type";
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { ref, set } from "firebase/database";
 
 export const addSalesReportData = async (
   selectedProducts: SelectedProduct[],
   invoiceForm: InvoiceForm,
   products: Product[],
-  updateProduct: (productId: string, attribute: Partial<Product>) => void,
   addSalesReport: (newReport: SalesReport) => void,
   showToast: (type: ToastType, text1: string, text2?: string) => void,
   user: User | null
@@ -50,8 +49,6 @@ export const addSalesReportData = async (
       invoiceForm: invoiceForm,
       selectedProduct: selectedProducts,
     };
-
-    console.log(newSalesReport);
 
     addSalesReport(newSalesReport);
     showToast("success", "Invoice added successfully");

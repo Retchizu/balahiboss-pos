@@ -1,6 +1,7 @@
 import { ToastType } from "react-native-toast-message";
 import { db, realTimeDb } from "../../firebaseConfig";
 import {
+  CustomerReportParams,
   InvoiceForm,
   Product,
   SalesReport,
@@ -20,6 +21,13 @@ export const updateSalesReportData = async (
     attribute: Partial<SalesReport>
   ) => void,
   originalSelectedProducts: SelectedProduct[],
+  updateCurrentSalesReport: (
+    attribute: Partial<
+      CustomerReportParams & {
+        fromSales: boolean;
+      }
+    >
+  ) => void,
   showToast: (type: ToastType, text1: string, text2?: string) => void,
   user: User | null
 ) => {
@@ -70,11 +78,20 @@ export const updateSalesReportData = async (
         }
       })
     );
-    showToast(
-      "success",
-      "Sales report updated successfully",
-      "Redirecting, please wait..."
-    );
+
+    updateCurrentSalesReport({
+      id: salesReportId,
+      cashPayment: invoiceForm.cashPayment,
+      onlinePayment: invoiceForm.onlinePayment,
+      customer: invoiceForm.customer,
+      date: invoiceForm.date?.toISOString(),
+      discount: invoiceForm.discount,
+      freebies: invoiceForm.freebies,
+      deliveryFee: invoiceForm.deliveryFee,
+      selectedProducts: selectedProducts,
+      fromSales: true,
+    });
+    showToast("success", "Sales report updated successfully");
   } catch (error) {
     showToast("error", "Error occured", "Try again later");
   }

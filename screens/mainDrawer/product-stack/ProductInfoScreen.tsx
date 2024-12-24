@@ -13,20 +13,26 @@ import Toast from "react-native-toast-message";
 import { useToastContext } from "../../../context/ToastContext";
 import { useUserContext } from "../../../context/UserContext";
 import { deleteProductDataRealtime } from "../../../methods/data-methods/deleteProductDataRealtiime";
+import { useCurrentProductContext } from "../../../context/CurrentProductContext";
 
-const ProductInfoScreen = ({ route, navigation }: ProductInfoScreenProp) => {
+const ProductInfoScreen = ({ navigation }: ProductInfoScreenProp) => {
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
     useState(false);
-  const params = route.params;
 
   const { showToast } = useToastContext();
   const { user } = useUserContext();
   const [_, setToggleToast] = useState(0);
+  const { currentProduct } = useCurrentProductContext();
 
   const handleDeleteProduct = () => {
     navigation.pop();
     navigation.replace("ProductListScreen");
-    deleteProductDataRealtime(params.id, showToast, user, setToggleToast);
+    deleteProductDataRealtime(
+      currentProduct!.id,
+      showToast,
+      user,
+      setToggleToast
+    );
   };
 
   return (
@@ -38,31 +44,31 @@ const ProductInfoScreen = ({ route, navigation }: ProductInfoScreenProp) => {
     >
       <InfoContainerHorizontal
         label={"Product name"}
-        value={params.productName}
+        value={currentProduct!.productName}
       />
       <InfoContainerHorizontal
         label={"Stock price"}
-        value={`₱ ${params.stockPrice.toFixed(2)}`}
+        value={`₱ ${currentProduct!.stockPrice.toFixed(2)}`}
       />
       <InfoContainerHorizontal
         label={"Sell price"}
-        value={`₱ ${params.sellPrice.toFixed(2)}`}
+        value={`₱ ${currentProduct!.sellPrice.toFixed(2)}`}
       />
       <InfoContainerHorizontal
         label={"Stock"}
-        value={params.stock.toString()}
+        value={currentProduct!.stock.toString()}
       />
       <InfoContainerHorizontal
         label={"Low stock threshold"}
-        value={params.lowStockThreshold.toString()}
+        value={currentProduct!.lowStockThreshold.toString()}
       />
 
       <ConfirmationModal
         isVisible={isConfirmationModalVisible}
         setIsVisible={setIsConfirmationModalVisible}
         cancelFn={() => setIsConfirmationModalVisible(false)}
-        confirmFn={async () => await handleDeleteProduct()}
-        confirmationTitle={`Delete product "${params.productName}"`}
+        confirmFn={() => handleDeleteProduct()}
+        confirmationTitle={`Delete product "${currentProduct!.productName}"`}
         confirmationDescription="Do you want to delete this product?"
       />
       <View style={styles.buttonContainer}>
@@ -74,7 +80,7 @@ const ProductInfoScreen = ({ route, navigation }: ProductInfoScreenProp) => {
         <Button
           icon={<Entypo name="edit" size={24} color="#F3F0E9" />}
           buttonStyle={styles.buttonStyle}
-          onPress={() => navigation.navigate("EditProductScreen", params)}
+          onPress={() => navigation.navigate("EditProductScreen")}
         />
       </View>
       <Toast position="bottom" autoHide visibilityTime={2000} />

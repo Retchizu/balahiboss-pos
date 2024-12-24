@@ -31,6 +31,7 @@ type CustomerFormProps = {
   buttonLabel: string;
   formTitle: string;
   submit: () => void;
+  loading: boolean;
 };
 
 const CustomerForm = ({
@@ -39,6 +40,7 @@ const CustomerForm = ({
   buttonLabel,
   formTitle,
   submit,
+  loading,
 }: CustomerFormProps) => {
   const textInputRef = useRef<TextInput | null>(null);
 
@@ -85,6 +87,7 @@ const CustomerForm = ({
           buttonStyle={styles.buttonStyle}
           titleStyle={styles.titleStyle}
           onPress={() => submit()}
+          loading={loading}
         />
       </View>
       <Toast position="bottom" autoHide visibilityTime={2000} />

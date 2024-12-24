@@ -17,10 +17,7 @@ import Toast from "react-native-toast-message";
 import { useToastContext } from "../../../context/ToastContext";
 import BluetoothDeviceListModal from "../../../components/BluetoothDeviceListModal";
 import { useUserContext } from "../../../context/UserContext";
-import {
-  KeyboardAvoidingView,
-  KeyboardAwareScrollView,
-} from "react-native-keyboard-controller";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { submitSummaryReport } from "../../../methods/submit-sales-method/submitSummaryReport";
 import { useInvoiceForm } from "../../../hooks/invoice-hooks/useInvoiceForm";
 import { useBluetoothPrinter } from "../../../hooks/invoice-hooks/useBluetoothPrinter";
@@ -38,7 +35,7 @@ const InvoiceScreen: React.FC<InvoiceScreenProp> = ({
   //context
   const { selectedProducts, setSelectedProductList } =
     useSelectedProductContext();
-  const { products, updateProduct } = useProductContext();
+  const { products } = useProductContext();
   const { addSalesReport } = useSalesReportContext();
   const { showToast } = useToastContext();
   const { user } = useUserContext();
@@ -75,6 +72,8 @@ const InvoiceScreen: React.FC<InvoiceScreenProp> = ({
   const [draftTitle, setDraftTitle] = useState("");
   const { addDraft } = useDraftContext();
 
+  const [loading, setLoading] = useState(false);
+
   if (permissionResponse === null) {
     requestPermission();
   }
@@ -103,20 +102,22 @@ const InvoiceScreen: React.FC<InvoiceScreenProp> = ({
             setIsSaveModalVisible={setIsSaveModalVisible}
             dateInvoiceFn={() => setIsDateVisible(true)}
             timeInvoiceFn={() => setIsTimeVisible(true)}
-            submitSummaryFormFn={() =>
-              submitSummaryReport(
+            loading={loading}
+            submitSummaryFormFn={async () => {
+              setLoading(true);
+              await submitSummaryReport(
                 selectedProducts,
                 invoiceForm,
                 setInvoiceForm,
                 products,
-                updateProduct,
                 addSalesReport,
                 addSalesReportData,
                 showToast,
                 user,
                 setSelectedProductList
-              )
-            }
+              );
+              setLoading(false);
+            }}
           />
         </KeyboardAwareScrollView>
       </View>

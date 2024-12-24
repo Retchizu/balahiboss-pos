@@ -11,7 +11,7 @@ export const useProductOnChildAdded = (
   const handleOnChildAdded = useCallback(() => {
     const productRef = ref(realTimeDb, `users/${user?.uid}/products`);
     onChildAdded(productRef, (data) => {
-      console.log("onChildeAdded called");
+      // console.log("onChildeAdded called");
       const { productName, stockPrice, sellPrice, stock, lowStockThreshold } =
         data.val();
       const product: Product = {
