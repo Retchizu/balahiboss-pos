@@ -5,6 +5,7 @@ import { CustomerReportParams, SelectedProduct } from "../types/type";
 import InfoHorizontal from "./InfoHorizontal";
 import { calculateTotalProfit } from "../methods/calculation-methods/calculateTotalProfit";
 import { calculateTotalPrice } from "../methods/calculation-methods/calculateTotalPrice";
+import { readableTime } from "../methods/time-methods/readableTime";
 
 type InvoiceInfoProp = {
   params: Readonly<
@@ -32,6 +33,10 @@ const InvoiceInfo: React.FC<InvoiceInfoProp> = ({ params }) => {
       <InfoHorizontal
         label="Date bought"
         value={params.date ? readableDate(new Date(params.date)) : ""}
+      />
+      <InfoHorizontal
+        label="Time bought"
+        value={params.date ? readableTime(new Date(params.date)) : ""}
       />
       <InfoHorizontal
         label="Discount"

@@ -5,11 +5,14 @@ import {
   InvoiceForm,
   Product,
   SalesReport,
+  SalesReportDataToExcel,
   SelectedProduct,
+  StockReportDataToExcel,
   User,
 } from "../../types/type";
 import { doc, updateDoc } from "firebase/firestore";
 import { ref, set } from "firebase/database";
+import { readableDate } from "../time-methods/readableDate";
 
 export const updateSalesReportData = async (
   salesReportId: string,
@@ -29,7 +32,13 @@ export const updateSalesReportData = async (
     >
   ) => void,
   showToast: (type: ToastType, text1: string, text2?: string) => void,
-  user: User | null
+  user: User | null,
+  setSalesReportCache: React.Dispatch<
+    React.SetStateAction<Map<string, SalesReportDataToExcel[]>>
+  >,
+  setStockSoldCache: React.Dispatch<
+    React.SetStateAction<Map<string, StockReportDataToExcel[]>>
+  >
 ) => {
   try {
     console.log("originalSelectedProducts", originalSelectedProducts);
@@ -81,6 +90,22 @@ export const updateSalesReportData = async (
         }
       })
     );
+
+    const currentDate = readableDate(invoiceForm.date!);
+    setSalesReportCache((prevMap) => {
+      const currentMap = new Map(prevMap);
+      if (currentMap.has(currentDate)) {
+        currentMap.delete(currentDate);
+      }
+      return currentMap;
+    });
+    setStockSoldCache((prevMap) => {
+      const currentMap = new Map(prevMap);
+      if (currentMap.has(currentDate)) {
+        currentMap.delete(currentDate);
+      }
+      return currentMap;
+    });
 
     updateCurrentSalesReport({
       id: salesReportId,

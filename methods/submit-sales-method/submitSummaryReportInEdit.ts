@@ -49,7 +49,7 @@ export const submitSummaryReportInEdit = async (
     selectedProductsInEdit,
     productsInEdit,
     updateSalesReport,
-    invoiceForm.selectedProducts,
+    invoiceForm.selectedProducts as SelectedProduct[],
     showToast,
     user
   );
@@ -86,3 +86,5 @@ export const submitSummaryReportInEdit = async (
     };
   }, 900);
 };
+
+//not used

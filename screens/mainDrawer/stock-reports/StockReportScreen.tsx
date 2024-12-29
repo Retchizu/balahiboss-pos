@@ -23,6 +23,7 @@ import FileNameModal from "../../../components/FileNameModal";
 import ConversionOptionsModal from "../../../components/ConversionOptionsModal";
 import { productStockReportToExcel } from "../../../methods/convert-to-excel-methods/productStockReportToExcel";
 import { choiceType } from "../../../types/type";
+import { useStockSoldReportCacheContext } from "../../../context/cacheContext/StockSoldReportCacheContext";
 
 const StockReportScreen = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -66,6 +67,9 @@ const StockReportScreen = () => {
 
   const [choiceSelected, setChoiceSelected] = useState<choiceType | null>(null);
   const [isConversionLoading, setIsConversionLoading] = useState(false);
+
+  const { stockSoldCache, setStockSoldCache } =
+    useStockSoldReportCacheContext();
 
   return (
     <View
@@ -135,7 +139,9 @@ const StockReportScreen = () => {
                   setIsConversionLoading,
                   setIsFileModalVisible,
                   setIsConversionOptionsVisible,
-                  setChoiceSelected
+                  setChoiceSelected,
+                  stockSoldCache,
+                  setStockSoldCache
                 );
                 break;
               case 2:

@@ -3,10 +3,13 @@ import {
   InvoiceForm,
   Product,
   SalesReport,
+  SalesReportDataToExcel,
   SelectedProduct,
+  StockReportDataToExcel,
   User,
 } from "../../types/type";
 import { clearSelectedProduct } from "../product-select-methods/clearSelectedProduct";
+import { readableDate } from "../time-methods/readableDate";
 
 export const submitSummaryReport = async (
   selectedProducts: Map<string, SelectedProduct>,
@@ -26,7 +29,13 @@ export const submitSummaryReport = async (
   user: User | null,
   setSelectedProductList: (
     newSelectedProductList: Map<string, SelectedProduct>
-  ) => void
+  ) => void,
+  setSalesReportCache: React.Dispatch<
+    React.SetStateAction<Map<string, SalesReportDataToExcel[]>>
+  >,
+  setStockSoldCache: React.Dispatch<
+    React.SetStateAction<Map<string, StockReportDataToExcel[]>>
+  >
 ) => {
   if (!selectedProducts.size) {
     showToast(
@@ -47,6 +56,21 @@ export const submitSummaryReport = async (
       showToast,
       user
     );
+    const currentDate = readableDate(date);
+    setSalesReportCache((prevMap) => {
+      const currentMap = new Map(prevMap);
+      if (currentMap.has(currentDate)) {
+        currentMap.delete(currentDate);
+      }
+      return currentMap;
+    });
+    setStockSoldCache((prevMap) => {
+      const currentMap = new Map(prevMap);
+      if (currentMap.has(currentDate)) {
+        currentMap.delete(currentDate);
+      }
+      return currentMap;
+    });
     clearSelectedProduct(setSelectedProductList);
     setInvoiceFormInfo({
       cashPayment: "",

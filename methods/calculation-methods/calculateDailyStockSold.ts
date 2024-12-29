@@ -14,8 +14,9 @@ export const calculateDailyStockSold = (
     return salesReportDate.getTime() === resetDateHours.getTime();
   });
   salesReportsThisDate.forEach((report) => {
-    const extractedSelectedProduct = report.selectedProduct.find(
-      (selectedProd) => selectedProd.id === productId
+    const selectedProductToArray = Array.from(report.selectedProduct.values());
+    const extractedSelectedProduct = selectedProductToArray.find(
+      (selectedProduct) => selectedProduct.id === productId
     );
     total += extractedSelectedProduct?.quantity
       ? extractedSelectedProduct.quantity

@@ -3,7 +3,7 @@ import { SalesReport, SelectedProduct } from "../../types/type";
 export const calculateOverallTotalPrice = (
   salesReports: SalesReport[],
   calculateTotalPrice: (
-    selectedProducts: SelectedProduct[],
+    selectedProducts: Map<string, SelectedProduct>,
     deliveryFee?: number
   ) => number
 ) => {

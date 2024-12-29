@@ -31,6 +31,7 @@ import FileNameModal from "../../../components/FileNameModal";
 import { salesReportsToExcel } from "../../../methods/convert-to-excel-methods/salesReportsToExcel";
 import { useGetCustomers } from "../../../hooks/customer-hooks/useGetCustomers";
 import { useCurrentSalesReportContext } from "../../../context/CurrentSalesReportContext";
+import { useSalesreportCacheContext } from "../../../context/cacheContext/SalesReportCacheContext";
 
 const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -64,6 +65,8 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
   const [isConversionLoading, setIsConversionLoading] = useState(false);
 
   const { setCurrentSalesReport } = useCurrentSalesReportContext();
+  const { salesReportCache, setSalesReportCache } =
+    useSalesreportCacheContext();
 
   return (
     <View
@@ -177,7 +180,9 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
               fileName,
               showToast,
               setIsConversionLoading,
-              setIsFileModalVisible
+              setIsFileModalVisible,
+              salesReportCache,
+              setSalesReportCache
             );
             setFileName("");
           }, 100);

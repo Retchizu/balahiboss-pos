@@ -227,3 +227,16 @@ export type EditCustomerReportScreenProp = BottomTabScreenProps<
   "ProductListEditCustomerReportScreen"
 >;
  */
+
+export type StockReportDataToExcel = {
+  Product_Name: string;
+  Total_Stock_Sold: number;
+  Date: string;
+};
+
+export type SalesReportDataToExcel = {
+  Customer_Id: string;
+  Customer_Name: string | undefined;
+  Total_Amount_Sold: number;
+  Date_Bought: string;
+};

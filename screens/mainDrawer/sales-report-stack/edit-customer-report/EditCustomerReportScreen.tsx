@@ -19,6 +19,8 @@ import { filterSearchForCustomer } from "../../../../methods/search-filters/fitl
 import Toast from "react-native-toast-message";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useCurrentSalesReportContext } from "../../../../context/CurrentSalesReportContext";
+import { useSalesreportCacheContext } from "../../../../context/cacheContext/SalesReportCacheContext";
+import { useStockSoldReportCacheContext } from "../../../../context/cacheContext/StockSoldReportCacheContext";
 
 const EditCustomerReportScreen = () => {
   const { currentSalesReport, updateCurrentSalesReport } =
@@ -64,6 +66,8 @@ const EditCustomerReportScreen = () => {
     customerSearchQuery
   );
 
+  const { setSalesReportCache } = useSalesreportCacheContext();
+  const { setStockSoldCache } = useStockSoldReportCacheContext();
   return (
     <View style={styles.container}>
       <View>
@@ -112,7 +116,9 @@ const EditCustomerReportScreen = () => {
                 currentSalesReportSelectedProductsMap,
                 updateCurrentSalesReport,
                 showToast,
-                user
+                user,
+                setSalesReportCache,
+                setStockSoldCache
               );
               setLoading(false);
               /*  submitSummaryReportInEdit(

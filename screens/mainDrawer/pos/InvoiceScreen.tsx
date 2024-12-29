@@ -25,6 +25,8 @@ import { useCustomerListManager } from "../../../hooks/invoice-hooks/useCustomer
 import SaveDraftModal from "../../../components/SaveDraftModal";
 import { useDraftContext } from "../../../context/DraftContext";
 import { handleSaveDraft } from "../../../methods/handleSaveDraft";
+import { useSalesreportCacheContext } from "../../../context/cacheContext/SalesReportCacheContext";
+import { useStockSoldReportCacheContext } from "../../../context/cacheContext/StockSoldReportCacheContext";
 
 const InvoiceScreen: React.FC<InvoiceScreenProp> = ({
   navigation,
@@ -73,6 +75,8 @@ const InvoiceScreen: React.FC<InvoiceScreenProp> = ({
   const { addDraft } = useDraftContext();
 
   const [loading, setLoading] = useState(false);
+  const { setSalesReportCache } = useSalesreportCacheContext();
+  const { setStockSoldCache } = useStockSoldReportCacheContext();
 
   if (permissionResponse === null) {
     requestPermission();
@@ -114,7 +118,9 @@ const InvoiceScreen: React.FC<InvoiceScreenProp> = ({
                 addSalesReportData,
                 showToast,
                 user,
-                setSelectedProductList
+                setSelectedProductList,
+                setSalesReportCache,
+                setStockSoldCache
               );
               setLoading(false);
             }}
