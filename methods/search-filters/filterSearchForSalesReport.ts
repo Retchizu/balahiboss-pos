@@ -1,26 +1,32 @@
 import { useMemo } from "react";
-import { SalesReport } from "../../types/type";
+import { SalesReport, SalesReportSearchBarFilter } from "../../types/type";
 
 export const filterSearchForSalesReport = (
-  SalesReport: SalesReport[],
+  salesReport: SalesReport[],
   searchQuery: string,
-  isNameFilter: boolean
+  salesReportSearchBarFilter: SalesReportSearchBarFilter
 ) => {
   const result = useMemo(() => {
-    const filteredItems = isNameFilter
-      ? SalesReport.filter((item) =>
-          item.invoiceForm.customer?.customerName
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase())
-        )
-      : SalesReport.filter((item) => {
-          const isProductMatch = item.selectedProduct.some((product) =>
-            product.productName
+    const filteredItems =
+      salesReportSearchBarFilter === "customer_name"
+        ? salesReport.filter((item) =>
+            item.invoiceForm.customer?.customerName
               .toLowerCase()
               .includes(searchQuery.toLowerCase())
-          );
-          return isProductMatch;
-        });
+          )
+        : salesReport.filter((item) => {
+            let isProductMatch = false;
+            item.selectedProduct.forEach((product) => {
+              if (
+                product.productName
+                  .toLowerCase()
+                  .includes(searchQuery.toLowerCase())
+              ) {
+                isProductMatch = true;
+              }
+            });
+            return isProductMatch;
+          });
     const sortedFilteredItems = filteredItems.sort((a, b) => {
       const dateA = a.invoiceForm.date?.getTime();
       const dateB = b.invoiceForm.date?.getTime();
@@ -28,7 +34,7 @@ export const filterSearchForSalesReport = (
     });
 
     return sortedFilteredItems;
-  }, [SalesReport, searchQuery]);
+  }, [salesReport, searchQuery]);
 
   return result;
 };

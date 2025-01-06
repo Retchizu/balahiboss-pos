@@ -17,6 +17,9 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { noPaymentColor } from "../methods/noPaymentColor";
+import { readableTime } from "../methods/time-methods/readableTime";
+import Entypo from "@expo/vector-icons/Entypo";
 
 type SalesReportListProp = {
   data: SalesReport[];
@@ -42,7 +45,15 @@ const SalesReportList = ({
   const renderSalesReportList = useCallback(
     ({ item }: { item: SalesReport }) => (
       <TouchableOpacity
-        style={styles.customerInfoContainer}
+        style={[
+          styles.customerInfoContainer,
+          {
+            borderColor: noPaymentColor(
+              item.invoiceForm.cashPayment,
+              item.invoiceForm.onlinePayment
+            ),
+          },
+        ]}
         activeOpacity={0.5}
         onPress={() => {
           const convertSalesReportToCustomerParams = {
@@ -63,12 +74,75 @@ const SalesReportList = ({
           navigation.navigate("CustomerReportScreen");
         }}
       >
-        <Text style={styles.customerName}>
+        <Text
+          style={[
+            styles.customerName,
+            {
+              color: noPaymentColor(
+                item.invoiceForm.cashPayment,
+                item.invoiceForm.onlinePayment
+              ),
+            },
+          ]}
+        >
           {item.invoiceForm.customer?.customerName}
         </Text>
-        <Text style={styles.timeStyle}>
-          {readableDate(item.invoiceForm.date!)}
-        </Text>
+        <View>
+          <View style={{ flexDirection: "row" }}>
+            <Entypo
+              name="calendar"
+              size={wp(3.5)}
+              color={noPaymentColor(
+                item.invoiceForm.cashPayment,
+                item.invoiceForm.onlinePayment
+              )}
+              style={styles.iconStyle}
+            />
+            <Text
+              style={[
+                styles.timeStyle,
+                {
+                  color: noPaymentColor(
+                    item.invoiceForm.cashPayment,
+                    item.invoiceForm.onlinePayment
+                  ),
+                },
+              ]}
+            >
+              {readableDate(item.invoiceForm.date!)}
+            </Text>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Entypo
+              name="clock"
+              size={wp(3)}
+              color={noPaymentColor(
+                item.invoiceForm.cashPayment,
+                item.invoiceForm.onlinePayment
+              )}
+              style={styles.iconStyle}
+            />
+            <Text
+              style={[
+                styles.timeStyle,
+                {
+                  color: noPaymentColor(
+                    item.invoiceForm.cashPayment,
+                    item.invoiceForm.onlinePayment
+                  ),
+                  fontSize: wp(3),
+                },
+              ]}
+            >
+              {readableTime(item.invoiceForm.date!)}
+            </Text>
+          </View>
+        </View>
       </TouchableOpacity>
     ),
     [data]
@@ -108,4 +182,5 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  iconStyle: { alignSelf: "center", paddingRight: wp(1) },
 });

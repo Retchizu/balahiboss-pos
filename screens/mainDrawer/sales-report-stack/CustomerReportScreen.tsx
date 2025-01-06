@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useState } from "react";
 import { CustomerReportScreenProp, SelectedProduct } from "../../../types/type";
 import {

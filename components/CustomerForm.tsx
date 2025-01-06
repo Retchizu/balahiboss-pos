@@ -1,5 +1,4 @@
 import {
-  Keyboard,
   StyleSheet,
   Text,
   TextInput,
@@ -13,7 +12,6 @@ import {
 } from "react-native-responsive-screen";
 import { handleInputChange } from "../methods/handleInputChange";
 import { Button } from "@rneui/base";
-import { Customer } from "../types/type";
 import Toast from "react-native-toast-message";
 
 type CustomerFormProps = {

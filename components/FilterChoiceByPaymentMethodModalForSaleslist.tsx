@@ -6,26 +6,26 @@ import {
 } from "react-native-responsive-screen";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Entypo from "@expo/vector-icons/Entypo";
-import { chooseFilterTypeForSaleslist } from "../methods/search-filters/chooseFilterTypeForSaleslist";
-import { SalesReportSearchBarFilter } from "../types/type";
+import { PaymentMethodFilter } from "../types/type";
+import { chooseFilterTypeWithPaymentMethodForSaleslist } from "../methods/search-filters/chooseFilterTypeWIthPaymentMethodForSaleslist";
 
-type FilterChoiceModalForSaleslistProp = {
+type FilterChoiceByPaymentMethodModalForSaleslistProp = {
   isFilterModalVisible: boolean;
   setIsFilterModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  salesReportSearchBarFilter: SalesReportSearchBarFilter;
-  setSalesReportSearchBarFilter: React.Dispatch<
-    React.SetStateAction<SalesReportSearchBarFilter>
+  paymentMethodForFilter: PaymentMethodFilter;
+  setPaymentMethodForFilter: React.Dispatch<
+    React.SetStateAction<PaymentMethodFilter>
   >;
   choices: { key: number; choiceName: string }[];
 };
 
-const FilterChoiceModalForSaleslist = ({
+const FilterChoiceByPaymentMethodModalForSaleslist = ({
   isFilterModalVisible,
   setIsFilterModalVisible,
   choices,
-  salesReportSearchBarFilter,
-  setSalesReportSearchBarFilter,
-}: FilterChoiceModalForSaleslistProp) => {
+  paymentMethodForFilter,
+  setPaymentMethodForFilter,
+}: FilterChoiceByPaymentMethodModalForSaleslistProp) => {
   return (
     <Modal
       visible={isFilterModalVisible}
@@ -52,7 +52,7 @@ const FilterChoiceModalForSaleslist = ({
             }}
             onPress={() => setIsFilterModalVisible(false)}
           />
-          <Text style={styles.modalTitle}>Search bar filters by:</Text>
+          <Text style={styles.modalTitle}>Sales Report filters by:</Text>
           {choices.map((item) => (
             <View key={item.key} style={styles.choiceBorder}>
               <TouchableOpacity
@@ -62,19 +62,20 @@ const FilterChoiceModalForSaleslist = ({
                   justifyContent: "space-between",
                 }}
                 onPress={() =>
-                  chooseFilterTypeForSaleslist(
+                  chooseFilterTypeWithPaymentMethodForSaleslist(
                     item.key,
-                    setSalesReportSearchBarFilter
+                    setPaymentMethodForFilter
                   )
                 }
               >
                 <Text style={styles.choiceTitle}>{item.choiceName}</Text>
-                {salesReportSearchBarFilter === "customer_name" &&
-                item.key == 1 ? (
+                {paymentMethodForFilter === "cash" && item.key == 1 ? (
                   <AntDesign name="check" size={24} color="#634F40" />
                 ) : null}
-                {salesReportSearchBarFilter === "product_name" &&
-                item.key == 2 ? (
+                {paymentMethodForFilter === "online" && item.key == 2 ? (
+                  <AntDesign name="check" size={24} color="#634F40" />
+                ) : null}
+                {paymentMethodForFilter === "none" && item.key == 3 ? (
                   <AntDesign name="check" size={24} color="#634F40" />
                 ) : null}
               </TouchableOpacity>
@@ -86,7 +87,7 @@ const FilterChoiceModalForSaleslist = ({
   );
 };
 
-export default FilterChoiceModalForSaleslist;
+export default FilterChoiceByPaymentMethodModalForSaleslist;
 
 const styles = StyleSheet.create({
   choiceBorder: {
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
   },
   childContainer: {
     backgroundColor: "#F3F0E9",
-    height: hp(30),
+    height: hp(35),
     width: wp(70),
     borderRadius: wp(3),
     shadowColor: "#000",

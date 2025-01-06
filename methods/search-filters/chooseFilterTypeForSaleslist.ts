@@ -1,13 +1,17 @@
+import { SalesReportSearchBarFilter } from "../../types/type";
+
 export const chooseFilterTypeForSaleslist = (
   key: number,
-  setIsNameFilter: React.Dispatch<React.SetStateAction<boolean>>
+  setSalesReportSearchBarFilter: React.Dispatch<
+    React.SetStateAction<SalesReportSearchBarFilter>
+  >
 ) => {
   switch (key) {
     case 1:
-      setIsNameFilter(true);
+      setSalesReportSearchBarFilter("customer_name");
       break;
     case 2:
-      setIsNameFilter(false);
+      setSalesReportSearchBarFilter("product_name");
       break;
   }
 };

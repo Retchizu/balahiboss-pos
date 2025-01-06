@@ -5,14 +5,19 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Searchbar from "../../../components/Searchbar";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import SalesReportList from "../../../components/SalesReportList";
-import { SalesReportListScreenProp } from "../../../types/type";
+import {
+  PaymentMethodFilter,
+  SalesReport,
+  SalesReportListScreenProp,
+  SalesReportSearchBarFilter,
+} from "../../../types/type";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { onChangeDateRange } from "../../../methods/time-methods/onChangeDate";
 import SalesReportView from "../../../components/SalesReportView";
@@ -32,6 +37,9 @@ import { salesReportsToExcel } from "../../../methods/convert-to-excel-methods/s
 import { useGetCustomers } from "../../../hooks/customer-hooks/useGetCustomers";
 import { useCurrentSalesReportContext } from "../../../context/CurrentSalesReportContext";
 import { useSalesreportCacheContext } from "../../../context/cacheContext/SalesReportCacheContext";
+import { paymentMethodFilterChoices } from "../../../methods/search-filters/chooseFilterTypeWIthPaymentMethodForSaleslist";
+import FilterChoiceByPaymentMethodModalForSaleslist from "../../../components/FilterChoiceByPaymentMethodModalForSaleslist";
+import { filterSalesReportByPaymentMethod } from "../../../methods/search-filters/filterSalesReportByPaymentMethodForSalesReport";
 
 const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -44,8 +52,11 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
   const { showToast } = useToastContext();
   const { user } = useUserContext();
 
-  const [isNameFilter, setIsNameFilter] = useState(true);
+  const [salesReportSearchBarFilter, setSalesReportSearchBarFilter] =
+    useState<SalesReportSearchBarFilter>("customer_name");
   const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
+  const [isFilterByPaymentModalVisible, setIsFilterByPaymentModalVisible] =
+    useState(false);
 
   const { salesReports, setSalesReportList } = useGetSalesReport(
     setIsLoading,
@@ -54,10 +65,26 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
   );
   const { customers } = useGetCustomers(user, setIsLoading, showToast);
   const { isKeyboardVisible } = useKeyboardVisibilityListener();
+
+  const [paymentMethodForFilter, setPaymentMethodForFilter] =
+    useState<PaymentMethodFilter>("none");
+
+  const [salesList, setSalesList] = useState<SalesReport[]>(salesReports);
+
+  useEffect(
+    () =>
+      filterSalesReportByPaymentMethod(
+        salesReports,
+        paymentMethodForFilter,
+        setSalesList
+      ),
+    [paymentMethodForFilter, salesReports]
+  );
+
   const filteredData = filterSearchForSalesReport(
-    salesReports,
+    salesList,
     searchQuery,
-    isNameFilter
+    salesReportSearchBarFilter
   );
 
   const [isFileModalVisible, setIsFileModalVisible] = useState(false);
@@ -72,7 +99,14 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
     <View
       style={[
         styles.container,
-        { opacity: isFilterModalVisible || isFileModalVisible ? 0.1 : 1 },
+        {
+          opacity:
+            isFilterModalVisible ||
+            isFileModalVisible ||
+            isFilterByPaymentModalVisible
+              ? 0.1
+              : 1,
+        },
       ]}
     >
       <View style={styles.headerContainer}>
@@ -88,7 +122,18 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
           activeOpacity={0.7}
           style={styles.headerButtons}
         >
-          <AntDesign name="filter" size={26} color="#634F40" />
+          <AntDesign name="filter" size={wp(7)} color="#634F40" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setIsFilterByPaymentModalVisible(true)}
+          activeOpacity={0.7}
+          style={styles.headerButtons}
+        >
+          <MaterialCommunityIcons
+            name="credit-card-search-outline"
+            size={wp(7)}
+            color="#634F40"
+          />
         </TouchableOpacity>
         <TouchableOpacity
           activeOpacity={0.7}
@@ -99,7 +144,7 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
         >
           <MaterialCommunityIcons
             name="microsoft-excel"
-            size={26}
+            size={wp(7)}
             color="#634F40"
           />
         </TouchableOpacity>
@@ -154,9 +199,18 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
         choices={choices}
         isFilterModalVisible={isFilterModalVisible}
         setIsFilterModalVisible={setIsFilterModalVisible}
-        isNameFilter={isNameFilter}
-        setIsNameFilter={setIsNameFilter}
+        salesReportSearchBarFilter={salesReportSearchBarFilter}
+        setSalesReportSearchBarFilter={setSalesReportSearchBarFilter}
       />
+
+      <FilterChoiceByPaymentMethodModalForSaleslist
+        choices={paymentMethodFilterChoices}
+        isFilterModalVisible={isFilterByPaymentModalVisible}
+        setIsFilterModalVisible={setIsFilterByPaymentModalVisible}
+        paymentMethodForFilter={paymentMethodForFilter}
+        setPaymentMethodForFilter={setPaymentMethodForFilter}
+      />
+
       {!isKeyboardVisible && <SalesReportView salesReportList={filteredData} />}
       <Toast position="bottom" autoHide visibilityTime={2000} />
       <FileNameModal
@@ -213,7 +267,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingRight: wp(15),
+    paddingRight: wp(25),
   },
   headerButtons: {
     paddingHorizontal: wp(1),

@@ -240,3 +240,6 @@ export type SalesReportDataToExcel = {
   Total_Amount_Sold: number;
   Date_Bought: string;
 };
+
+export type PaymentMethodFilter = "cash" | "online" | "none";
+export type SalesReportSearchBarFilter = "customer_name" | "product_name";

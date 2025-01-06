@@ -21,6 +21,9 @@ import { useUserContext } from "../../../context/UserContext";
 import { useRecentSalesReportManager } from "../../../hooks/useRecentSalesReportManager";
 import { useProductContext } from "../../../context/ProductContext";
 import { useCurrentSalesReportContext } from "../../../context/CurrentSalesReportContext";
+import { noPaymentColor } from "../../../methods/noPaymentColor";
+import Entypo from "@expo/vector-icons/Entypo";
+import React from "react";
 
 const RecentScreen = ({ navigation }: RecentScreenProp) => {
   const { setCurrentSalesReport } = useCurrentSalesReportContext();
@@ -62,7 +65,15 @@ const RecentScreen = ({ navigation }: RecentScreenProp) => {
           data={sortedData}
           renderItem={({ item }) => (
             <TouchableOpacity
-              style={styles.customerInfoContainer}
+              style={[
+                styles.customerInfoContainer,
+                {
+                  borderColor: noPaymentColor(
+                    item.invoiceForm.cashPayment,
+                    item.invoiceForm.onlinePayment
+                  ),
+                },
+              ]}
               activeOpacity={0.5}
               onPress={() => {
                 const convertSalesReportToCustomerParams = {
@@ -83,12 +94,43 @@ const RecentScreen = ({ navigation }: RecentScreenProp) => {
                 navigation.navigate("CustomerReportScreen");
               }}
             >
-              <Text style={styles.customerName}>
+              <Text
+                style={[
+                  styles.customerName,
+                  {
+                    color: noPaymentColor(
+                      item.invoiceForm.cashPayment,
+                      item.invoiceForm.onlinePayment
+                    ),
+                  },
+                ]}
+              >
                 {item.invoiceForm.customer?.customerName}
               </Text>
-              <Text style={styles.timeStyle}>
-                {readableTime(item.invoiceForm.date!)}
-              </Text>
+              <View style={{ flexDirection: "row" }}>
+                <Entypo
+                  name="clock"
+                  size={wp(3.5)}
+                  color={noPaymentColor(
+                    item.invoiceForm.cashPayment,
+                    item.invoiceForm.onlinePayment
+                  )}
+                  style={styles.iconStyle}
+                />
+                <Text
+                  style={[
+                    styles.timeStyle,
+                    {
+                      color: noPaymentColor(
+                        item.invoiceForm.cashPayment,
+                        item.invoiceForm.onlinePayment
+                      ),
+                    },
+                  ]}
+                >
+                  {readableTime(item.invoiceForm.date!)}
+                </Text>
+              </View>
             </TouchableOpacity>
           )}
           showsVerticalScrollIndicator={false}
@@ -151,4 +193,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
+  iconStyle: { alignSelf: "center", paddingRight: wp(1) },
 });

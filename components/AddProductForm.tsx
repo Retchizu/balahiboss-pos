@@ -7,7 +7,6 @@ import {
 import InputFormWithLabelHorizontal from "./InputFormWithLabelHorizontal";
 import { handleInputChange } from "../methods/handleInputChange";
 import { Button } from "@rneui/base";
-import Toast, { ToastType } from "react-native-toast-message";
 import { useToastContext } from "../context/ToastContext";
 
 type AddProductFormProps = {
