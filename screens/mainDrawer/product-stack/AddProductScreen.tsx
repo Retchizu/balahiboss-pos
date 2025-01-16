@@ -17,10 +17,9 @@ const AddProductScreen = () => {
   });
   const { showToast } = useToastContext();
   const { user } = useUserContext();
-  const [_, setToggleToast] = useState(0);
 
   const handleAddProductSubmit = async () => {
-    await addProductDataRealtime(productInfo, showToast, user, setToggleToast);
+    await addProductDataRealtime(productInfo, showToast, user);
     setProductInfo({
       productName: "",
       sellPrice: "",
@@ -38,7 +37,6 @@ const AddProductScreen = () => {
           submit={handleAddProductSubmit}
           productInfo={productInfo}
         />
-        <Toast position="bottom" autoHide visibilityTime={2000} />
       </KeyboardAvoidingView>
     </View>
   );

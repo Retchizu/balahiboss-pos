@@ -119,7 +119,6 @@ const StockReportScreen = () => {
         setIsFileNameVisible={setIsFileModalVisible}
       />
 
-      <Toast position="bottom" autoHide visibilityTime={2000} />
       <FileNameModal
         isFileNameVisible={isFileModalVisible}
         fileName={fileName}

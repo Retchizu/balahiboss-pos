@@ -212,7 +212,6 @@ const SalesReportListScreen = ({ navigation }: SalesReportListScreenProp) => {
       />
 
       {!isKeyboardVisible && <SalesReportView salesReportList={filteredData} />}
-      <Toast position="bottom" autoHide visibilityTime={2000} />
       <FileNameModal
         choiceKey={3}
         fileName={fileName}

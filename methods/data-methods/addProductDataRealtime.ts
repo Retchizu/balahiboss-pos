@@ -1,8 +1,7 @@
 import { ToastType } from "react-native-toast-message";
-import { Product, User } from "../../types/type";
+import { User } from "../../types/type";
 import { push, ref, set } from "firebase/database";
 import { realTimeDb } from "../../firebaseConfig";
-import React from "react";
 
 export const addProductDataRealtime = async (
   productInfo: {
@@ -12,8 +11,7 @@ export const addProductDataRealtime = async (
     lowStockThreshold: string;
   },
   showToast: (type: ToastType, text1: string, text2?: string) => void,
-  user: User | null,
-  setToggleToast: React.Dispatch<React.SetStateAction<number>>
+  user: User | null
 ) => {
   try {
     if (
@@ -31,7 +29,6 @@ export const addProductDataRealtime = async (
         lowStockThreshold: parseFloat(productInfo.lowStockThreshold),
         stock: 0,
       });
-      setToggleToast((prev) => prev + 1);
       showToast(
         "success",
         "Product Added",

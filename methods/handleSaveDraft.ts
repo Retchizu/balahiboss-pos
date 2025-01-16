@@ -15,10 +15,12 @@ export const handleSaveDraft = async (
   addDraft: (newDraft: InvoiceDraft) => void,
   showToast: (type: ToastType, text1: string, text2?: string) => void,
   setIsSaveModalVisible: React.Dispatch<React.SetStateAction<boolean>>,
-  setDraftTitle: React.Dispatch<React.SetStateAction<string>>
+  setDraftTitle: React.Dispatch<React.SetStateAction<string>>,
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   if (draftTitle.trim()) {
-    addDraftData(
+    setLoading(true);
+    await addDraftData(
       user,
       draftTitle,
       invoiceFormInfo,
@@ -27,6 +29,7 @@ export const handleSaveDraft = async (
       addDraft,
       showToast
     );
+    setLoading(false);
     setIsSaveModalVisible(false);
     setDraftTitle("");
   } else {

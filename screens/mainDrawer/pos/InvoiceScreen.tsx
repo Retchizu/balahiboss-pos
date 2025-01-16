@@ -75,6 +75,7 @@ const InvoiceScreen: React.FC<InvoiceScreenProp> = ({
   const { addDraft } = useDraftContext();
 
   const [loading, setLoading] = useState(false);
+  const [saveDraftLoading, setSaveDraftLoading] = useState(false);
   const { setSalesReportCache } = useSalesreportCacheContext();
   const { setStockSoldCache } = useStockSoldReportCacheContext();
 
@@ -141,7 +142,6 @@ const InvoiceScreen: React.FC<InvoiceScreenProp> = ({
         setPairedDevice={setPairedDevices}
         setPrintButtonVisibility={setPrintButtonVisibilty}
       />
-      <Toast position="bottom" autoHide visibilityTime={2000} />
       <BluetoothDeviceListModal
         isBluetoothDeviceListModalVisible={isBluetoothDeviceListModalVisible}
         printButtonVisibility={printButtonVisibility}
@@ -180,6 +180,7 @@ const InvoiceScreen: React.FC<InvoiceScreenProp> = ({
         setIsVisible={setIsSaveModalVisible}
         draftTitle={draftTitle}
         setDraftTitle={setDraftTitle}
+        saveDraftButtonLoading={saveDraftLoading}
         confirmFn={() =>
           handleSaveDraft(
             draftTitle,
@@ -189,7 +190,8 @@ const InvoiceScreen: React.FC<InvoiceScreenProp> = ({
             addDraft,
             showToast,
             setIsSaveModalVisible,
-            setDraftTitle
+            setDraftTitle,
+            setSaveDraftLoading
           )
         }
       />

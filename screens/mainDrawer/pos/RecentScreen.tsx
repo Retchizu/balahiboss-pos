@@ -142,7 +142,6 @@ const RecentScreen = ({ navigation }: RecentScreenProp) => {
           </Text>
         </View>
       )}
-      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

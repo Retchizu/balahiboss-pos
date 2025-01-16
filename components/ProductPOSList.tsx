@@ -91,7 +91,6 @@ const ProductPOSList: React.FC<ProductPOSListProps> = memo(
           maxToRenderPerBatch={5}
           windowSize={5}
         />
-        <Toast position="bottom" autoHide visibilityTime={2000} />
       </View>
     );
   }

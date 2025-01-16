@@ -64,7 +64,6 @@ const AddCustomerScreen = ({ navigation, route }: AddCustomerScreenProp) => {
           loading={loading}
         />
       </KeyboardAvoidingView>
-      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

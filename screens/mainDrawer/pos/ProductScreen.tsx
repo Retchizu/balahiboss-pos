@@ -55,8 +55,6 @@ const ProductScreen = () => {
           deleteSelectedProduct={deleteSelectedProduct}
         />
       )}
-
-      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

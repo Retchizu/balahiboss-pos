@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Searchbar from "../../../components/Searchbar";
 import {
   widthPercentageToDP as wp,
@@ -22,13 +22,11 @@ import Toast from "react-native-toast-message";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import {
-  deleteDraftData,
-  deleteMultipleDraftData,
-} from "../../../methods/data-methods/deleteDraftData";
+import { deleteMultipleDraftData } from "../../../methods/data-methods/deleteDraftData";
 import { filterSearchForDraft } from "../../../methods/search-filters/filterSearchForDraft";
+import React from "react";
 
-const DraftScreen = ({ navigation, route }: DraftScreenProp) => {
+const DraftScreen = ({ navigation }: DraftScreenProp) => {
   const [searchQuery, setSearchQuery] = useState("");
   const { drafts, setDraftList } = useDraftContext();
   const [isLoading, setIsLoading] = useState(false);
@@ -178,7 +176,6 @@ const DraftScreen = ({ navigation, route }: DraftScreenProp) => {
       ) : (
         <FlatList data={filteredData} renderItem={renderDraftList} />
       )}
-      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

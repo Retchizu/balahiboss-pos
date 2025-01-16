@@ -5,7 +5,6 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Button } from "@rneui/base";
-import Toast from "react-native-toast-message";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 
 type SaveDraftModalType = {
@@ -14,6 +13,7 @@ type SaveDraftModalType = {
   draftTitle: string;
   setDraftTitle: React.Dispatch<React.SetStateAction<string>>;
   confirmFn: () => void;
+  saveDraftButtonLoading: boolean;
 };
 const SaveDraftModal: React.FC<SaveDraftModalType> = ({
   isVisible,
@@ -21,6 +21,7 @@ const SaveDraftModal: React.FC<SaveDraftModalType> = ({
   confirmFn,
   draftTitle,
   setDraftTitle,
+  saveDraftButtonLoading,
 }) => {
   return (
     <Modal
@@ -54,12 +55,12 @@ const SaveDraftModal: React.FC<SaveDraftModalType> = ({
                   buttonStyle={styles.buttonStyle}
                   title={"Confirm"}
                   onPress={() => confirmFn()}
+                  loading={saveDraftButtonLoading}
                 />
               </View>
             </View>
           </View>
         </KeyboardAvoidingView>
-        <Toast position="bottom" autoHide visibilityTime={2000} />
       </View>
     </Modal>
   );

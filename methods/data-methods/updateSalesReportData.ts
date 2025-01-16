@@ -41,8 +41,8 @@ export const updateSalesReportData = async (
   >
 ) => {
   try {
-    console.log("originalSelectedProducts", originalSelectedProducts);
-    console.log("selectedProducts", selectedProducts);
+    /* console.log("originalSelectedProducts", originalSelectedProducts);
+    console.log("selectedProducts", selectedProducts); */
     const salesReportRef = doc(db, "users", user?.uid!, "sales", salesReportId);
     await updateDoc(salesReportRef, {
       selectedProducts: Array.from(selectedProducts.values()),

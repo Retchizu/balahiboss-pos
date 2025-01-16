@@ -88,7 +88,6 @@ const CustomerForm = ({
           loading={loading}
         />
       </View>
-      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

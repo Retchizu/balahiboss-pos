@@ -40,7 +40,6 @@ const ProductListScreen = ({ navigation }: ProductListScreenProp) => {
         navigation={navigation}
         setCurrentProduct={setCurrentProduct}
       />
-      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

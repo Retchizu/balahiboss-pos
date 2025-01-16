@@ -104,7 +104,6 @@ const DraftInfoScreen = ({ navigation, route }: DraftInfoScreenProp) => {
           );
         }}
       />
-      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

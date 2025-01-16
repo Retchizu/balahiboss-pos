@@ -68,7 +68,6 @@ const CustomerInfoScreen = ({ navigation }: CustomerInfoScreenProp) => {
         }}
         setIsVisible={setIsConfirmationModalVisible}
       />
-      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

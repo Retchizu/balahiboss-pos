@@ -9,7 +9,6 @@ import InfoContainerHorizontal from "../../../components/InfoContainerHorizontal
 import Entypo from "@expo/vector-icons/Entypo";
 import { Button } from "@rneui/base";
 import ConfirmationModal from "../../../components/ConfirmationModal";
-import Toast from "react-native-toast-message";
 import { useToastContext } from "../../../context/ToastContext";
 import { useUserContext } from "../../../context/UserContext";
 import { deleteProductDataRealtime } from "../../../methods/data-methods/deleteProductDataRealtiime";
@@ -21,18 +20,12 @@ const ProductInfoScreen = ({ navigation }: ProductInfoScreenProp) => {
 
   const { showToast } = useToastContext();
   const { user } = useUserContext();
-  const [_, setToggleToast] = useState(0);
   const { currentProduct } = useCurrentProductContext();
 
   const handleDeleteProduct = () => {
     navigation.pop();
     navigation.replace("ProductListScreen");
-    deleteProductDataRealtime(
-      currentProduct!.id,
-      showToast,
-      user,
-      setToggleToast
-    );
+    deleteProductDataRealtime(currentProduct!.id, showToast, user);
   };
 
   return (
@@ -83,7 +76,6 @@ const ProductInfoScreen = ({ navigation }: ProductInfoScreenProp) => {
           onPress={() => navigation.navigate("EditProductScreen")}
         />
       </View>
-      <Toast position="bottom" autoHide visibilityTime={2000} />
     </View>
   );
 };

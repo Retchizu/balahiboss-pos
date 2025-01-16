@@ -53,7 +53,6 @@ const EditCustomerScreen = () => {
             }}
             loading={loading}
           />
-          <Toast position="bottom" autoHide visibilityTime={2000} />
         </KeyboardAwareScrollView>
       </View>
     </View>

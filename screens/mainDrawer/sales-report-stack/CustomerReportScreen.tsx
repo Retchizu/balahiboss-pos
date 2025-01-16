@@ -96,7 +96,6 @@ const CustomerReportScreen = ({
           />
         )}
       </View>
-      <Toast position="bottom" autoHide visibilityTime={2000} />
       <ConfirmationModal
         isVisible={isConfirmationModalVisible}
         setIsVisible={setIsConfirmationModalVisible}

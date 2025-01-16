@@ -159,8 +159,6 @@ const EditProductScreen = () => {
           />
         </KeyboardAwareScrollView>
       </View>
-
-      <Toast position="bottom" autoHide visibilityTime={2000} />
     </SafeAreaView>
   );
 };

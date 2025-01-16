@@ -23,7 +23,6 @@ const PreviewScreen = () => {
   const { showToast } = useToastContext();
 
   useEffect(() => {
-    //TODO: fix toast
     const productStockConflict = Array.from(selectedProducts.values()).filter(
       (selectedProduct) => {
         const findProduct = products.find(
