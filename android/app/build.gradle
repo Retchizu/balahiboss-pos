@@ -114,8 +114,8 @@ android {
         applicationId 'com.retchizu.retchi'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 26
-        versionName "3.6.0.26"
+        versionCode 28
+        versionName "3.8.0.28"
     }
     signingConfigs {
         debug {

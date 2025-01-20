@@ -10,7 +10,5 @@ export const calculateTotalPrice = (
     const calculatePrice = selectedProduct.sellPrice * selectedProduct.quantity;
     total += calculatePrice;
   });
-  if (deliveryFee) total += deliveryFee;
-  if (discount) total -= discount;
   return total;
 };

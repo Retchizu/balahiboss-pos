@@ -13,7 +13,6 @@ export const calculateTotalProfit = (
       (selectedProduct.sellPrice - selectedProduct.stockPrice) *
       selectedProduct.quantity;
   });
-
   total = total - (discount ?? 0) - (freebies ?? 0);
 
   return total;
