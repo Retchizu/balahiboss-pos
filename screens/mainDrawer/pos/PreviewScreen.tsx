@@ -8,7 +8,7 @@ import {
 } from "react-native-responsive-screen";
 import { clearSelectedProduct } from "../../../methods/product-select-methods/clearSelectedProduct";
 import Entypo from "@expo/vector-icons/Entypo";
-import { calculateTotalPrice } from "../../../methods/calculation-methods/calculateTotalPrice";
+import { calculateTotalPriceForSummary } from "../../../methods/calculation-methods/calculateTotalPriceForSummary";
 import { useProductContext } from "../../../context/ProductContext";
 import { useToastContext } from "../../../context/ToastContext";
 
@@ -51,7 +51,8 @@ const PreviewScreen = () => {
       />
       <View style={styles.footerStyle}>
         <Text style={styles.totalStyle}>
-          Total Price: ₱{calculateTotalPrice(selectedProducts).toFixed(2)}
+          Total Price: ₱
+          {calculateTotalPriceForSummary(selectedProducts).toFixed(2)}
         </Text>
         <TouchableOpacity
           activeOpacity={0.7}

@@ -13,12 +13,12 @@ import {
 } from "react-native-responsive-screen";
 import { Device, SelectedProduct } from "../types/type";
 import { calculatePrice } from "../methods/calculation-methods/calculatePrice";
-import { calculateTotalPrice } from "../methods/calculation-methods/calculateTotalPrice";
 import Entypo from "@expo/vector-icons/Entypo";
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
 import Toast, { ToastType } from "react-native-toast-message";
 import { connectToBluetooth } from "../methods/print-methods/connectToBluetooth";
+import { calculateTotalPriceForInvoice } from "../methods/calculation-methods/calculateTotalPriceForInvoice";
 
 type InvoiceFormProps = {
   isInvoiceVisible: boolean;
@@ -158,7 +158,7 @@ const InvoiceModal = ({
             <Text style={styles.footerFontStyle}>TOTAL</Text>
             <Text style={styles.footerFontStyle}>
               ₱{" "}
-              {calculateTotalPrice(
+              {calculateTotalPriceForInvoice(
                 selectedProducts,
                 parseFloat(deliveryFee),
                 parseFloat(discount)

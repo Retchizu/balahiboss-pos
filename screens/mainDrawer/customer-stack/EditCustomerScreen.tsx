@@ -5,7 +5,6 @@ import { updateCustomerData } from "../../../methods/data-methods/updateCustomer
 import { useCustomerContext } from "../../../context/CustomerContext";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useToastContext } from "../../../context/ToastContext";
-import Toast from "react-native-toast-message";
 import { useUserContext } from "../../../context/UserContext";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useCurrentCustomerContext } from "../../../context/CurrentCustomerContext";

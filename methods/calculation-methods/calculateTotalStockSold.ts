@@ -6,7 +6,8 @@ export const calculateTotalStockSold = (
 ) => {
   let total = 0;
   salesReports.forEach((report) => {
-    const extractedSelectedProduct = report.selectedProduct.find(
+    const reportValues = Array.from(report.selectedProduct.values());
+    const extractedSelectedProduct = reportValues.find(
       (selectedProd) => selectedProd.id === productId
     );
     total += extractedSelectedProduct?.quantity

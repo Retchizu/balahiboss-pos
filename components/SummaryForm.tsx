@@ -11,7 +11,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { InvoiceForm, SelectedProduct } from "../types/type";
 import { handleInputChange } from "../methods/handleInputChange";
-import { calculateTotalPrice } from "../methods/calculation-methods/calculateTotalPrice";
+import { calculateTotalPriceForSummary } from "../methods/calculation-methods/calculateTotalPriceForSummary";
 import { calculateTotalProfit } from "../methods/calculation-methods/calculateTotalProfit";
 import { readableDate } from "../methods/time-methods/readableDate";
 import { readableTime } from "../methods/time-methods/readableTime";
@@ -186,9 +186,8 @@ const SummaryForm = ({
         <Text style={[styles.label, { flex: 1.5 }]}>Total Price:</Text>
         <Text style={[styles.label, { flex: 2.5 }]}>
           ₱{" "}
-          {calculateTotalPrice(
+          {calculateTotalPriceForSummary(
             selectedProducts,
-            undefined,
             parseFloat(invoiceFormInfo.discount)
           ).toFixed(2)}
         </Text>

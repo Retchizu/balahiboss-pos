@@ -2,7 +2,7 @@ import { SalesReport, SelectedProduct } from "../../types/type";
 
 export const calculateOverallTotalPrice = (
   salesReports: SalesReport[],
-  calculateTotalPrice: (
+  calculateTotalPriceForSummary: (
     selectedProducts: Map<string, SelectedProduct>,
     deliveryFee?: number,
     freebies?: number
@@ -18,7 +18,7 @@ export const calculateOverallTotalPrice = (
       ? 0
       : parseFloat(salesReport.invoiceForm.discount);
 
-    total += calculateTotalPrice(
+    total += calculateTotalPriceForSummary(
       salesReport.selectedProduct,
       parsedDiscount,
       parsedFreebies

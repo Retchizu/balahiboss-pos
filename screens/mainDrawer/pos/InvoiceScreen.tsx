@@ -13,7 +13,6 @@ import { addSalesReportData } from "../../../methods/data-methods/addSalesReport
 import { useProductContext } from "../../../context/ProductContext";
 import { useSalesReportContext } from "../../../context/SalesReportContext";
 import * as MediaLibrary from "expo-media-library";
-import Toast from "react-native-toast-message";
 import { useToastContext } from "../../../context/ToastContext";
 import BluetoothDeviceListModal from "../../../components/BluetoothDeviceListModal";
 import { useUserContext } from "../../../context/UserContext";

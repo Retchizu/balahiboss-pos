@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { SalesReport } from "../types/type";
-import { calculateTotalPrice } from "../methods/calculation-methods/calculateTotalPrice";
+import { calculateTotalPriceForSummary } from "../methods/calculation-methods/calculateTotalPriceForSummary";
 import { calculateOverallTotalPrice } from "../methods/calculation-methods/calculateOverallTotalPrice";
 import { calculateTotalProfit } from "../methods/calculation-methods/calculateTotalProfit";
 import { calculateOverallCashPayment } from "../methods/calculation-methods/calculateOverallCashPayment";
@@ -55,7 +55,7 @@ const SalesReportView = ({ salesReportList }: SalesReportViewProp) => {
           ₱
           {calculateOverallTotalPrice(
             salesReportList,
-            calculateTotalPrice
+            calculateTotalPriceForSummary
           ).toFixed(2)}
         </Text>
       </View>

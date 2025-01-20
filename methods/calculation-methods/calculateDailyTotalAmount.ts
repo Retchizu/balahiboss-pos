@@ -1,5 +1,5 @@
 import { SalesReport } from "../../types/type";
-import { calculateTotalPrice } from "./calculateTotalPrice";
+import { calculateTotalPriceForSummary } from "./calculateTotalPriceForSummary";
 
 export const calculateDailyTotalAmount = (
   date: Date,
@@ -18,9 +18,8 @@ export const calculateDailyTotalAmount = (
     );
   });
   customerTransactionThisDate.forEach((transaction) => {
-    total += calculateTotalPrice(
+    total += calculateTotalPriceForSummary(
       transaction.selectedProduct,
-      undefined,
       parseFloat(transaction.invoiceForm.discount)
     );
   });

@@ -14,7 +14,6 @@ import CustomerList from "../../../components/CustomerList";
 import { filterSearchForCustomer } from "../../../methods/search-filters/fitlerSearchForCustomer";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { CustomerListScreenProp } from "../../../types/type";
-import Toast from "react-native-toast-message";
 import { useUserContext } from "../../../context/UserContext";
 import { useToastContext } from "../../../context/ToastContext";
 import { useGetCustomers } from "../../../hooks/customer-hooks/useGetCustomers";

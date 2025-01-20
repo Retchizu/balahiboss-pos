@@ -6,7 +6,6 @@ import Searchbar from "../../../components/Searchbar";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { filterSearchForPoduct } from "../../../methods/search-filters/filterSearchForProduct";
 import { useSelectedProductContext } from "../../../context/SelectedProductContext";
-import Toast from "react-native-toast-message";
 import { useUserContext } from "../../../context/UserContext";
 import { useProductOnChildAdded } from "../../../hooks/realtime-database-listeners/useProductOnChildAdded";
 import { useProductOnChildRemoved } from "../../../hooks/realtime-database-listeners/useProductOnChildRemoved";

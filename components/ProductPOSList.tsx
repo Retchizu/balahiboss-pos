@@ -13,7 +13,6 @@ import {
 } from "react-native-responsive-screen";
 import { selectProduct } from "../methods/product-select-methods/selectProduct";
 import { useToastContext } from "../context/ToastContext";
-import Toast from "react-native-toast-message";
 
 type ProductPOSListProps = {
   data: Product[];

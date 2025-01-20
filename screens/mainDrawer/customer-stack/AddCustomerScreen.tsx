@@ -8,7 +8,6 @@ import { handleInputChange } from "../../../methods/handleInputChange";
 import { AddCustomerScreenProp } from "../../../types/type";
 import { CommonActions } from "@react-navigation/native";
 import { useToastContext } from "../../../context/ToastContext";
-import Toast from "react-native-toast-message";
 import { useUserContext } from "../../../context/UserContext";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 

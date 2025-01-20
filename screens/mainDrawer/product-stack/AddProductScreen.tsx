@@ -6,7 +6,6 @@ import { useToastContext } from "../../../context/ToastContext";
 import { useUserContext } from "../../../context/UserContext";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { addProductDataRealtime } from "../../../methods/data-methods/addProductDataRealtime";
-import Toast from "react-native-toast-message";
 
 const AddProductScreen = () => {
   const [productInfo, setProductInfo] = useState({

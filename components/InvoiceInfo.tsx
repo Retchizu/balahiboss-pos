@@ -4,7 +4,7 @@ import { readableDate } from "../methods/time-methods/readableDate";
 import { CustomerReportParams, SelectedProduct } from "../types/type";
 import InfoHorizontal from "./InfoHorizontal";
 import { calculateTotalProfit } from "../methods/calculation-methods/calculateTotalProfit";
-import { calculateTotalPrice } from "../methods/calculation-methods/calculateTotalPrice";
+import { calculateTotalPriceForSummary } from "../methods/calculation-methods/calculateTotalPriceForSummary";
 import { readableTime } from "../methods/time-methods/readableTime";
 
 type InvoiceInfoProp = {
@@ -48,9 +48,8 @@ const InvoiceInfo: React.FC<InvoiceInfoProp> = ({ params }) => {
       />
       <InfoHorizontal
         label="Total amount"
-        value={`₱${calculateTotalPrice(
+        value={`₱${calculateTotalPriceForSummary(
           params.selectedProducts as Map<string, SelectedProduct>,
-          undefined,
           parseFloat(params.discount.trim() ? params.discount : "0")
         ).toFixed(2)}`}
       />

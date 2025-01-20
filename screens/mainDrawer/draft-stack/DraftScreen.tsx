@@ -18,7 +18,6 @@ import { getDraftData } from "../../../methods/data-methods/getDraftData";
 import { useToastContext } from "../../../context/ToastContext";
 import { useUserContext } from "../../../context/UserContext";
 import { DraftScreenProp, InvoiceDraft } from "../../../types/type";
-import Toast from "react-native-toast-message";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";

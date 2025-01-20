@@ -16,14 +16,12 @@ import { readableTime } from "../../../methods/time-methods/readableTime";
 import { getSalesReportData } from "../../../methods/data-methods/getSalesReportData";
 import { RecentScreenProp } from "../../../types/type";
 import { useToastContext } from "../../../context/ToastContext";
-import Toast from "react-native-toast-message";
 import { useUserContext } from "../../../context/UserContext";
 import { useRecentSalesReportManager } from "../../../hooks/useRecentSalesReportManager";
 import { useProductContext } from "../../../context/ProductContext";
 import { useCurrentSalesReportContext } from "../../../context/CurrentSalesReportContext";
 import { noPaymentColor } from "../../../methods/noPaymentColor";
 import Entypo from "@expo/vector-icons/Entypo";
-import React from "react";
 
 const RecentScreen = ({ navigation }: RecentScreenProp) => {
   const { setCurrentSalesReport } = useCurrentSalesReportContext();

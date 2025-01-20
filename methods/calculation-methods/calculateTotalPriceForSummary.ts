@@ -1,8 +1,7 @@
 import { SelectedProduct } from "../../types/type";
 
-export const calculateTotalPrice = (
+export const calculateTotalPriceForSummary = (
   selectedProducts: Map<string, SelectedProduct>,
-  deliveryFee?: number,
   discount?: number
 ) => {
   let total = 0;

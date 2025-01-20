@@ -10,7 +10,6 @@ import Entypo from "@expo/vector-icons/Entypo";
 import ConfirmationModal from "../../../components/ConfirmationModal";
 import { deleteCustomerData } from "../../../methods/data-methods/deleteCustomerData";
 import { useCustomerContext } from "../../../context/CustomerContext";
-import Toast from "react-native-toast-message";
 import { useToastContext } from "../../../context/ToastContext";
 import { useUserContext } from "../../../context/UserContext";
 import { useCurrentCustomerContext } from "../../../context/CurrentCustomerContext";

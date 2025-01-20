@@ -10,7 +10,6 @@ import { ProductListScreenProp } from "../../../types/type";
 import ProductList from "../../../components/ProductList";
 import { useProductContext } from "../../../context/ProductContext";
 import { filterSearchForPoduct } from "../../../methods/search-filters/filterSearchForProduct";
-import Toast from "react-native-toast-message";
 import { useCurrentProductContext } from "../../../context/CurrentProductContext";
 
 const ProductListScreen = ({ navigation }: ProductListScreenProp) => {

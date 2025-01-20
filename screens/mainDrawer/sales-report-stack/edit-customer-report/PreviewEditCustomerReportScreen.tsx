@@ -2,7 +2,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import SelectedProductList from "../../../../components/SelectedProductList";
 import { useSelectedProductInEditContext } from "../../../../context/SelectedProductInEditContext";
-import { calculateTotalPrice } from "../../../../methods/calculation-methods/calculateTotalPrice";
+import { calculateTotalPriceForSummary } from "../../../../methods/calculation-methods/calculateTotalPriceForSummary";
 import { clearSelectedProduct } from "../../../../methods/product-select-methods/clearSelectedProduct";
 import {
   widthPercentageToDP as wp,
@@ -26,7 +26,8 @@ const PreviewEditCustomerReportScreen = () => {
       />
       <View style={styles.footerStyle}>
         <Text style={styles.totalStyle}>
-          Total Price: ₱{calculateTotalPrice(selectedProductsInEdit).toFixed(2)}
+          Total Price: ₱
+          {calculateTotalPriceForSummary(selectedProductsInEdit).toFixed(2)}
         </Text>
         <TouchableOpacity
           activeOpacity={0.7}

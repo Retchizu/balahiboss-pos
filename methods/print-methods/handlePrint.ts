@@ -1,18 +1,17 @@
 import {
   BluetoothManager,
   BluetoothEscposPrinter,
-  BluetoothTscPrinter,
 } from "react-native-bluetooth-escpos-printer";
 import { Device, SelectedProduct } from "../../types/type";
 import { permissionForPrint } from "./permissionForPrint";
 import { calculatePrice } from "../calculation-methods/calculatePrice";
-import { calculateTotalPrice } from "../calculation-methods/calculateTotalPrice";
 import { ToastType } from "react-native-toast-message";
 import { readableDate } from "../time-methods/readableDate";
 import {
   readableTime,
   readableTimeForReceipt,
 } from "../time-methods/readableTime";
+import { calculateTotalPriceForInvoice } from "../calculation-methods/calculateTotalPriceForInvoice";
 
 export const handlePrint = async (
   selectedProducts: Map<string, SelectedProduct>,
@@ -133,7 +132,7 @@ export const handlePrint = async (
           [0, 2],
           [
             "TOTAL",
-            `P ${calculateTotalPrice(
+            `P ${calculateTotalPriceForInvoice(
               selectedProducts,
               deliveryFee.trim() ? parseFloat(deliveryFee) : undefined,
               discount.trim() ? parseFloat(discount) : undefined
