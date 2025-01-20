@@ -10,5 +10,6 @@ export const calculateTotalPrice = (
     const calculatePrice = selectedProduct.sellPrice * selectedProduct.quantity;
     total += calculatePrice;
   });
+  if (discount) total -= discount;
   return total;
 };
