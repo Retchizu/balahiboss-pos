@@ -64,105 +64,112 @@ const BluetoothDeviceListModal = ({
     >
       <View style={styles.mainContainer}>
         <View style={styles.childContainer}>
-          <Text style={styles.textTitle}>Paired Bluetooth Devices</Text>
-          {pairedDevices && pairedDevices.length ? (
-            <FlatList
-              style={{ flex: 1 }}
-              data={pairedDevices}
-              renderItem={({ item }) => (
-                <View style={styles.itemContainer}>
-                  <Text style={styles.deviceName}>{item.name}</Text>
-                  <Button
-                    title={"Set as printer"}
-                    containerStyle={{ flex: 1 }}
-                    buttonStyle={styles.buttonStyle}
-                    titleStyle={styles.titleStyle}
-                    onPress={() => {
-                      setCurrentPrinter(item);
-                      AsyncStorage.setItem("printer", JSON.stringify(item));
-                    }}
-                    loading={printButtonVisibility}
-                  />
-                </View>
-              )}
-            />
-          ) : (
-            <ActivityIndicator
-              color={"#634F40"}
-              size={wp(10)}
-              style={{ flex: 1 }}
-            />
-          )}
-
-          <View>
-            <Text
+          {currentPrinter ? (
+            <View
               style={{
-                textAlign: "center",
-                fontFamily: "SoraSemiBold",
-                fontSize: wp(5),
+                flex: 1,
+                justifyContent: "center",
               }}
             >
-              Current Printer
-            </Text>
-            <View style={styles.currentPrinterParent}>
-              {currentPrinter ? (
-                <View style={styles.currentPrinterChild}>
-                  <Text style={styles.deviceName}>{currentPrinter.name}</Text>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                    }}
-                  >
-                    <Button
-                      title={"Print"}
-                      containerStyle={{ paddingHorizontal: wp(1) }}
-                      buttonStyle={styles.buttonStyle}
-                      titleStyle={styles.titleStyle}
-                      onPress={() => {
-                        handlePrint(
-                          selectedProducts,
-                          discount,
-                          deliveryFee,
-                          invoiceDate,
-                          currentPrinter,
-                          showToast
-                        );
-                      }}
-                    />
-                    <Button
-                      title={"Remove printer"}
-                      buttonStyle={styles.buttonStyle}
-                      titleStyle={styles.titleStyle}
-                      onPress={async () => {
-                        setCurrentPrinter(undefined);
-                        try {
-                          await AsyncStorage.removeItem("printer");
-                          if (pairedDevices.length === 0 && currentPrinter) {
-                            const pairedDevice = await connectToBluetooth(
-                              showToast,
-                              setPrintButtonVisibility
-                            );
-                            setPairedDevice(pairedDevice);
-                          }
-                        } catch (error) {
-                          console.error(
-                            "Failed to connect to Bluetooth:",
-                            error
-                          );
-                          showToast("error", "Failed to get paired devices");
-                        }
-                      }}
-                    />
-                  </View>
-                </View>
+              <Text
+                style={{
+                  fontFamily: "SoraBold",
+                  fontSize: wp(10),
+                  textAlign: "center",
+                }}
+              >
+                Current Printer
+              </Text>
+
+              <Text
+                style={{
+                  fontFamily: "SoraMedium",
+                  fontSize: wp(9),
+                  textAlign: "center",
+                }}
+              >
+                {currentPrinter.name}
+              </Text>
+              <Button
+                title={"PRINT"}
+                containerStyle={{ marginVertical: hp(5) }}
+                buttonStyle={[styles.buttonStyle, { marginHorizontal: wp(20) }]}
+                titleStyle={{ fontFamily: "SoraSemiBold", fontSize: wp(6) }}
+                onPress={() => {
+                  handlePrint(
+                    selectedProducts,
+                    discount,
+                    deliveryFee,
+                    invoiceDate,
+                    currentPrinter,
+                    showToast
+                  );
+                }}
+              />
+              <Button
+                title={"REMOVE PRINTER"}
+                buttonStyle={[
+                  styles.buttonStyle,
+                  {
+                    marginHorizontal: wp(20),
+                    backgroundColor: "#ff6347",
+                  },
+                ]}
+                titleStyle={{ fontFamily: "SoraSemiBold", fontSize: wp(3.5) }}
+                onPress={async () => {
+                  setCurrentPrinter(undefined);
+                  try {
+                    await AsyncStorage.removeItem("printer");
+                    if (pairedDevices.length === 0 && currentPrinter) {
+                      const pairedDevice = await connectToBluetooth(
+                        showToast,
+                        setPrintButtonVisibility
+                      );
+                      setPairedDevice(pairedDevice);
+                    }
+                  } catch (error) {
+                    console.error("Failed to connect to Bluetooth:", error);
+                    showToast("error", "Failed to get paired devices");
+                  }
+                }}
+              />
+            </View>
+          ) : (
+            <View style={{ flex: 1 }}>
+              <Text style={styles.textTitle}>Paired Bluetooth Devices</Text>
+              {pairedDevices &&
+              pairedDevices.length &&
+              !printButtonVisibility ? (
+                <FlatList
+                  style={{ flex: 1 }}
+                  data={pairedDevices}
+                  renderItem={({ item }) => (
+                    <View style={styles.itemContainer}>
+                      <Text style={styles.deviceName}>{item.name}</Text>
+                      <Button
+                        title={"Set as printer"}
+                        containerStyle={{ flex: 1 }}
+                        buttonStyle={styles.buttonStyle}
+                        titleStyle={styles.titleStyle}
+                        onPress={() => {
+                          setCurrentPrinter(item);
+                          AsyncStorage.setItem("printer", JSON.stringify(item));
+                        }}
+                      />
+                    </View>
+                  )}
+                />
               ) : (
-                <Text style={styles.currentPrinterMessage}>
-                  No current printer
-                </Text>
+                <ActivityIndicator
+                  color={"#634F40"}
+                  size={wp(10)}
+                  style={{ flex: 1 }}
+                />
               )}
             </View>
-          </View>
+          )}
         </View>
+
         <Toast position="bottom" autoHide visibilityTime={2000} />
       </View>
     </Modal>
@@ -206,6 +213,7 @@ const styles = StyleSheet.create({
   buttonStyle: {
     backgroundColor: "#E6B794",
     borderRadius: wp(1.5),
+    padding: wp(4),
   },
   deviceName: {
     fontFamily: "SoraMedium",
@@ -216,7 +224,6 @@ const styles = StyleSheet.create({
     fontFamily: "SoraSemiBold",
     fontSize: wp(3),
   },
-  currentPrinterChild: { flexDirection: "row", alignItems: "center" },
   currentPrinterParent: {
     borderWidth: wp(0.3),
     borderColor: "#634F40",

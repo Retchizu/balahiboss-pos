@@ -1,5 +1,6 @@
 import { PermissionsAndroid, Platform } from "react-native";
 export const permissionForPrint = async () => {
+  console.log((Platform.Version as number) >= 31);
   try {
     if ((Platform.Version as number) >= 31) {
       const grantedBluetoothConnect = await PermissionsAndroid.request(
@@ -49,30 +50,8 @@ export const permissionForPrint = async () => {
       }
     } else {
       // For Android versions below 12, only request general Bluetooth permissions
-      const grantedBluetooth = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.BLUETOOTH,
-        {
-          title: "Bluetooth Permission",
-          message: "This app requires Bluetooth access to connect to devices.",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK",
-        }
-      );
-
-      const grantedBluetoothAdmin = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.BLUETOOTH_ADMIN,
-        {
-          title: "Bluetooth Admin Permission",
-          message:
-            "This app requires Bluetooth Admin access to manage Bluetooth settings.",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK",
-        }
-      );
       const grantedFineLocation = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION ?? "",
         {
           title: "Location Permission",
           message:
@@ -83,19 +62,18 @@ export const permissionForPrint = async () => {
         }
       );
 
-      if (
-        grantedBluetooth === PermissionsAndroid.RESULTS.GRANTED &&
-        grantedBluetoothAdmin === PermissionsAndroid.RESULTS.GRANTED &&
-        grantedFineLocation == PermissionsAndroid.RESULTS.GRANTED
-      ) {
+      if (grantedFineLocation === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log(
+          "Bluetooth permissions granted for Android versions below 12"
+        );
         return true;
       } else {
         console.log(
           "Bluetooth permissions denied for Android versions below 12"
         );
+        return false;
       }
     }
-    return false;
   } catch (error) {
     console.log("error asking for permissions");
   }

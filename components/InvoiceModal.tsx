@@ -32,6 +32,7 @@ type InvoiceFormProps = {
   showToast: (type: ToastType, text1: string, text2?: string) => void;
   setPairedDevice: React.Dispatch<React.SetStateAction<Device[]>>;
   setPrintButtonVisibility: React.Dispatch<React.SetStateAction<boolean>>;
+  currentPrinter: Device | undefined;
 };
 const InvoiceModal = ({
   isInvoiceVisible,
@@ -43,6 +44,7 @@ const InvoiceModal = ({
   setPairedDevice,
   setPrintButtonVisibility,
   showToast,
+  currentPrinter,
 }: InvoiceFormProps) => {
   const viewRef = useRef<View>(null);
   const [snapshotVisible, setSnapshotVisible] = useState(true);
@@ -189,11 +191,13 @@ const InvoiceModal = ({
                   setIsBluetoothDeviceListModalVisible(true);
                   setIsInvoiceVisible(false);
                   try {
-                    const pairedDevice = await connectToBluetooth(
-                      showToast,
-                      setPrintButtonVisibility
-                    );
-                    setPairedDevice(pairedDevice);
+                    if (!currentPrinter) {
+                      const pairedDevice = await connectToBluetooth(
+                        showToast,
+                        setPrintButtonVisibility
+                      );
+                      setPairedDevice(pairedDevice);
+                    }
                   } catch (error) {
                     console.error("Failed to connect to Bluetooth:", error);
                     showToast("error", "Failed to get paired devices");

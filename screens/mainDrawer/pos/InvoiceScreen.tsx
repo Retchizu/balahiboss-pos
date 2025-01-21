@@ -140,6 +140,7 @@ const InvoiceScreen: React.FC<InvoiceScreenProp> = ({
         }
         setPairedDevice={setPairedDevices}
         setPrintButtonVisibility={setPrintButtonVisibilty}
+        currentPrinter={currentPrinter}
       />
       <BluetoothDeviceListModal
         isBluetoothDeviceListModalVisible={isBluetoothDeviceListModalVisible}

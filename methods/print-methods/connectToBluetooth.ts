@@ -21,8 +21,9 @@ export const connectToBluetooth = async (
       const devicesJson = JSON.parse(devices);
       showToast("info", "Make sure the device is a thermal printer");
       setPrintButtonVisibility(false);
-
       return devicesJson.paired;
+    } else {
+      showToast("error", "Bluetooth permissions denied");
     }
     return [];
   } catch (error) {
