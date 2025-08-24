@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "balahiboss",
+    "slug": "balahiboss",
+    "scheme": "com.retchizu.balahiboss",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/balahiboss.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.retchizu.balahiboss"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.retchizu.balahiboss"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-router"
+      ],
+      [
+        "expo-font"
+      ],
+      [
+        "expo-splash-screen"
+      ],
+      [
+        "expo-audio"
+      ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "1ef907ac-c296-4c5b-8bd7-bb0241b6f588"
+      }
+    }
+  }
+}

@@ -1,0 +1,126 @@
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
+
+import React, { useMemo } from "react";
+
+import { primary, strongPrimary } from "@/theme/backgroundTheme";
+
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from "react-native-responsive-screen";
+
+import { useRecentTrasactionContext } from "@/contexts/RecentTransactionContext";
+
+import { useCustomerContext } from "@/contexts/CustomerContext";
+
+import { FontAwesome6 } from "@expo/vector-icons";
+
+import { router } from "expo-router";
+
+const RecentTransactionScreen = () => {
+  const { recentTransactions } = useRecentTrasactionContext();
+
+  const { customers } = useCustomerContext();
+
+  const sortedRecentTransactions = useMemo(() => {
+    return recentTransactions.sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+  }, [recentTransactions]);
+
+  return (
+    <View
+      style={{
+        flex: 1,
+
+        backgroundColor: primary,
+
+        paddingVertical: hp(2),
+
+        paddingHorizontal: wp(2),
+      }}
+    >
+      <Text style={{ fontFamily: "Gantari-Medium", fontSize: wp(4.5), textAlign:"center", marginBottom:hp(1) }}>
+        Today&apos;s Transactions
+      </Text>
+      <FlatList
+        data={sortedRecentTransactions}
+        renderItem={({ item }) => {
+          const customerName = customers[item.customerId].customerName;
+
+          return (
+            <TouchableOpacity
+              style={{
+                flexDirection: "row",
+
+                justifyContent: "space-between",
+
+                borderWidth: wp(0.4),
+
+                borderRadius: wp(4),
+
+                borderColor: strongPrimary,
+
+                padding: wp(2),
+
+                alignItems: "center",
+
+                marginVertical: hp(0.5),
+              }}
+              activeOpacity={0.7}
+              onPress={() => {
+                router.push({
+                  pathname: "./recent/details",
+
+                  params: { recentId: item.id },
+                });
+              }}
+            >
+              <Text
+                style={{
+                  fontFamily: "Gantari-Regular",
+
+                  fontSize: wp(4),
+
+                  maxWidth: wp(70),
+                }}
+              >
+                {customerName}
+              </Text>
+
+              <View
+                style={{
+                  flexDirection: "row",
+
+                  alignItems: "center",
+
+                  gap: wp(1),
+                }}
+              >
+                <FontAwesome6 name="clock-four" size={wp(4)} color="black" />
+
+                <Text
+                  style={{
+                    fontFamily: "Gantari-Regular",
+
+                    fontSize: wp(4),
+                  }}
+                >
+                  {new Date(item.date).toLocaleTimeString([], {
+                    hour: "numeric",
+
+                    minute: "2-digit",
+
+                    hour12: true,
+                  })}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          );
+        }}
+      />
+    </View>
+  );
+};
+
+export default RecentTransactionScreen;
