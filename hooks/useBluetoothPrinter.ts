@@ -10,6 +10,7 @@ import {
 } from "@brooons/react-native-bluetooth-escpos-printer";
 import { useState } from "react";
 import { PermissionsAndroid, Platform } from "react-native";
+import Toast from "react-native-toast-message";
 
 const useBluetoothPrinter = () => {
   const [foundDevices, setFoundDevices] = useState<Device[]>([]);
@@ -176,7 +177,11 @@ const useBluetoothPrinter = () => {
       );
       console.log("done");
     } catch (error) {
-      console.error("Something went wrong in printing:", error);
+      Toast.show({
+        type: "error",
+        text1: "Something went wrong, check your connection or the printer.",
+      });
+      console.log(error)
     }
   };
 
@@ -187,7 +192,7 @@ const useBluetoothPrinter = () => {
     pairDevice,
     isBluetoothEnabled,
     printReceipt,
-    isAlreadyConnected
+    isAlreadyConnected,
   };
 };
 

@@ -9,6 +9,14 @@ import { TransactionProvider } from "@/contexts/TransactionContext";
 import { RecentTransactionProvider } from "@/contexts/RecentTransactionContext";
 import { ProductProvider } from "@/contexts/ProductContext";
 import { CustomerProvider } from "@/contexts/CustomerContext";
+import Toast, {
+  BaseToast,
+  ErrorToast,
+  ToastConfig,
+  ToastConfigParams,
+} from "react-native-toast-message";
+import { ImageBackground, View, StyleSheet } from "react-native";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -60,6 +68,7 @@ export default function RootLayout() {
                     options={{ headerTitle: "About Us" }}
                   />
                 </Stack>
+                <Toast config={toastConfig} position="bottom" />
               </UserProvider>
             </CustomerProvider>
           </ProductProvider>
@@ -68,3 +77,83 @@ export default function RootLayout() {
     </PendingOrderProvider>
   );
 }
+
+const toastConfig: ToastConfig = {
+  success: (params: ToastConfigParams<any>) => (
+    <View style={styles.main}>
+      <ImageBackground
+        source={require("@/assets/balahiboss.png")}
+        style={styles.background}
+        imageStyle={styles.image}
+      >
+        <BaseToast
+          {...params}
+          style={[
+            styles.toast,
+            {
+              backgroundColor: "transparent",
+              borderColor: "#60B5FF",
+              borderLeftWidth: wp(1),
+              elevation: 0,
+            },
+          ]}
+          contentContainerStyle={{ paddingHorizontal: wp(4) }}
+          text1Style={{
+            fontSize: wp(4),
+            color: "black",
+            fontFamily: "Gantari-SemiBold",
+          }}
+          text1NumberOfLines={3}
+        />
+      </ImageBackground>
+    </View>
+  ),
+
+  error: (params: ToastConfigParams<any>) => (
+    <View style={styles.main}>
+      <ImageBackground
+        source={require("@/assets/balahiboss.png")}
+        style={styles.background}
+        imageStyle={styles.image}
+      >
+        <ErrorToast
+          {...params}
+          style={[
+            styles.toast,
+            {
+              backgroundColor: "transparent",
+              borderColor: "#FF8989",
+              borderLeftWidth: wp(1),
+              elevation: 0,
+            },
+          ]}
+          text1Style={{
+            fontSize: wp(4),
+            color: "black",
+            fontFamily: "Gantari-SemiBold",
+          }}
+          text1NumberOfLines={3}
+        />
+      </ImageBackground>
+    </View>
+  ),
+};
+
+const styles = StyleSheet.create({
+  main: {
+    zIndex: 1,
+    backgroundColor: "white",
+    alignItems: "center",
+    elevation: 1,
+  },
+  background: {
+    zIndex: 2,
+  },
+  image: {
+    resizeMode: "center",
+    opacity: 0.2,
+  },
+  toast: {
+    alignSelf: "center", // centers horizontally
+  },
+});

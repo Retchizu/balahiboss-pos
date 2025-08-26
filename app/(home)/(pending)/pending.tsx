@@ -22,6 +22,7 @@ import PendingOrder from "@/types/PendingOrder";
 import { auth } from "@/config/firebaseConfig";
 import { api } from "@/config/axios-api";
 import { isAxiosError } from "axios";
+import Toast from "react-native-toast-message";
 
 const PendingScreen = () => {
   const { orders } = usePendingOrderContext();
@@ -109,7 +110,10 @@ const PendingScreen = () => {
                   });
                 } catch (error) {
                   if (isAxiosError(error)) {
-                    console.error(error.response?.data.message);
+                    Toast.show({
+                      type: "error",
+                      text1: `${error.response?.data.error}`,
+                    });
                   }
                   console.error(error);
                 } finally {

@@ -15,6 +15,7 @@ import * as FileSystem from "expo-file-system";
 import { isAxiosError } from "axios";
 import FloatingButton from "@/components/buttons/FloatingButton";
 import ModalTemplate from "@/components/modals/ModalTemplate";
+import Toast from "react-native-toast-message";
 
 const UpdateScreen = () => {
   // product params
@@ -119,10 +120,10 @@ const UpdateScreen = () => {
       // Call your update API here
       // await updateProductAPI(updatedProduct);
       const response = await api.put(`/product/update/${id}`, updatedProduct);
-      console.log(response.data);
+      Toast.show({ type: "success", text1: `${response?.data.message}` });
     } catch (error) {
       if (isAxiosError(error)) {
-        console.error("Error updating product:", error.response?.data);
+        Toast.show({ type: "error", text1: `${error.response?.data.error}` });
       }
       console.error("Error updating product:", error);
     } finally {
@@ -137,10 +138,10 @@ const UpdateScreen = () => {
       setIsDeleteModalVisible(false);
       router.back();
       const response = await api.delete(`/product/delete/${id}`);
-      console.log(response.data);
+      Toast.show({ type: "success", text1: `${response?.data.message}` });
     } catch (error) {
       if (isAxiosError(error)) {
-        console.error("Error deleting product:", error.response?.data);
+        Toast.show({ type: "error", text1: `${error.response?.data.error}` });
       }
       console.error("Error deleting product:", error);
     }

@@ -28,6 +28,7 @@ import { api } from "@/config/axios-api";
 import ModalTemplate from "@/components/modals/ModalTemplate";
 import { useInvoiceFormContext } from "@/contexts/InvoiceFormContext";
 import { useSelectedProductContext } from "@/contexts/SelectedProductContext";
+import Toast from "react-native-toast-message";
 
 const TransactionDetailScreen = () => {
   // params
@@ -61,7 +62,7 @@ const TransactionDetailScreen = () => {
       onlinePayment: transaction.onlinePayment
         ? transaction.onlinePayment.toFixed(2)
         : "0",
-      customer: {...customer, id: transaction.customerId},
+      customer: { ...customer, id: transaction.customerId },
       date: new Date(transaction.date),
       discount: transaction.discount ? transaction.discount.toString() : "0",
       freebies: transaction.freebies ? transaction.freebies.toString() : "0",
@@ -80,11 +81,11 @@ const TransactionDetailScreen = () => {
       const response = await api.delete(
         `/transaction/delete/${transaction.id}`
       );
-      console.log(response.data.message);
+      Toast.show({ type: "success", text1: `${response?.data.message}` });
       router.replace("../list");
     } catch (error) {
       if (isAxiosError(error)) {
-        console.error(error.response?.data.error);
+        Toast.show({ type: "error", text1: `${error.response?.data.error}` });
       }
       console.error(error);
     } finally {

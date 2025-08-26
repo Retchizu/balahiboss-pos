@@ -16,6 +16,7 @@ import CommonButton from "@/components/buttons/CommonButton";
 import { router } from "expo-router";
 import { isAxiosError } from "axios";
 import { api } from "@/config/axios-api";
+import Toast from "react-native-toast-message";
 
 const AddCustomerScreen = () => {
   const [customerForm, setCustomerForm] = useState({
@@ -39,10 +40,10 @@ const AddCustomerScreen = () => {
       setIsAddingCustomer(true);
       const response = await api.post("/customer/add", customerForm);
       router.back();
-      console.log(response.data);
+      Toast.show({ type: "success", text1: `${response?.data.message}` });
     } catch (error) {
       if (isAxiosError(error)) {
-        console.error("Add Customer failed:", error.response?.data.message);
+        Toast.show({ type: "error", text1: `${error.response?.data.error}` });
       }
       console.error("Add Customer failed:", error);
     } finally {

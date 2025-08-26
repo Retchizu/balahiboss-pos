@@ -36,6 +36,7 @@ import { useSelectedProductsArray } from "@/hooks/useSelectedProductsArray";
 import useCustomersArray from "@/hooks/useCustomersArray";
 import searchCustomerByName from "@/methods/search/searchCustomerByName";
 import { useUserContext } from "@/contexts/UserContext";
+import Toast from "react-native-toast-message";
 
 // UI
 const InvoiceScreen = () => {
@@ -154,7 +155,7 @@ const InvoiceScreen = () => {
         })
       );
 
-      await api.post("/transaction/add", {
+      const response = await api.post("/transaction/add", {
         customerId: invoiceForm.customer?.id,
         items: productTransactionBody,
         onlinePayment: parseFloat(invoiceForm.onlinePayment || "0"),
@@ -179,10 +180,10 @@ const InvoiceScreen = () => {
       });
       setIspPendingOrder(false);
       setPendingOrderInformation("");
-      console.log("done");
+      Toast.show({ type: "success", text1: `${response?.data.message}` });
     } catch (error) {
       if (isAxiosError(error)) {
-        console.log(error.response?.data.error);
+        Toast.show({ type: "error", text1: `${error.response?.data.error}` });
       }
     } finally {
       setIsInvoiceSubmitting(false);
@@ -216,7 +217,16 @@ const InvoiceScreen = () => {
             activeOpacity={0.7}
             onPress={() => setCustomerPickerVisibility(true)}
           >
-            <Text style={[styles.buttonLabel, {color: invoiceForm.customer?.customerName ? "black" : "rgba(0,0,0,0.5)"}]}>
+            <Text
+              style={[
+                styles.buttonLabel,
+                {
+                  color: invoiceForm.customer?.customerName
+                    ? "black"
+                    : "rgba(0,0,0,0.5)",
+                },
+              ]}
+            >
               {invoiceForm.customer
                 ? invoiceForm.customer.customerName
                 : "Select Customer"}
@@ -281,7 +291,12 @@ const InvoiceScreen = () => {
             }}
             activeOpacity={0.7}
           >
-            <Text style={[styles.buttonLabel, {color: invoiceForm.date ? "black" : "rgba(0,0,0,0.5)"}]}>
+            <Text
+              style={[
+                styles.buttonLabel,
+                { color: invoiceForm.date ? "black" : "rgba(0,0,0,0.5)" },
+              ]}
+            >
               {invoiceForm.date
                 ? invoiceForm.date.toLocaleString("en-PH", {
                     dateStyle: "medium",

@@ -32,6 +32,7 @@ import { router } from "expo-router";
 import { useActivityContext } from "@/contexts/ActivityContext";
 import ModalTemplate from "@/components/modals/ModalTemplate";
 import {Checkbox} from "expo-checkbox";
+import Toast from "react-native-toast-message";
 
 type Section = {
   title: string;
@@ -98,7 +99,7 @@ const ActivityLogScreen = () => {
         setActivities(response.data.items);
       } catch (error) {
         if (isAxiosError(error)) {
-          console.error(error.response?.data.error);
+          Toast.show({type:"error", text1:`${error.response?.data.error}`})
         }
         console.error((error as Error).message);
       }

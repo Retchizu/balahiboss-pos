@@ -1,9 +1,15 @@
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import useGetProducts from "@/hooks/useGetProducts";
 import useProductsArray from "@/hooks/useProductsArray";
 import searchProductsByName from "@/methods/search/searchProductsByName";
-import { primary, strongPrimary } from "@/theme/backgroundTheme";
+import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -15,6 +21,14 @@ import DatePicker from "react-native-date-picker";
 import CommonButton from "@/components/buttons/CommonButton";
 import { api } from "@/config/axios-api";
 import { isAxiosError } from "axios";
+import Toast from "react-native-toast-message";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import ModalTemplate from "@/components/modals/ModalTemplate";
+import Input from "@/components/inputs/Input";
+import { Checkbox } from "expo-checkbox";
+import * as XLSX from "xlsx";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
 
 const StockReportListScreen = () => {
   const { products } = useGetProducts();
@@ -55,10 +69,7 @@ const StockReportListScreen = () => {
         setTransactions(response.data.items);
       } catch (error) {
         if (isAxiosError(error)) {
-          console.error(
-            "Get Transaction Failed: ",
-            error.response?.data.message
-          );
+          Toast.show({ type: "error", text1: `${error.response?.data.error}` });
         }
         console.error("Get Transaction Failed: ", error);
       }
@@ -66,6 +77,88 @@ const StockReportListScreen = () => {
 
     getTransactions();
   }, [endDate, setTransactions, startDate, products]);
+
+  // excel conversion
+  const [excelConversionOptionsModal, setExcelConversionOptionsModal] =
+    useState(false);
+  const [excelFileName, setExcelFileName] = useState("");
+
+  const [selectedOption, setSelectedOption] = useState<
+    "products" | "stockSold" | null
+  >(null);
+
+  const stockSoldExportData = useMemo(() => {
+    const totalSold = calculateTotalStockSold(transactions);
+
+    return productsArray.map((product) => ({
+      "Product Name": product.productName,
+      "Total Stock Sold": totalSold[product.id] || 0,
+    }));
+  }, [productsArray, transactions]);
+
+  const productsExportData = useMemo(() => {
+    return productsArray.map((product) => ({
+      "Product Name": product.productName,
+      Stock: product.stock,
+      "Stock Price": product.stockPrice,
+      "Sell Price": product.sellPrice,
+      "Current Stock Total Amount": product.stockPrice * product.stock,
+    }));
+  }, [productsArray]);
+
+  const exportToExcel = async (data: any[], fileName: string) => {
+    if (excelFileName.length === 0 || selectedOption === null) {
+      Toast.show({ type: "error", text1: "File name and mode is required." });
+      return;
+    }
+    if (!data || data.length === 0) {
+      console.warn("No data to export");
+      return;
+    }
+
+    try {
+    // Create worksheet and set column widths
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    worksheet["!cols"] = [
+      { wch: 40 }, // Product Name
+      { wch: 10 }, // Stock / Sold
+      { wch: 12 }, // Stock Price
+      { wch: 12 }, // Sell Price
+      { wch: 28 }, // Current Stock Total Amount
+    ];
+
+    // Create workbook
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+    // Convert workbook to base64
+    const workbookOutput = XLSX.write(workbook, {
+      type: "base64",
+      bookType: "xlsx",
+    });
+
+    // Save to device storage
+    const fileUri = `${FileSystem.documentDirectory}${fileName}.xlsx`;
+    await FileSystem.writeAsStringAsync(fileUri, workbookOutput, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+
+    // Share if available
+    if (await Sharing.isAvailableAsync()) {
+      await Sharing.shareAsync(fileUri, {
+        mimeType:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        dialogTitle: `Share ${fileName}.xlsx`,
+      });
+    }
+
+    Toast.show({ type: "success", text1: "Export successful" });
+    console.log("Exported Excel:", fileUri);
+  } catch (error) {
+    Toast.show({ type: "error", text1: "Something went wrong" });
+    console.log("Excel Export Error:", error);
+  }
+  };
 
   return (
     <View
@@ -76,11 +169,30 @@ const StockReportListScreen = () => {
         paddingHorizontal: wp(2),
       }}
     >
-      <SearchBar
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        placeholder={"Search Products..."}
-      />
+      <View style={{ flexDirection: "row", gap: wp(2) }}>
+        <SearchBar
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder={"Search Products..."}
+          row
+        />
+
+        <TouchableOpacity
+          style={{
+            padding: wp(2),
+            borderRadius: wp(4),
+            backgroundColor: secondary,
+          }}
+          onPress={() => setExcelConversionOptionsModal(true)}
+        >
+          <MaterialCommunityIcons
+            name="microsoft-excel"
+            size={24}
+            color="black"
+          />
+        </TouchableOpacity>
+      </View>
+
       <View
         style={{ flexDirection: "row", justifyContent: "center", gap: wp(10) }}
       >
@@ -210,6 +322,77 @@ const StockReportListScreen = () => {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       />
+      <ModalTemplate
+        visible={excelConversionOptionsModal}
+        onClose={() => {
+          setExcelConversionOptionsModal(false);
+        }}
+        width={wp(80)}
+        height={hp(35)}
+      >
+        <Text
+          style={{
+            fontFamily: "Gantari-SemiBold",
+            fontSize: wp(4.5),
+            marginVertical: hp(2),
+          }}
+        >
+          Convert to Excel
+        </Text>
+        <Input
+          value={excelFileName}
+          onChangeText={setExcelFileName}
+          placeholder="File Name"
+        />
+        <TouchableOpacity
+          style={styles.optionRow}
+          activeOpacity={0.7}
+          onPress={() => setSelectedOption("products")}
+        >
+          <Checkbox
+            value={selectedOption === "products"}
+            onValueChange={() => setSelectedOption("products")}
+            color={selectedOption === "products" ? "#007AFF" : undefined}
+          />
+          <Text style={styles.optionText}>Products to Excel</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.optionRow}
+          activeOpacity={0.7}
+          onPress={() => setSelectedOption("stockSold")}
+        >
+          <Checkbox
+            value={selectedOption === "stockSold"}
+            onValueChange={() => setSelectedOption("stockSold")}
+            color={selectedOption === "stockSold" ? "#007AFF" : undefined}
+          />
+          <Text style={styles.optionText}>Stock Sold to Excel</Text>
+        </TouchableOpacity>
+
+        {/* Action Buttons */}
+        <View style={styles.actions}>
+          <CommonButton
+            title="Cancel"
+            onPress={() => {
+              setSelectedOption(null);
+              setExcelConversionOptionsModal(false);
+              setExcelFileName("");
+            }}
+          />
+          <CommonButton
+            title="Confirm"
+            onPress={async () => {
+              if (selectedOption === "products") {
+                await exportToExcel(productsExportData, excelFileName);
+              } else if (selectedOption === "stockSold") {
+                await exportToExcel(stockSoldExportData, excelFileName);
+              }
+            }}
+          />
+        </View>
+      </ModalTemplate>
+
     </View>
   );
 };
@@ -224,6 +407,21 @@ const styles = StyleSheet.create({
   labelStyle: {
     fontFamily: "Gantari-SemiBold",
     fontSize: wp(4),
+  },
+  optionRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: hp(2),
+  },
+  optionText: {
+    marginLeft: wp(2),
+    fontSize: wp(4),
+  },
+  actions: {
+    flexDirection: "row",
+    marginTop: hp(2),
+    gap: wp(4),
+    justifyContent: "flex-end",
   },
 });
 

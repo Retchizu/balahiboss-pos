@@ -27,6 +27,7 @@ import searchProductsByName from "@/methods/search/searchProductsByName";
 import { useUserContext } from "@/contexts/UserContext";
 import useBluetoothPrinter from "@/hooks/useBluetoothPrinter";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 const PosScreen = () => {
   const { role } = useUserContext();
   console.log(role);
@@ -81,7 +82,7 @@ const PosScreen = () => {
                     });
                   }
                 }
-              : () => console.log("Out of stock")
+              : () => Toast.show({type:"error",text1:`${item.productName} is out of stock.`})
           }
         >
           <View

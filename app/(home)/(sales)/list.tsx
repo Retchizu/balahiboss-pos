@@ -32,6 +32,7 @@ import calculateTotalPriceSold from "@/methods/invoice/report/calculateTotalPric
 import calculateTotalProfit from "@/methods/invoice/report/calculateTotalProfit";
 import ModalTemplate from "@/components/modals/ModalTemplate";
 import { Checkbox } from "expo-checkbox";
+import Toast from "react-native-toast-message";
 
 const TransactionListScreen = () => {
   // startDate
@@ -102,10 +103,7 @@ const TransactionListScreen = () => {
         setTransactions(response.data.items);
       } catch (error) {
         if (isAxiosError(error)) {
-          console.error(
-            "Get Transaction Failed: ",
-            error.response?.data.message
-          );
+          Toast.show({ type: "error", text1: `${error.response?.data.error}` });
         }
         console.error("Get Transaction Failed: ", error);
       }
@@ -274,7 +272,11 @@ const TransactionListScreen = () => {
         <SearchBar
           onChangeText={setSearchQuery}
           value={searchQuery}
-          placeholder={nameFilter === "Product" ? "Search By Products..." : "Search By Customers..."}
+          placeholder={
+            nameFilter === "Product"
+              ? "Search By Products..."
+              : "Search By Customers..."
+          }
           row
         />
         <TouchableOpacity
@@ -453,7 +455,7 @@ const styles = StyleSheet.create({
     marginBottom: hp(1.5), // previously 12
   },
   sectionTitle: {
-    fontFamily:"Gantari-Bold",
+    fontFamily: "Gantari-Bold",
     fontSize: wp(3.5), // previously 14
     marginBottom: hp(0.8), // previously 6
   },
@@ -466,8 +468,8 @@ const styles = StyleSheet.create({
     marginRight: wp(2), // previously 8
   },
   optionText: {
-    fontSize: wp(3.5), // previously 
-    fontFamily:"Gantari-Regular",
+    fontSize: wp(3.5), // previously
+    fontFamily: "Gantari-Regular",
   },
   applyButton: {
     backgroundColor: "#007AFF",

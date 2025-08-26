@@ -38,6 +38,7 @@ import { api } from "@/config/axios-api";
 import calculateTotalSellPrice from "@/methods/invoice/calculateTotalSellPrice";
 import { useConvertTransactionArrayToMap } from "@/hooks/useConvertTransactionArrayToMap";
 import { usePendingOrderContext } from "@/contexts/PendingOrderContext";
+import Toast from "react-native-toast-message";
 
 const EditInvoiceScreen = () => {
   // params
@@ -133,7 +134,7 @@ const EditInvoiceScreen = () => {
           onPress={() => {
             setInvoiceForm((prev) => ({
               ...prev,
-              customer: {...item, id: item.id},
+              customer: { ...item, id: item.id },
             }));
             setCustomerPickerVisibility(false);
           }}
@@ -157,7 +158,7 @@ const EditInvoiceScreen = () => {
     [setInvoiceForm]
   );
 
-  console.log(invoiceForm.customer)
+  console.log(invoiceForm.customer);
   // on form submit
   const updateTransaction = async () => {
     try {
@@ -169,7 +170,7 @@ const EditInvoiceScreen = () => {
         })
       );
 
-      await api.put(`/transaction/update/${transaction.id}`, {
+      const response = await api.put(`/transaction/update/${transaction.id}`, {
         customerId: invoiceForm.customer?.id,
         items: productTransactionBody,
         onlinePayment: parseFloat(invoiceForm.onlinePayment || "0"),
@@ -182,16 +183,16 @@ const EditInvoiceScreen = () => {
         orderInformation: pendingOrderInformation,
       });
       router.back();
-      console.log("done update");
+      Toast.show({ type: "success", text1: `${response?.data.message}` });
     } catch (error) {
       if (isAxiosError(error)) {
-        console.log(error.response?.data.error);
+        Toast.show({ type: "error", text1: `${error.response?.data.error}` });
       }
     } finally {
       setIsInvoiceSubmitting(false);
     }
   };
-  
+
   return (
     <View
       style={{

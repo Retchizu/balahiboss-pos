@@ -19,6 +19,7 @@ import FloatingButton from "@/components/buttons/FloatingButton";
 import { api } from "@/config/axios-api";
 import { isAxiosError } from "axios";
 import ModalTemplate from "@/components/modals/ModalTemplate";
+import Toast from "react-native-toast-message";
 
 const UpdateCustomerScreen = () => {
   // customer params
@@ -46,16 +47,16 @@ const UpdateCustomerScreen = () => {
   const updateCustomer = async () => {
     try {
       setIsUpdatingCustomer(true);
-      const {customerName, customerInfo} = customerForm;
+      const { customerName, customerInfo } = customerForm;
       const response = await api.put(`/customer/update/${id}`, {
         customerName,
-        customerInfo
-      })
-      console.log(response.data.message)
+        customerInfo,
+      });
+      Toast.show({ type: "success", text1: `${response?.data.message}` });
       router.back();
     } catch (error) {
       if (isAxiosError(error)) {
-        console.error("Update Customer Failed: ", error.response?.data.message);
+        Toast.show({ type: "error", text1: `${error.response?.data.error}` });
       }
       console.error("Update Customer Failed: ", error);
     } finally {
@@ -70,10 +71,10 @@ const UpdateCustomerScreen = () => {
       setIsDeleteModalVisible(false);
       router.back();
       const response = await api.delete(`/customer/delete/${id}`);
-      console.log(response.data);
+      Toast.show({ type: "success", text1: `${response?.data.message}` });
     } catch (error) {
       if (isAxiosError(error)) {
-        console.error("Delete Customer Failed: ", error.response?.data.message);
+        Toast.show({ type: "error", text1: `${error.response?.data.error}` });
       }
       console.error("Delete Customer Failed: ", error);
     }
@@ -118,7 +119,9 @@ const UpdateCustomerScreen = () => {
       </TouchableOpacity>
 
       <CommonButton
-        onPress={async () => {await updateCustomer()}}
+        onPress={async () => {
+          await updateCustomer();
+        }}
         title="Update Customer"
         titleColor={"white"}
         marginTop={hp(3)}

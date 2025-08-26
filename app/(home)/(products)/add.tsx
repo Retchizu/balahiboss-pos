@@ -11,6 +11,7 @@ import CommonButton from "@/components/buttons/CommonButton";
 import { router } from "expo-router";
 import { api } from "@/config/axios-api";
 import { isAxiosError } from "axios";
+import Toast from "react-native-toast-message";
 
 const AddProductScreen = () => {
   // image state
@@ -85,14 +86,13 @@ const AddProductScreen = () => {
         base64Image,
       });
 
-      const data = response.data.message;
       router.back();
-      console.log(data);
-    } catch (err) {
-      if (isAxiosError(err)) {
-        console.error("Upload failed:", err.response?.data.message);
+      Toast.show({ type: "success", text1: `${response?.data.message}` });
+    } catch (error) {
+      if (isAxiosError(error)) {
+        Toast.show({ type: "error", text1: `${error.response?.data.error}` });
       }
-      console.error("Upload failed:", err);
+      console.error("Upload failed:", error);
     } finally {
       setUploading(false);
     }

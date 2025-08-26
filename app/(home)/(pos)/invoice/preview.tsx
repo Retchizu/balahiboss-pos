@@ -14,6 +14,7 @@ import CommonButton from "@/components/buttons/CommonButton";
 import * as MediaLibrary from "expo-media-library";
 import { captureRef } from "react-native-view-shot";
 import useBluetoothPrinter from "@/hooks/useBluetoothPrinter";
+import Toast from "react-native-toast-message";
 
 const PreviewInvoiceScreen = () => {
   const { invoiceForm } = useInvoiceFormContext();
@@ -41,9 +42,9 @@ const PreviewInvoiceScreen = () => {
 
       await MediaLibrary.saveToLibraryAsync(localUri);
 
-      console.log("success", "Image saved to gallery!");
+     Toast.show({ type: "success", text1: "Image saved to gallery." })
     } catch (error) {
-      console.log("error", "Error saving to gallery", "try again later");
+      Toast.show({ type: "error", text1: "Failed to save to gallery." });
       console.error("Failed to capture and handle image:", error);
     } finally {
       setIsButtonsVisible(true);

@@ -25,6 +25,7 @@ import { api } from "@/config/axios-api";
 import { isAxiosError } from "axios";
 import { PendingOrderStatus } from "@/types/PendingOrder";
 import ModalTemplate from "@/components/modals/ModalTemplate";
+import Toast from "react-native-toast-message";
 
 const OrderDetailsScreen = () => {
   const { id, status } = useLocalSearchParams<{
@@ -84,12 +85,12 @@ const OrderDetailsScreen = () => {
           params: { transactionId: id },
         }
       );
-      console.log(response.data.message);
+      Toast.show({ type: "success", text1: `${response?.data.message}` });
       setOrderStatusModalVisible(false);
       router.back();
     } catch (error) {
       if (isAxiosError(error)) {
-        console.log(error.response?.data.message);
+        Toast.show({ type: "error", text1: `${error.response?.data.error}` });
       }
       console.log(error);
     } finally {
@@ -294,7 +295,7 @@ const OrderDetailsScreen = () => {
 
         <CommonButton
           title="Confirm"
-          onPress={ async () => {
+          onPress={async () => {
             if (selectedOrderStatusOption) {
               await setOrderStatus();
             }

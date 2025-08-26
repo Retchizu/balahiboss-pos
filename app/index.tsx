@@ -17,6 +17,7 @@ import { isAxiosError } from "axios";
 import { verifyAccountApi } from "@/methods/auth/verifyAccountApi";
 import { router } from "expo-router";
 import { useUserContext } from "@/contexts/UserContext";
+import Toast from "react-native-toast-message";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -103,7 +104,7 @@ const handleGoogleSignIn = async (
       if (error.response.status === 403 || error.response.status) {
         await auth.signOut();
       } else {
-        console.log(error.message);
+        Toast.show({type:"error", text1: `${error.response.data.error}`})
       }
     }
     console.error("Google Sign-In Error:", (error as Error).message);
