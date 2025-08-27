@@ -13,6 +13,12 @@
     },
     "production": {
       "autoIncrement": true
+    },
+    "client": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "autoIncrement": true
     }
   },
   "submit": {

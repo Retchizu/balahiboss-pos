@@ -114,7 +114,7 @@ const CartScreen = () => {
                                 <Text
                                     style={{
                                         fontFamily: "Gantari-Regular",
-                                        color: "#FF9149",
+                                        color: "black",
                                         fontSize: wp(4),
                                     }}
                                 >
@@ -223,7 +223,7 @@ const CartScreen = () => {
                         </Text>
                         <Text
                             style={{
-                                color: strongPrimary,
+                                color: "black",
                                 fontFamily: "Gantari-Bold",
                                 fontSize: wp(6.5),
                                 maxWidth: wp(50),

@@ -115,7 +115,7 @@ const PosScreen = () => {
             <Text
               style={{
                 fontFamily: "Gantari-Regular",
-                color: "#FF9149",
+                color: "black",
                 fontSize: wp(4),
               }}
             >
@@ -124,6 +124,7 @@ const PosScreen = () => {
             <Text
               style={{
                 fontFamily: "Gantari-Regular",
+                color:"black",
                 fontSize: wp(4),
               }}
             >

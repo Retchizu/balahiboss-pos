@@ -23,14 +23,17 @@ const useBluetoothPrinter = () => {
       const address: any = await BluetoothManager.getConnectedDeviceAddress();
       return !!address;
     } catch (err) {
-      console.error("Failed to check connection:", err);
+      console.log("No printer connected", err);
       return false;
     }
   };
   const scanDevices = async () => {
     const enabled = await isBluetoothEnabled();
     if (!enabled) {
-      console.log("Please enable bluetooth");
+      Toast.show({
+        type: "error",
+        text1: "Please enable Bluetooth to scan for devices.",
+      });
       return;
     }
 

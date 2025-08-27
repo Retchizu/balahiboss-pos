@@ -37,6 +37,7 @@ import useCustomersArray from "@/hooks/useCustomersArray";
 import searchCustomerByName from "@/methods/search/searchCustomerByName";
 import { useUserContext } from "@/contexts/UserContext";
 import Toast from "react-native-toast-message";
+import useBluetoothPrinter from "@/hooks/useBluetoothPrinter";
 
 // UI
 const InvoiceScreen = () => {
@@ -191,6 +192,7 @@ const InvoiceScreen = () => {
   };
 
   const { role } = useUserContext();
+  const {isAlreadyConnected, printReceipt} = useBluetoothPrinter();
 
   return (
     <View
@@ -203,36 +205,6 @@ const InvoiceScreen = () => {
     >
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
         <ScrollView contentContainerStyle={{ gap: hp(2) }}>
-          <TouchableOpacity
-            style={{
-              borderWidth: wp(0.3),
-              borderColor: strongPrimary,
-              borderRadius: wp(2),
-              padding: wp(2),
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "row",
-              gap: wp(1),
-            }}
-            activeOpacity={0.7}
-            onPress={() => setCustomerPickerVisibility(true)}
-          >
-            <Text
-              style={[
-                styles.buttonLabel,
-                {
-                  color: invoiceForm.customer?.customerName
-                    ? "black"
-                    : "rgba(0,0,0,0.5)",
-                },
-              ]}
-            >
-              {invoiceForm.customer
-                ? invoiceForm.customer.customerName
-                : "Select Customer"}
-            </Text>
-            <FontAwesome6 name="person" size={wp(6)} color="rgba(0,0,0,0.4)" />
-          </TouchableOpacity>
           <View
             style={{
               flexDirection: "row",
@@ -277,6 +249,36 @@ const InvoiceScreen = () => {
             }}
             inputType="numeric"
           />
+          <TouchableOpacity
+            style={{
+              borderWidth: wp(0.3),
+              borderColor: strongPrimary,
+              borderRadius: wp(2),
+              padding: wp(2),
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "row",
+              gap: wp(1),
+            }}
+            activeOpacity={0.7}
+            onPress={() => setCustomerPickerVisibility(true)}
+          >
+            <Text
+              style={[
+                styles.buttonLabel,
+                {
+                  color: invoiceForm.customer?.customerName
+                    ? "black"
+                    : "rgba(0,0,0,0.5)",
+                },
+              ]}
+            >
+              {invoiceForm.customer
+                ? invoiceForm.customer.customerName
+                : "Select Customer"}
+            </Text>
+            <FontAwesome6 name="person" size={wp(6)} color="rgba(0,0,0,0.4)" />
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setDatePickerVisibility(true)}
             style={{
@@ -511,7 +513,25 @@ const InvoiceScreen = () => {
                 width: wp(25),
                 opacity: isInvoiceSubmitting ? 0.7 : 1,
               }}
-              onPress={() => addTransaction()}
+              onPress={async() => {
+                if(selectedProductArray.length === 0){
+                  Toast.show({
+                    type: "error",
+                    text1: "No products selected",
+                  });
+                  return;
+                }
+                await addTransaction();
+                const isPrinterConnected = await isAlreadyConnected();
+                if(isPrinterConnected){
+                  await printReceipt(invoiceForm, selectedProductArray);
+                } else {
+                  Toast.show({
+                    type: "error",
+                    text1: "No printer connected",
+                  });
+                }
+              }}
               disabled={isInvoiceSubmitting}
               activeOpacity={0.7}
             >
@@ -573,7 +593,7 @@ const styles = StyleSheet.create({
   totalValue: {
     fontFamily: "Gantari-Bold",
     fontSize: wp(5),
-    color: strongPrimary,
+    color: "black",
   },
   totalLabel: {
     fontSize: wp(5),

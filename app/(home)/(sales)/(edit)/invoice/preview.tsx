@@ -14,6 +14,7 @@ import CommonButton from "@/components/buttons/CommonButton";
 import * as MediaLibrary from "expo-media-library";
 import { captureRef } from "react-native-view-shot";
 import Toast from "react-native-toast-message";
+import useBluetoothPrinter from "@/hooks/useBluetoothPrinter";
 
 const EditInvoicePreviewScreen = () => {
   const { invoiceForm } = useInvoiceFormContext();
@@ -41,7 +42,7 @@ const EditInvoicePreviewScreen = () => {
 
       await MediaLibrary.saveToLibraryAsync(localUri);
 
-Toast.show({ type: "success", text1: "Image saved to gallery." })
+      Toast.show({ type: "success", text1: "Image saved to gallery." });
     } catch (error) {
       Toast.show({ type: "error", text1: "Failed to save to gallery." });
       console.error("Failed to capture and handle image:", error);
@@ -49,6 +50,8 @@ Toast.show({ type: "success", text1: "Image saved to gallery." })
       setIsButtonsVisible(true);
     }
   };
+
+  const {printReceipt} = useBluetoothPrinter()
 
   return (
     <View
@@ -239,7 +242,9 @@ Toast.show({ type: "success", text1: "Image saved to gallery." })
           />
           <CommonButton
             title="Print Invoice"
-            onPress={() => {}}
+            onPress={async () => {
+              await printReceipt(invoiceForm, selectedProductArray);
+            }}
             backgroundColor={strongPrimary}
             titleColor={"white"}
             iconLeft={{

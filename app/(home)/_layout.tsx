@@ -222,7 +222,6 @@ const DrawerLayout = () => {
             drawerIcon: ({ color }) => (
               <Entypo name="print" size={wp(5)} color={color} />
             ),
-            drawerItemStyle: role === "user" ? { display: "none" } : undefined,
           }}
         />
       </Drawer>
