@@ -31,6 +31,7 @@ export default function RootLayout() {
     "Gantari-Regular": require("@/assets/fonts/Gantari-Regular.ttf"),
     "Gantari-SemiBold": require("@/assets/fonts/Gantari-SemiBold.ttf"),
     "Gantari-Thin": require("@/assets/fonts/Gantari-Thin.ttf"),
+    "Gantari-Italic": require("@/assets/fonts/Gantari-Italic.ttf")
   });
   useEffect(() => {
     if (loaded || error) {
@@ -65,7 +66,7 @@ export default function RootLayout() {
                   <Stack.Screen name="index" options={{ headerShown: false }} />
                   <Stack.Screen
                     name="about"
-                    options={{ headerTitle: "About Us" }}
+                    options={{ headerShown:false}}
                   />
                 </Stack>
                 <Toast config={toastConfig} position="bottom" />
