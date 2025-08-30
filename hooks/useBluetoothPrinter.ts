@@ -201,7 +201,7 @@ const useBluetoothPrinter = () => {
 
 export default useBluetoothPrinter;
 
-const permissionForPrint = async () => {
+export const permissionForPrint = async () => {
   console.log((Platform.Version as number) >= 31);
   try {
     if ((Platform.Version as number) >= 31) {

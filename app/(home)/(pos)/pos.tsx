@@ -25,7 +25,7 @@ import {
 import { db } from "@/config/firebaseConfig";
 import searchProductsByName from "@/methods/search/searchProductsByName";
 import { useUserContext } from "@/contexts/UserContext";
-import useBluetoothPrinter from "@/hooks/useBluetoothPrinter";
+import useBluetoothPrinter, { permissionForPrint } from "@/hooks/useBluetoothPrinter";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 const PosScreen = () => {
@@ -169,8 +169,9 @@ const PosScreen = () => {
   useEffect(() => {
     const pairSavedPrinter = async () => {
       try {
+        const permission = await permissionForPrint();
         const savedCurrentPrinter = await AsyncStorage.getItem("printer");
-        if (savedCurrentPrinter) {
+        if (permission && savedCurrentPrinter) {
           const printer = JSON.parse(savedCurrentPrinter);
           await pairDevice(printer.address);
           console.log("Paired Successfully");
