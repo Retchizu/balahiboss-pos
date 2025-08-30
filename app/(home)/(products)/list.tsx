@@ -17,7 +17,7 @@ const ProductListScreen = () => {
   const { products } = useProductContext();
   const { productsArray } = useProductsArray(products);
 
-  const filteredProducts = searchProductsByName(productsArray, searchBarValue)
+  const filteredProducts = searchProductsByName(productsArray, searchBarValue);
   return (
     <View
       style={{
@@ -69,6 +69,7 @@ const ProductListScreen = () => {
                 style={{
                   fontFamily: "Gantari-SemiBold",
                   fontSize: wp(4.5),
+                  color: item.stock <= 0 ? "rgba(80,109,132,0.8)" : "black",
                 }}
               >
                 {item.productName}

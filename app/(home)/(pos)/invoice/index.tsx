@@ -82,6 +82,14 @@ const InvoiceScreen = () => {
   const [pendingOrderInformation, setPendingOrderInformation] = useState("");
   const orderInformationRef = useRef<TextInput>(null);
 
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  const handleScrollToBottom = () => {
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollToEnd()
+    }
+  };
+
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
   useEffect(() => {
@@ -192,7 +200,7 @@ const InvoiceScreen = () => {
   };
 
   const { role } = useUserContext();
-  const {isAlreadyConnected, printReceipt} = useBluetoothPrinter();
+  const { isAlreadyConnected, printReceipt } = useBluetoothPrinter();
 
   return (
     <View
@@ -204,7 +212,7 @@ const InvoiceScreen = () => {
       }}
     >
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
-        <ScrollView contentContainerStyle={{ gap: hp(2) }}>
+        <ScrollView contentContainerStyle={{ gap: hp(2) }} ref={scrollViewRef}>
           <View
             style={{
               flexDirection: "row",
@@ -387,6 +395,7 @@ const InvoiceScreen = () => {
                     }}
                     onPress={() => {
                       orderInformationRef.current?.focus();
+                      handleScrollToBottom();
                     }}
                   >
                     <TextInput
@@ -395,6 +404,9 @@ const InvoiceScreen = () => {
                       style={{ fontFamily: "Gantari-Regular", fontSize: wp(4) }}
                       value={pendingOrderInformation}
                       onChangeText={(text) => setPendingOrderInformation(text)}
+                      onFocus={() => handleScrollToBottom()}
+                      onPointerEnter={() => handleScrollToBottom()}
+                      onKeyPress={() => handleScrollToBottom()}
                     />
                   </TouchableOpacity>
                 </View>
@@ -513,8 +525,8 @@ const InvoiceScreen = () => {
                 width: wp(25),
                 opacity: isInvoiceSubmitting ? 0.7 : 1,
               }}
-              onPress={async() => {
-                if(selectedProductArray.length === 0){
+              onPress={async () => {
+                if (selectedProductArray.length === 0) {
                   Toast.show({
                     type: "error",
                     text1: "No products selected",
@@ -523,7 +535,7 @@ const InvoiceScreen = () => {
                 }
                 await addTransaction();
                 const isPrinterConnected = await isAlreadyConnected();
-                if(isPrinterConnected){
+                if (isPrinterConnected) {
                   await printReceipt(invoiceForm, selectedProductArray);
                 } else {
                   Toast.show({

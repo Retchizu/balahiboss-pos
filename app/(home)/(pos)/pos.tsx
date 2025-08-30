@@ -25,7 +25,9 @@ import {
 import { db } from "@/config/firebaseConfig";
 import searchProductsByName from "@/methods/search/searchProductsByName";
 import { useUserContext } from "@/contexts/UserContext";
-import useBluetoothPrinter, { permissionForPrint } from "@/hooks/useBluetoothPrinter";
+import useBluetoothPrinter, {
+  permissionForPrint,
+} from "@/hooks/useBluetoothPrinter";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 const PosScreen = () => {
@@ -82,7 +84,11 @@ const PosScreen = () => {
                     });
                   }
                 }
-              : () => Toast.show({type:"error",text1:`${item.productName} is out of stock.`})
+              : () =>
+                  Toast.show({
+                    type: "error",
+                    text1: `${item.productName} is out of stock.`,
+                  })
           }
         >
           <View
@@ -108,6 +114,7 @@ const PosScreen = () => {
               style={{
                 fontFamily: "Gantari-SemiBold",
                 fontSize: wp(4.5),
+                color: item.stock <= 0 ? "rgba(80,109,132,0.8)": selectedProducts.has(item.id) ? "#0077ffff" : "black"
               }}
             >
               {item.productName}
@@ -124,7 +131,7 @@ const PosScreen = () => {
             <Text
               style={{
                 fontFamily: "Gantari-Regular",
-                color:"black",
+                color: "black",
                 fontSize: wp(4),
               }}
             >
