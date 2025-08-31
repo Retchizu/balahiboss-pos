@@ -86,7 +86,7 @@ const InvoiceScreen = () => {
 
   const handleScrollToBottom = () => {
     if (scrollViewRef.current) {
-      scrollViewRef.current.scrollToEnd()
+      scrollViewRef.current.scrollToEnd();
     }
   };
 
@@ -537,11 +537,6 @@ const InvoiceScreen = () => {
                 const isPrinterConnected = await isAlreadyConnected();
                 if (isPrinterConnected) {
                   await printReceipt(invoiceForm, selectedProductArray);
-                } else {
-                  Toast.show({
-                    type: "error",
-                    text1: "No printer connected",
-                  });
                 }
               }}
               disabled={isInvoiceSubmitting}

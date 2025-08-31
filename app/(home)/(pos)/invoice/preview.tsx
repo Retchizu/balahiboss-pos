@@ -121,8 +121,17 @@ const PreviewInvoiceScreen = () => {
           >
             <Text style={styles.paymentDetailsLabel}>Date and Time</Text>
             <Text style={styles.paymentDetailsValue}>
-              {invoiceForm.date
+              {invoiceForm.date ? invoiceForm.date
                 ?.toLocaleString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true,
+                })
+                .replace(",", "")
+                .replace(/AM|PM/, (m) => m.toLowerCase()): new Date().toLocaleString("en-US", {
                   month: "long",
                   day: "numeric",
                   year: "numeric",
@@ -212,10 +221,10 @@ const PreviewInvoiceScreen = () => {
             marginTop: hp(2),
           }}
         >
-          <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(5) }}>
-            Total Qty:{" "}
+          <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(4.5) }}>
+           # of Items:{" "}
           </Text>
-          <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(5) }}>
+          <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(4.5) }}>
             {totalQuantity()}
           </Text>
         </View>
@@ -227,10 +236,10 @@ const PreviewInvoiceScreen = () => {
             marginTop: hp(2),
           }}
         >
-          <Text style={{ fontFamily: "Gantari-Bold", fontSize: wp(6) }}>
+          <Text style={{ fontFamily: "Gantari-Bold", fontSize: wp(8) }}>
             TOTAL
           </Text>
-          <Text style={{ fontFamily: "Gantari-Bold", fontSize: wp(6) }}>
+          <Text style={{ fontFamily: "Gantari-Bold", fontSize: wp(8) }}>
             ₱{" "}
             {calculateInvoiceTotalPrice(
               invoiceForm,

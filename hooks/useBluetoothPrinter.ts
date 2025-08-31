@@ -182,7 +182,7 @@ const useBluetoothPrinter = () => {
     } catch (error) {
       Toast.show({
         type: "error",
-        text1: "Something went wrong, check your connection or the printer.",
+        text1: "Printer not found.",
       });
       console.log(error)
     }
