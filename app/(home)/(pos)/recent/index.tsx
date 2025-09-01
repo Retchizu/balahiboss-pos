@@ -16,17 +16,20 @@ import { useCustomerContext } from "@/contexts/CustomerContext";
 import { FontAwesome6 } from "@expo/vector-icons";
 
 import { router } from "expo-router";
+import useGetProducts from "@/hooks/useGetProducts";
 
 const RecentTransactionScreen = () => {
   const { recentTransactions } = useRecentTrasactionContext();
 
   const { customers } = useCustomerContext();
+  const {products} = useGetProducts();
 
   const sortedRecentTransactions = useMemo(() => {
     return recentTransactions.sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
-  }, [recentTransactions]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recentTransactions, products]);
 
   return (
     <View
