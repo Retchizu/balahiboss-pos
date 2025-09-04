@@ -142,6 +142,7 @@ const TransactionListScreen = () => {
               marginRight: hp(0.5),
               fontFamily: "Gantari-SemiBold",
               fontSize: wp(4.5),
+              color: item.cashPayment === 0 && item.onlinePayment === 0? "red" : "black"
             }}
           >
             {customer.customerName}

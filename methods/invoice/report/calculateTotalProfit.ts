@@ -12,7 +12,7 @@ const calculateTotalProfit = (
       const profitPerItem = product.sellPrice - product.stockPrice;
       return sum + profitPerItem * item.quantity;
     }, 0);
-    return total + transactionProfit;
+    return total + transactionProfit - transaction.discount - transaction.freebies;
   }, 0);
 };
 
