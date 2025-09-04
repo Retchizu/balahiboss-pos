@@ -39,12 +39,14 @@ import calculateTotalSellPrice from "@/methods/invoice/calculateTotalSellPrice";
 import { useConvertTransactionArrayToMap } from "@/hooks/useConvertTransactionArrayToMap";
 import { usePendingOrderContext } from "@/contexts/PendingOrderContext";
 import Toast from "react-native-toast-message";
+import Transaction from "@/types/Transaction";
 
 const EditInvoiceScreen = () => {
   // params
   const { id } = useLocalSearchParams();
   const parseId = id as string;
-  const { transactionMap } = useConvertTransactionArrayToMap(false);
+  const { transactionMap, setTransactions } =
+    useConvertTransactionArrayToMap(false);
   const transaction = transactionMap[parseId];
 
   // fetch customer right away
@@ -170,6 +172,18 @@ const EditInvoiceScreen = () => {
         })
       );
 
+      const updatedTransaction: Transaction = {
+        id: parseId,
+        customerId: invoiceForm.customer!.id,
+        items: productTransactionBody,
+        onlinePayment: parseFloat(invoiceForm.onlinePayment || "0"),
+        cashPayment: parseFloat(invoiceForm.cashPayment || "0"),
+        date: invoiceForm.date!.toISOString(),
+        deliveryFee: parseFloat(invoiceForm.deliveryFee || "0"),
+        discount: parseFloat(invoiceForm.discount || "0"),
+        freebies: parseFloat(invoiceForm.freebies || "0"),
+      };
+
       const response = await api.put(`/transaction/update/${transaction.id}`, {
         customerId: invoiceForm.customer?.id,
         items: productTransactionBody,
@@ -182,6 +196,8 @@ const EditInvoiceScreen = () => {
         pending: isPendingOrder,
         orderInformation: pendingOrderInformation,
       });
+
+      setTransactions(prev => prev.map(transaction => transaction.id === parseId ? updatedTransaction : transaction))
       router.back();
       Toast.show({ type: "success", text1: `${response?.data.message}` });
     } catch (error) {
@@ -204,27 +220,6 @@ const EditInvoiceScreen = () => {
     >
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
         <ScrollView contentContainerStyle={{ gap: hp(2) }}>
-          <TouchableOpacity
-            style={{
-              borderWidth: wp(0.3),
-              borderColor: strongPrimary,
-              borderRadius: wp(2),
-              padding: wp(2),
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "row",
-              gap: wp(1),
-            }}
-            activeOpacity={0.7}
-            onPress={() => setCustomerPickerVisibility(true)}
-          >
-            <Text style={styles.buttonLabel}>
-              {invoiceForm.customer
-                ? invoiceForm.customer.customerName
-                : "Select Customer"}
-            </Text>
-            <FontAwesome6 name="person" size={wp(6)} color="rgba(0,0,0,0.4)" />
-          </TouchableOpacity>
           <View
             style={{
               flexDirection: "row",
@@ -258,6 +253,7 @@ const EditInvoiceScreen = () => {
               inputType="numeric"
             />
           </View>
+
           <Input
             placeholder="Enter Delivery Fee"
             value={invoiceForm.deliveryFee}
@@ -269,6 +265,27 @@ const EditInvoiceScreen = () => {
             }}
             inputType="numeric"
           />
+          <TouchableOpacity
+            style={{
+              borderWidth: wp(0.3),
+              borderColor: strongPrimary,
+              borderRadius: wp(2),
+              padding: wp(2),
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "row",
+              gap: wp(1),
+            }}
+            activeOpacity={0.7}
+            onPress={() => setCustomerPickerVisibility(true)}
+          >
+            <Text style={styles.buttonLabel}>
+              {invoiceForm.customer
+                ? invoiceForm.customer.customerName
+                : "Select Customer"}
+            </Text>
+            <FontAwesome6 name="person" size={wp(6)} color="rgba(0,0,0,0.4)" />
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setDatePickerVisibility(true)}
             style={{

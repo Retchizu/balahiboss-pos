@@ -3,7 +3,7 @@ import { useTransactionContext } from "@/contexts/TransactionContext";
 import Transaction from "@/types/Transaction";
 
 export const useConvertTransactionArrayToMap = (fromRecentScreen: boolean) => {
-  const { transactions } = useTransactionContext();
+  const { transactions, setTransactions } = useTransactionContext();
   const { recentTransactions } = useRecentTrasactionContext();
 
   // check which transaction is from 2 transaction screens
@@ -17,5 +17,5 @@ export const useConvertTransactionArrayToMap = (fromRecentScreen: boolean) => {
     {} as Record<string, Transaction>
   );
 
-  return { transactionMap };
+  return { transactionMap, setTransactions };
 };

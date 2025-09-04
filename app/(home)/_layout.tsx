@@ -183,7 +183,7 @@ const DrawerLayout = () => {
             drawerLabel: ({ color }) => (
               <DrawerLabel
                 title="Pending Orders"
-                badgeCount={pendingOrdersArray.length}
+                badgeCount={pendingOrdersArray.filter((order) => order.status === "pending").length}
                 color={color}
               />
             ),
