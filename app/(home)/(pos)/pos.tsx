@@ -30,6 +30,7 @@ import useBluetoothPrinter, {
 } from "@/hooks/useBluetoothPrinter";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
+import PendingOrder from "@/types/PendingOrder";
 const PosScreen = () => {
   const { role } = useUserContext();
   console.log(role);
@@ -114,7 +115,12 @@ const PosScreen = () => {
               style={{
                 fontFamily: "Gantari-SemiBold",
                 fontSize: wp(4.5),
-                color: item.stock <= 0 ? "rgba(80,109,132,0.8)": selectedProducts.has(item.id) ? "#0077ffff" : "black"
+                color:
+                  item.stock <= 0
+                    ? "rgba(80,109,132,0.8)"
+                    : selectedProducts.has(item.id)
+                    ? "#0077ffff"
+                    : "black",
               }}
             >
               {item.productName}
@@ -165,7 +171,20 @@ const PosScreen = () => {
     );
 
     const unsubscribe = onValue(pendingOrdersRef, (snapshot) => {
-      setOrders(snapshot.val());
+      const pendingOrders: Record<string, PendingOrder> = snapshot.val() || {};
+
+      // normalize each order
+      const normalizedOrders: Record<string, PendingOrder> = Object.fromEntries(
+        Object.entries(pendingOrders).map(([id, order]) => [
+          id,
+          {
+            ...order,
+            checkedBy: order.checkedBy ?? [], // ensure array
+          },
+        ])
+      );
+
+      setOrders(normalizedOrders);
     });
 
     return () => unsubscribe();

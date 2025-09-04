@@ -41,22 +41,29 @@ const DrawerLayout = () => {
 
   useEffect(() => {
     if (role === "admin") return;
+    if (
+      pendingOrders.filter((order) => order.status === "pending").length === 0
+    )
+      return;
 
     const currentUser = auth.currentUser;
-    const uncheckedPendingOrder = pendingOrdersArray.some((order) =>
-      order.checkedBy ? !order.checkedBy.includes(currentUser?.uid!) : true
-    );
+    const uncheckedPendingOrder = pendingOrdersArray
+      .filter((order) => order.status === "pending" && order.checkedBy !== undefined)
+      .some((order) => !order.checkedBy.includes(currentUser?.uid!));
 
     console.log("uncheckedPendingOrder", uncheckedPendingOrder);
+    console.log(pendingOrdersArray);
     const loopPlayer = setInterval(() => {
       if (uncheckedPendingOrder) {
         player.seekTo(0);
         player.play();
+      } else {
+        player.pause();
       }
     }, 7000);
 
     return () => clearInterval(loopPlayer);
-  }, [pendingOrdersArray, player, role]);
+  }, [pendingOrders, pendingOrdersArray, player, role]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -183,7 +190,11 @@ const DrawerLayout = () => {
             drawerLabel: ({ color }) => (
               <DrawerLabel
                 title="Pending Orders"
-                badgeCount={pendingOrdersArray.filter((order) => order.status === "pending").length}
+                badgeCount={
+                  pendingOrdersArray.filter(
+                    (order) => order.status === "pending"
+                  ).length
+                }
                 color={color}
               />
             ),

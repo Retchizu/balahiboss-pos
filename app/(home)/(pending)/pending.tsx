@@ -95,7 +95,7 @@ const PendingScreen = () => {
               onPress={async () => {
                 try {
                   setMarkAsReadLoading(true);
-                  if (!item.checkedBy || !item.checkedBy.includes(item.id)) {
+                  if (!item.checkedBy.includes(currentUser?.uid!)) {
                     await api.post(
                       "/pending-order/view",
                       {},
