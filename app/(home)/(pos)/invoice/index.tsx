@@ -452,15 +452,19 @@ const InvoiceScreen = () => {
               ).toFixed(2)}
             </Text>
           </View>
-          <View style={styles.totalView}>
-            <Text style={styles.totalLabel}>Total Profit:</Text>
-            <Text style={styles.totalValue}>
-              ₱
-              {calculateTotalProfit(selectedProductArray, invoiceForm).toFixed(
-                2
-              )}
-            </Text>
-          </View>
+          {role === "admin" && (
+            <View style={styles.totalView}>
+              <Text style={styles.totalLabel}>Total Profit:</Text>
+              <Text style={styles.totalValue}>
+                ₱
+                {calculateTotalProfit(
+                  selectedProductArray,
+                  invoiceForm
+                ).toFixed(2)}
+              </Text>
+            </View>
+          )}
+
           <View
             style={{
               flexDirection: "row",

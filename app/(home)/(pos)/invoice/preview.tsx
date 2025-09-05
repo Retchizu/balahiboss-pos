@@ -71,183 +71,182 @@ const PreviewInvoiceScreen = () => {
         paddingHorizontal: wp(5),
       }}
     >
-      <View
-        style={{
-          backgroundColor: "white",
-          flex: 1,
-          padding: wp(4),
-          borderRadius: wp(4),
-          shadowColor: strongPrimary,
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
-          elevation: 5,
-          marginBottom: hp(2),
-        }}
-        collapsable={false}
-        ref={imageRef}
-      >
-        <Text
-          style={{
-            textAlign: "center",
-            fontFamily: "Gantari-Bold",
-            fontSize: wp(5),
-          }}
-        >
-          BalahiBoss Pet Supplies
-        </Text>
         <View
           style={{
-            gap: hp(0.5),
-            borderBottomWidth: wp(0.3),
-            borderStyle: "dashed",
-            borderColor: "black",
-            paddingBottom: hp(1),
+            backgroundColor: "white",
+            flex: 1,
+            padding: wp(4),
+            borderRadius: wp(4),
+            shadowColor: strongPrimary,
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+            marginBottom: hp(2),
           }}
+          collapsable={false}
+          ref={imageRef}
         >
-          <View
+          <Text
             style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          ></View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
+              textAlign: "center",
+              fontFamily: "Gantari-Bold",
+              fontSize: wp(5),
             }}
           >
-            <Text style={styles.paymentDetailsLabel}>Date and Time</Text>
-            <Text style={styles.paymentDetailsValue}>
-              {invoiceForm.date ? invoiceForm.date
-                ?.toLocaleString("en-US", {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                  hour: "numeric",
-                  minute: "2-digit",
-                  hour12: true,
-                })
-                .replace(",", "")
-                .replace(/AM|PM/, (m) => m.toLowerCase()): new Date().toLocaleString("en-US", {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                  hour: "numeric",
-                  minute: "2-digit",
-                  hour12: true,
-                })
-                .replace(",", "")
-                .replace(/AM|PM/, (m) => m.toLowerCase())}
-            </Text>
-          </View>
-        </View>
-        <FlatList
-          data={selectedProductArray}
-          renderItem={({ item }) => (
+            BalahiBoss Pet Supplies
+          </Text>
+          <View
+            style={{
+              gap: hp(0.5),
+              borderBottomWidth: wp(0.3),
+              borderStyle: "dashed",
+              borderColor: "black",
+              paddingBottom: hp(1),
+            }}
+          >
             <View
               style={{
                 flexDirection: "row",
+                justifyContent: "space-between",
                 alignItems: "center",
-                marginVertical: hp(0.5),
+              }}
+            ></View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
               }}
             >
-              <View style={{ flex: 1 }}>
-                <Text style={styles.paymentDetailsLabel}>
-                  {item.productName}
-                </Text>
-                <View style={{ flexDirection: "row" }}>
-                  <Text
-                    style={[
-                      styles.paymentDetailsValue,
-                      { color: "#ff6347", fontFamily: "Gantari-SemiBold" },
-                    ]}
-                  >
-                    {item.quantity}{" "}
-                  </Text>
-                  <Text style={styles.paymentDetailsValue}>
-                    x ₱ {item.sellPrice.toFixed(2)}
-                  </Text>
-                </View>
-              </View>
-              <Text
-                style={[styles.paymentDetailsValue, { textAlign: "right" }]}
+              <Text style={styles.paymentDetailsLabel}>Date and Time</Text>
+              <Text style={styles.paymentDetailsValue}>
+                {invoiceForm.date ? invoiceForm.date
+                  ?.toLocaleString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  })
+                  .replace(",", "")
+                  .replace(/AM|PM/, (m) => m.toLowerCase()): new Date().toLocaleString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  })
+                  .replace(",", "")
+                  .replace(/AM|PM/, (m) => m.toLowerCase())}
+              </Text>
+            </View>
+          </View>
+          <FlatList
+            data={selectedProductArray}
+            renderItem={({ item }) => (
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginVertical: hp(0.5),
+                }}
               >
-                ₱ {calculateSubTotalPrice(item).toFixed(2)}
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.paymentDetailsLabel}>
+                    {item.productName}
+                  </Text>
+                  <View style={{ flexDirection: "row" }}>
+                    <Text
+                      style={[
+                        styles.paymentDetailsValue,
+                        { color: "#ff6347", fontFamily: "Gantari-SemiBold" },
+                      ]}
+                    >
+                      {item.quantity}{" "}
+                    </Text>
+                    <Text style={styles.paymentDetailsValue}>
+                      x ₱ {item.sellPrice.toFixed(2)}
+                    </Text>
+                  </View>
+                </View>
+                <Text
+                  style={[styles.paymentDetailsValue, { textAlign: "right" }]}
+                >
+                  ₱ {calculateSubTotalPrice(item).toFixed(2)}
+                </Text>
+              </View>
+            )}
+            style={{
+              marginTop: hp(1),
+              marginBottom: hp(2),
+              borderBottomWidth: wp(0.2),
+              borderStyle: "dashed",
+              borderColor: "black",
+            }}
+          />
+          {invoiceForm.deliveryFee && (
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text style={styles.paymentDetailsLabel}>Delivery Fee</Text>
+              <Text style={styles.paymentDetailsValue}>
+                ₱ {parseFloat(invoiceForm.deliveryFee).toFixed(2)}
               </Text>
             </View>
           )}
-          style={{
-            marginTop: hp(1),
-            marginBottom: hp(2),
-            borderBottomWidth: wp(0.2),
-            borderStyle: "dashed",
-            borderColor: "black",
-          }}
-        />
-        {invoiceForm.deliveryFee && (
+          {invoiceForm.discount && (
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text style={styles.paymentDetailsLabel}>Discount</Text>
+              <Text style={styles.paymentDetailsValue}>
+                ₱ {parseFloat(invoiceForm.discount).toFixed(2)}
+              </Text>
+            </View>
+          )}
           <View
             style={{
               flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
             }}
           >
-            <Text style={styles.paymentDetailsLabel}>Delivery Fee</Text>
-            <Text style={styles.paymentDetailsValue}>
-              ₱ {parseFloat(invoiceForm.deliveryFee).toFixed(2)}
+            <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(4.5) }}>
+            # of Items:{" "}
+            </Text>
+            <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(4.5) }}>
+              {totalQuantity()}
             </Text>
           </View>
-        )}
-        {invoiceForm.discount && (
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Text style={styles.paymentDetailsLabel}>Discount</Text>
-            <Text style={styles.paymentDetailsValue}>
-              ₱ {parseFloat(invoiceForm.discount).toFixed(2)}
-            </Text>
-          </View>
-        )}
-        <View
-          style={{
-            flexDirection: "row",
-            marginTop: hp(2),
-          }}
-        >
-          <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(4.5) }}>
-           # of Items:{" "}
-          </Text>
-          <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(4.5) }}>
-            {totalQuantity()}
-          </Text>
-        </View>
 
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginTop: hp(2),
-          }}
-        >
-          <Text style={{ fontFamily: "Gantari-Bold", fontSize: wp(8) }}>
-            TOTAL
-          </Text>
-          <Text style={{ fontFamily: "Gantari-Bold", fontSize: wp(8) }}>
-            ₱{" "}
-            {calculateInvoiceTotalPrice(
-              invoiceForm,
-              selectedProductArray
-            ).toFixed(2)}
-          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginTop: hp(2),
+            }}
+          >
+            <Text style={{ fontFamily: "Gantari-Bold", fontSize: wp(8) }}>
+              TOTAL
+            </Text>
+            <Text style={{ fontFamily: "Gantari-Bold", fontSize: wp(8) }}>
+              ₱{" "}
+              {calculateInvoiceTotalPrice(
+                invoiceForm,
+                selectedProductArray
+              ).toFixed(2)}
+            </Text>
+          </View>
         </View>
-      </View>
       {isButtonsVisible && (
         <View style={{ flexDirection: "row", gap: wp(2) }}>
           <CommonButton
