@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Image,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import React from "react";
 import { useLocalSearchParams } from "expo-router";
 import { useActivityContext } from "@/contexts/ActivityContext";
@@ -17,6 +11,7 @@ import { FieldChange } from "@/types/Activity";
 import RenderLabelValuePair from "@/components/view/RenderLabelValuePair";
 import Transaction from "@/types/Transaction";
 import ActivityDetailCardView from "@/components/view/ActivityDetailCardView";
+import { useProductContext } from "@/contexts/ProductContext";
 
 const ProductActivityDetailScreen = () => {
   const { id }: { id: string } = useLocalSearchParams();
@@ -24,6 +19,7 @@ const ProductActivityDetailScreen = () => {
   const { activities } = useActivityContext();
 
   const activity = activities.find((activity) => activity.id === id);
+  const {products} = useProductContext();
 
   const productFieldLabels: Record<string, string> = {
     productName: "Product Name",
@@ -31,12 +27,17 @@ const ProductActivityDetailScreen = () => {
     sellPrice: "Sell Price",
     stock: "Stock",
     imageUrl: "Image",
-    lowStockThreshold: "Low Stock Threshold"
+    lowStockThreshold: "Low Stock Threshold",
   };
 
   const renderChangeValue = (field: string, value: unknown | null) => {
-    if(field === "imageUrl" && value !== null) {
-      return <Image source={{uri:value as string}} style={{height:hp(10), width:wp(20), borderRadius:wp(2)}}/>
+    if (field === "imageUrl" && value !== null) {
+      return (
+        <Image
+          source={{ uri: value as string }}
+          style={{ height: hp(10), width: wp(20), borderRadius: wp(2) }}
+        />
+      );
     }
     return <Text>{String(value ?? "—")}</Text>;
   };
@@ -92,6 +93,7 @@ const ProductActivityDetailScreen = () => {
           <Text style={styles.header}>Details</Text>
           <RenderLabelValuePair label="Actor" value={activity!.displayName} />
           <RenderLabelValuePair label="Type" value={activity!.entity} />
+          <RenderLabelValuePair label="Name" value={products[activity!.entityId].productName} />
           <RenderLabelValuePair label="Action" value={activity!.action} />
           <RenderLabelValuePair
             label="Date"
@@ -116,7 +118,6 @@ const ProductActivityDetailScreen = () => {
 export default ProductActivityDetailScreen;
 
 // cardView
-
 
 // render key value
 

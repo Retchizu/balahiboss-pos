@@ -16,11 +16,13 @@ import { FieldChange } from "@/types/Activity";
 import RenderLabelValuePair from "@/components/view/RenderLabelValuePair";
 import Transaction from "@/types/Transaction";
 import ActivityDetailCardView from "@/components/view/ActivityDetailCardView";
+import { useCustomerContext } from "@/contexts/CustomerContext";
 
 const CustomerActivityDetailScreen = () => {
   const { id }: { id: string } = useLocalSearchParams();
 
   const { activities } = useActivityContext();
+  const {customers} = useCustomerContext();
 
   const activity = activities.find((activity) => activity.id === id);
 
@@ -84,6 +86,7 @@ const CustomerActivityDetailScreen = () => {
           <Text style={styles.header}>Details</Text>
           <RenderLabelValuePair label="Actor" value={activity!.displayName} />
           <RenderLabelValuePair label="Type" value={activity!.entity} />
+          <RenderLabelValuePair label="Name" value={customers[activity!.entityId].customerName} />
           <RenderLabelValuePair label="Action" value={activity!.action} />
           <RenderLabelValuePair
             label="Date"

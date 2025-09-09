@@ -1,5 +1,5 @@
 import { FlatList, TouchableOpacity, View, Text, Image } from "react-native";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { primary, secondary } from "@/theme/backgroundTheme";
 import SearchBar from "@/components/searchbars/SearchBar";
 import {
@@ -17,7 +17,7 @@ const EditPosScreen = () => {
   const { deleteSelectedProduct, addSelectedProduct, selectedProducts } =
     useSelectedProductContext();
 
-    console.log(selectedProducts)
+  console.log(selectedProducts);
   // prevents re-render unless depencies have changed
   const renderProductList = useCallback(
     ({ item }: { item: Product }) => {
@@ -40,7 +40,7 @@ const EditPosScreen = () => {
             marginVertical: hp(0.5),
             borderRadius: wp(2),
             backgroundColor: productCardViewBackgroundColor(item),
-            alignItems:'center'
+            alignItems: "center",
           }}
           activeOpacity={0.7}
           onPress={
@@ -110,6 +110,17 @@ const EditPosScreen = () => {
     [addSelectedProduct, deleteSelectedProduct, selectedProducts]
   );
 
+  // searchbar
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredProducts = useMemo(
+    () =>
+      productsArray.filter((product) =>
+        product.productName.toLowerCase().includes(searchQuery.toLowerCase())
+      ),
+    [productsArray, searchQuery]
+  );
+
   return (
     <View
       style={{
@@ -120,13 +131,13 @@ const EditPosScreen = () => {
       }}
     >
       <SearchBar
-        value=""
-        onChangeText={() => {}}
+        value={searchQuery}
+        onChangeText={(text) => {setSearchQuery(text)}}
         placeholder="Search Products..."
       />
 
       <FlatList
-        data={productsArray}
+        data={filteredProducts}
         renderItem={renderProductList}
         initialNumToRender={10}
         maxToRenderPerBatch={5}

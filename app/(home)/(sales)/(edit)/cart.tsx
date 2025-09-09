@@ -46,7 +46,7 @@ const EditCartScreen = () => {
       return updated;
     };
     setDummyProducts({ ...products, ...dummyProduct() });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const computeSubTotal = (item: SelectedProduct) => {
@@ -114,12 +114,18 @@ const EditCartScreen = () => {
                 style={{
                   borderColor: "#FF9149",
                   borderWidth: wp(0.2),
+                  height: hp(8),
+                  width: wp(16),
                   borderRadius: wp(3),
                 }}
               >
                 <Image
-                  source={require("../../../../assets/balahiboss.png")}
-                  style={{ height: hp(8), width: wp(16) }}
+                  source={
+                    item.imageUrl
+                      ? { uri: item.imageUrl }
+                      : require("../../../../assets/balahiboss.png")
+                  }
+                  style={{ height: hp(8), width: wp(16), borderRadius: wp(3) }}
                 />
               </View>
               <View
@@ -187,7 +193,9 @@ const EditCartScreen = () => {
                   borderRadius: wp(2),
                 }}
                 activeOpacity={0.7}
-                onPress={() => increaseQuantity(item.id, dummyProducts[item.id])}
+                onPress={() =>
+                  increaseQuantity(item.id, dummyProducts[item.id])
+                }
               >
                 <FontAwesome5 name="plus" size={wp(6)} color="white" />
               </TouchableOpacity>

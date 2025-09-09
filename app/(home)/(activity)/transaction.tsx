@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import React from "react";
+import React, { useMemo } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { useActivityContext } from "@/contexts/ActivityContext";
 import { primary } from "@/theme/backgroundTheme";
@@ -13,6 +13,7 @@ import RenderLabelValuePair from "@/components/view/RenderLabelValuePair";
 import Transaction from "@/types/Transaction";
 import ActivityDetailCardView from "@/components/view/ActivityDetailCardView";
 import { useCustomerContext } from "@/contexts/CustomerContext";
+import { useTransactionContext } from "@/contexts/TransactionContext";
 
 const TransactionActivityDetailScreen = () => {
   const { id }: { id: string } = useLocalSearchParams();
@@ -24,6 +25,14 @@ const TransactionActivityDetailScreen = () => {
   const { customers } = useCustomerContext();
 
   const activity = activities.find((activity) => activity.id === id);
+  // transcation
+  const { transactions } = useTransactionContext();
+  const transaction = useMemo(() => {
+    return transactions.find((t) => t.id === activity?.entityId) ?? null;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  console.log("transaction", transaction);
 
   const transactionFieldLabels: Record<string, string> = {
     customerId: "Customer",
@@ -125,6 +134,12 @@ const TransactionActivityDetailScreen = () => {
           <Text style={styles.header}>Details</Text>
           <RenderLabelValuePair label="Actor" value={activity!.displayName} />
           <RenderLabelValuePair label="Type" value={activity!.entity} />
+          <RenderLabelValuePair
+            label="Name"
+            value={
+              transaction ? customers[transaction.customerId].customerName : ""
+            }
+          />
           <RenderLabelValuePair label="Action" value={activity!.action} />
           <RenderLabelValuePair
             label="Date"

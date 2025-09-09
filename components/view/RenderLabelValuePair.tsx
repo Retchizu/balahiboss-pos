@@ -27,6 +27,7 @@ const RenderLabelValuePair: FC<RenderLabelValuePairProps> = ({
           fontFamily: "Gantari-SemiBold",
           fontSize: wp(4),
           color: "rgba(0,0,0,0.6)",
+          flex:1
         }}
       >
         {label}

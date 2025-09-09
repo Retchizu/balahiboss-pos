@@ -33,11 +33,10 @@ const PreviewInvoiceScreen = () => {
   const captureAndHandle = async () => {
     try {
       setIsButtonsVisible(false);
+       await new Promise((resolve) => setTimeout(resolve, 500));
       const localUri = await captureRef(imageRef, {
         format: "png",
         quality: 1,
-        height: 4080,
-        width: 2080,
       });
 
       await MediaLibrary.saveToLibraryAsync(localUri);
