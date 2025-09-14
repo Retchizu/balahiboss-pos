@@ -6,8 +6,9 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  BackHandler,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
 import {
   widthPercentageToDP as wp,
@@ -34,6 +35,27 @@ const OrderDetailsScreen = () => {
   }>();
   const { orders } = usePendingOrderContext();
   const pendingOrder = orders[id];
+
+  useEffect(() => {
+    const backFn = () => {
+      switch(pendingOrder.status){
+        case "pending":
+          router.navigate("/(home)/(pending)/pending");
+          break;
+        case "packed":
+          router.navigate("/(home)/(pending)/packed");
+          break;
+        case "complete":
+          router.navigate("/(home)/(pending)/complete");
+          break;
+      };
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", backFn);
+
+    return () => backHandler.remove();
+  }, [pendingOrder.status])
 
   // customer detail
   const { customers } = useCustomerContext();
@@ -113,15 +135,15 @@ const OrderDetailsScreen = () => {
         <Text style={styles.value}>{customer.customerName}</Text>
       </View>
       <ScrollView
-        style={[styles.informationContainer, { maxHeight: hp(20) }]}
-        contentContainerStyle={{ flexDirection: "column" }}
+        style={styles.informationContainer}
+        contentContainerStyle={{ flexDirection: "column", height:hp(10) }}
       >
         <Text style={styles.label}>Information:</Text>
         <Text style={styles.value}>{pendingOrder.orderInformation}</Text>
       </ScrollView>
       <View style={styles.informationContainer}>
         <Text style={styles.label}>Date: </Text>
-        <Text style={[styles.value, { flex: 1 }]}>
+        <Text style={[styles.value]}>
           {new Date(pendingOrder.date).toLocaleString("en-US", {
             dateStyle: "medium",
             timeStyle: "short",
@@ -319,7 +341,6 @@ const styles = StyleSheet.create({
     fontFamily: "Gantari-Regular",
   },
   informationContainer: {
-    flexDirection: "row",
     backgroundColor: strongPrimary,
     padding: wp(2),
     borderRadius: wp(4),
