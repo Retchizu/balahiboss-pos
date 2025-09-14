@@ -155,6 +155,7 @@ const OrderDetailsScreen = () => {
       </Text>
       <FlatList
         data={pendingOrder.transaction.items}
+        style={{height:hp(30)}}
         renderItem={({ item }) => {
           const product = products[item.productId];
           return (
