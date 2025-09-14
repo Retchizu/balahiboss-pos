@@ -37,8 +37,14 @@ const OrderDetailsScreen = () => {
   const pendingOrder = orders[id];
 
   useEffect(() => {
+    if (!pendingOrder) {
+      router.back();
+    }
+  }, [pendingOrder]);
+
+  useEffect(() => {
     const backFn = () => {
-      switch(pendingOrder.status){
+      switch (pendingOrder.status) {
         case "pending":
           router.navigate("/(home)/(pending)/pending");
           break;
@@ -48,14 +54,17 @@ const OrderDetailsScreen = () => {
         case "complete":
           router.navigate("/(home)/(pending)/complete");
           break;
-      };
+      }
       return true;
     };
 
-    const backHandler = BackHandler.addEventListener("hardwareBackPress", backFn);
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backFn
+    );
 
     return () => backHandler.remove();
-  }, [pendingOrder.status])
+  }, [pendingOrder.status]);
 
   // customer detail
   const { customers } = useCustomerContext();
@@ -136,7 +145,7 @@ const OrderDetailsScreen = () => {
       </View>
       <ScrollView
         style={styles.informationContainer}
-        contentContainerStyle={{ flexDirection: "column", height:hp(10) }}
+        contentContainerStyle={{ flexDirection: "column", height: hp(10) }}
       >
         <Text style={styles.label}>Information:</Text>
         <Text style={styles.value}>{pendingOrder.orderInformation}</Text>
@@ -155,7 +164,7 @@ const OrderDetailsScreen = () => {
       </Text>
       <FlatList
         data={pendingOrder.transaction.items}
-        style={{height:hp(30)}}
+        style={{ height: hp(30) }}
         renderItem={({ item }) => {
           const product = products[item.productId];
           return (
