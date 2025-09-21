@@ -54,7 +54,6 @@ const OrderDetailsScreen = () => {
             break;
           case "complete":
             router.navigate("/(home)/(pending)/complete");
-            console.log("run lol");
             break;
         }
         return true;
@@ -216,20 +215,30 @@ const OrderDetailsScreen = () => {
                 <Text
                   style={{
                     fontFamily: "Gantari-Regular",
-                    color: "#FF9149",
                     fontSize: wp(4),
                   }}
                 >
                   Price: ₱{product.sellPrice.toFixed(2)}
                 </Text>
-                <Text
-                  style={{
-                    fontFamily: "Gantari-Regular",
-                    fontSize: wp(4),
-                  }}
-                >
-                  Quantity: {item.quantity}
-                </Text>
+                <View style={{ flexDirection: "row" }}>
+                  <Text
+                    style={{
+                      fontFamily: "Gantari-Regular",
+                      fontSize: wp(4),
+                    }}
+                  >
+                    {"Quantity: "}
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: "Gantari-Medium",
+                      fontSize: wp(4),
+                      color: "#ff6347",
+                    }}
+                  >
+                    {item.quantity}
+                  </Text>
+                </View>
               </View>
               {status === "pending" && (
                 <Checkbox
