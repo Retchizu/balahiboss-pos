@@ -5,7 +5,6 @@ type Product = {
     sellPrice: number;
     stock: number;
     imageUrl: string;
-    lowStockThreshold: number;
 }
 
 export default Product;

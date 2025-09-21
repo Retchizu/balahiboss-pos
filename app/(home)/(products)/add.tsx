@@ -22,7 +22,6 @@ const AddProductScreen = () => {
     productName: "",
     stockPrice: "",
     sellPrice: "",
-    lowStockThreshold: "",
     base64Image: "",
   });
 
@@ -74,14 +73,12 @@ const AddProductScreen = () => {
         productName,
         stockPrice,
         sellPrice,
-        lowStockThreshold,
         base64Image,
       } = productForm;
       const response = await api.post("/product/add", {
         productName,
         stockPrice: parseFloat(stockPrice),
         sellPrice: parseFloat(sellPrice),
-        lowStockThreshold: parseFloat(lowStockThreshold || "0"),
         stock: 0, // initial stock is 0
         base64Image,
       });
@@ -134,12 +131,6 @@ const AddProductScreen = () => {
         </View>
       </View>
       <Text style={styles.label}>Low Stock Threshold</Text>
-      <Input
-        value={productForm.lowStockThreshold}
-        onChangeText={(value) => handleInputChange("lowStockThreshold", value)}
-        placeholder="Enter Low Stock Threshold"
-        inputType="numeric"
-      />
       <Text style={[styles.label, { marginVertical: hp(1) }]}>
         Product Image
       </Text>

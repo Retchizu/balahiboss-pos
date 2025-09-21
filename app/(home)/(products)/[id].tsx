@@ -35,7 +35,7 @@ const UpdateScreen = () => {
     productName: product.productName,
     stockPrice: product.stockPrice.toString(),
     sellPrice: product.sellPrice.toString(),
-    lowStockThreshold: product.lowStockThreshold.toString(),
+
     base64Image: "",
     stock: product.stock.toString(),
   });
@@ -102,7 +102,6 @@ const UpdateScreen = () => {
         productName,
         stockPrice,
         sellPrice,
-        lowStockThreshold,
         base64Image,
         stock,
       } = productForm;
@@ -114,7 +113,6 @@ const UpdateScreen = () => {
         sellPrice: parseFloat(sellPrice),
         stock: parseFloat(stock),
         base64Image: base64Image,
-        lowStockThreshold: parseInt(lowStockThreshold, 10),
       };
 
       // Call your update API here
@@ -184,14 +182,6 @@ const UpdateScreen = () => {
       <View style={{ flexDirection: "row", gap: wp(5), marginVertical: hp(1) }}>
         <View>
           <Text style={styles.label}>Low Stock Threshold</Text>
-          <Input
-            value={productForm.lowStockThreshold}
-            onChangeText={(value) =>
-              handleInputChange("lowStockThreshold", value)
-            }
-            placeholder="Enter Low Stock Threshold"
-            inputType="numeric"
-          />
         </View>
         <View style={{ flex: 1 }}>
           <Text style={styles.label}>Stock</Text>

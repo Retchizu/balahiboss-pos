@@ -27,7 +27,6 @@ const ProductActivityDetailScreen = () => {
     sellPrice: "Sell Price",
     stock: "Stock",
     imageUrl: "Image",
-    lowStockThreshold: "Low Stock Threshold",
   };
 
   const renderChangeValue = (field: string, value: unknown | null) => {
