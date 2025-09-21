@@ -46,6 +46,20 @@ const PackedScreen = () => {
       >
         Packed
       </Text>
+      {
+        filteredOrders.length === 0 && (
+            <Text
+              style={{
+                fontFamily: "Gantari-Medium",
+                fontSize: wp(4),
+                textAlign: "center",
+                marginTop: hp(2),
+              }}
+            >
+              No packed orders found.
+            </Text>
+        )
+      }
       <FlatList
         data={filteredOrders}
         renderItem={({ item }) => {

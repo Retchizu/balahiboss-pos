@@ -21,10 +21,14 @@ const CompleteScreen = () => {
 
   const completeArray = useMemo(() => {
     return pendingOrdersArray.filter((orders) => orders.status === "complete");
-  }, [pendingOrdersArray])
+  }, [pendingOrdersArray]);
 
   const [searcQuery, setSearchQuery] = useState("");
-  const filteredOrders = searchOrderByCustomerName(completeArray, customers, searcQuery)
+  const filteredOrders = searchOrderByCustomerName(
+    completeArray,
+    customers,
+    searcQuery
+  );
   return (
     <View
       style={{
@@ -49,6 +53,18 @@ const CompleteScreen = () => {
       >
         Complete
       </Text>
+      {filteredOrders.length === 0 && (
+        <Text
+          style={{
+            fontFamily: "Gantari-Medium",
+            fontSize: wp(4),
+            textAlign: "center",
+            marginTop: hp(2),
+          }}
+        >
+          No complete orders found.
+        </Text>
+      )}
       <FlatList
         data={filteredOrders}
         renderItem={({ item }) => {

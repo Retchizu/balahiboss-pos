@@ -35,11 +35,8 @@ const RecentTransactionScreen = () => {
     <View
       style={{
         flex: 1,
-
         backgroundColor: primary,
-
         paddingVertical: hp(2),
-
         paddingHorizontal: wp(2),
       }}
     >
@@ -55,26 +52,18 @@ const RecentTransactionScreen = () => {
             <TouchableOpacity
               style={{
                 flexDirection: "row",
-
                 justifyContent: "space-between",
-
                 borderWidth: wp(0.4),
-
                 borderRadius: wp(4),
-
                 borderColor: strongPrimary,
-
                 padding: wp(2),
-
                 alignItems: "center",
-
                 marginVertical: hp(0.5),
               }}
               activeOpacity={0.7}
               onPress={() => {
                 router.push({
                   pathname: "./recent/details",
-
                   params: { recentId: item.id },
                 });
               }}
@@ -82,9 +71,7 @@ const RecentTransactionScreen = () => {
               <Text
                 style={{
                   fontFamily: "Gantari-Regular",
-
                   fontSize: wp(4),
-
                   maxWidth: wp(70),
                 }}
               >
@@ -105,15 +92,12 @@ const RecentTransactionScreen = () => {
                 <Text
                   style={{
                     fontFamily: "Gantari-Regular",
-
                     fontSize: wp(4),
                   }}
                 >
                   {new Date(item.date).toLocaleTimeString([], {
                     hour: "numeric",
-
                     minute: "2-digit",
-
                     hour12: true,
                   })}
                 </Text>

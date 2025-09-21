@@ -8,14 +8,14 @@ import {
   TouchableOpacity,
   BackHandler,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { usePendingOrderContext } from "@/contexts/PendingOrderContext";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCustomerContext } from "@/contexts/CustomerContext";
 import { useProductContext } from "@/contexts/ProductContext";
 import { Checkbox } from "expo-checkbox";
@@ -42,29 +42,32 @@ const OrderDetailsScreen = () => {
     }
   }, [pendingOrder]);
 
-  useEffect(() => {
-    const backFn = () => {
-      switch (pendingOrder.status) {
-        case "pending":
-          router.navigate("/(home)/(pending)/pending");
-          break;
-        case "packed":
-          router.navigate("/(home)/(pending)/packed");
-          break;
-        case "complete":
-          router.navigate("/(home)/(pending)/complete");
-          break;
-      }
-      return true;
-    };
+  useFocusEffect(
+    useCallback(() => {
+      const backFn = () => {
+        switch (pendingOrder.status) {
+          case "pending":
+            router.navigate("/(home)/(pending)/pending");
+            break;
+          case "packed":
+            router.navigate("/(home)/(pending)/packed");
+            break;
+          case "complete":
+            router.navigate("/(home)/(pending)/complete");
+            console.log("run lol");
+            break;
+        }
+        return true;
+      };
 
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backFn
-    );
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backFn
+      );
 
-    return () => backHandler.remove();
-  }, [pendingOrder.status]);
+      return () => backHandler.remove();
+    }, [pendingOrder.status])
+  );
 
   // customer detail
   const { customers } = useCustomerContext();
