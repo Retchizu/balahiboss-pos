@@ -149,17 +149,17 @@ const UpdateScreen = () => {
   const addStock = async () => {
     try {
       setIsAddStockLoading(true);
-      await api.patch(`/product/add-stock/${id}`, {
-        additionalStock: parseInt(productForm.stock),
+      const response = await api.patch(`/product/add-stock/${id}`, {
+        additionalStock: parseFloat(additionalStock),
       });
       Toast.show({
         type: "success",
-        text1: `Successfully added ${productForm.stock} to stock`,
+        text1: `${response?.data.message}`,
       });
       setProductForm((prev) => ({
         ...prev,
         stock: (
-          parseFloat(prev.stock) + parseFloat(additionalStock)
+          product.stock + parseFloat(additionalStock)
         ).toString(),
       }));
     } catch (error) {
@@ -382,7 +382,10 @@ const UpdateScreen = () => {
         >
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => setAddStockModalVisible(false)}
+            onPress={() => {
+              setAddStockModalVisible(false);
+              setAdditionalStock("0");
+            }}
           >
             <Text
               style={{
