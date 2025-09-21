@@ -142,7 +142,10 @@ const TransactionListScreen = () => {
               marginRight: hp(0.5),
               fontFamily: "Gantari-SemiBold",
               fontSize: wp(4.5),
-              color: item.cashPayment === 0 && item.onlinePayment === 0? "red" : "black"
+              color:
+                item.cashPayment === 0 && item.onlinePayment === 0
+                  ? "red"
+                  : "black",
             }}
           >
             {customer.customerName}
@@ -215,11 +218,12 @@ const TransactionListScreen = () => {
             .toLowerCase()
             .includes(searchQuery.toLowerCase());
         } else if (nameFilter === "Product") {
-          return t.items.some((item) =>
-            products[item.productId].productName
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase())
-          );
+          return t.items.some((item) => {
+            // temporary fix for product not found
+            const product = products[item.productId];
+            if (!product) return false;
+            return products[item.productId].productName.toLowerCase().includes(searchQuery.toLowerCase());
+          });
         }
 
         return true; // fallback
