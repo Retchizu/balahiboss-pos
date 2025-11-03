@@ -352,7 +352,7 @@ const UpdateScreen = () => {
       <ModalTemplate
         visible={addStockModalVisible}
         onClose={() => setAddStockModalVisible(false)}
-        height={hp(25)}
+        height={hp(26)}
         width={wp(90)}
       >
         <Text
@@ -373,11 +373,9 @@ const UpdateScreen = () => {
         <View
           style={{
             flexDirection: "row",
-            justifyContent: "flex-end",
-            alignItems: "flex-end",
-            flex: 1,
-            gap: wp(3),
             marginTop: hp(3),
+            alignSelf: "flex-end",
+            gap: wp(3),
           }}
         >
           <TouchableOpacity

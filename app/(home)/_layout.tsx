@@ -6,7 +6,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View} from "react-native";
 import { usePendingOrderContext } from "@/contexts/PendingOrderContext";
 import { Badge } from "react-native-paper";
 import { useEffect, useMemo } from "react";
@@ -23,6 +23,7 @@ import {
 import { useUserContext } from "@/contexts/UserContext";
 import { useAudioPlayer } from "expo-audio";
 import { auth } from "@/config/firebaseConfig";
+import Foundation from '@expo/vector-icons/Foundation';
 
 const pendingOrderRingtone = require("@/assets/alert/pending.mp3");
 
@@ -34,8 +35,6 @@ const DrawerLayout = () => {
   }, [pendingOrdersArray]);
 
   const { role } = useUserContext();
-
-  console.log(pendingOrdersArray);
 
   const player = useAudioPlayer(pendingOrderRingtone);
 
@@ -179,6 +178,20 @@ const DrawerLayout = () => {
             title: "Stocks Report",
             drawerIcon: ({ color }) => (
               <Entypo name="line-graph" size={24} color={color} />
+            ),
+            drawerItemStyle: role === "user" ? { display: "none" } : undefined,
+          }}
+        />
+
+        <Drawer.Screen
+          name="(employees)"
+          options={{
+            drawerLabel: ({ color }) => (
+              <DrawerLabel title="Employees" color={color} />
+            ),
+            title: "Employees",
+            drawerIcon: ({ color }) => (
+              <Foundation name="torso-business" size={24} color={color} />
             ),
             drawerItemStyle: role === "user" ? { display: "none" } : undefined,
           }}

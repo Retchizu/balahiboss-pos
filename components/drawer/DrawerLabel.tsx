@@ -11,7 +11,7 @@ type DrawerLabelProps = {
 export function DrawerLabel({ title, badgeCount, color }: DrawerLabelProps) {
   return (
     <View style={{ flexDirection: "row", alignItems: "center" }}>
-      <Text style={{color, fontFamily:"Gantari-SemiBold", fontSize:wp(4.5)}}>{title}</Text>
+      <Text style={{color, fontFamily:"Gantari-SemiBold", fontSize:wp(4)}}>{title}</Text>
       {badgeCount !== undefined && badgeCount > 0 && (
         <Badge
           style={{
