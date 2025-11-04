@@ -77,20 +77,18 @@ const PendingScreen = () => {
       >
         Pending
       </Text>
-      {
-        filteredOrders.length === 0 && (
-          <Text
-            style={{
-              fontFamily: "Gantari-Medium",
-              fontSize: wp(4),
-              textAlign: "center",
-              marginTop: hp(2),
-            }}
-          >
-            No pending orders found.
-          </Text>
-        )
-      }
+      {filteredOrders.length === 0 && (
+        <Text
+          style={{
+            fontFamily: "Gantari-Medium",
+            fontSize: wp(4),
+            textAlign: "center",
+            marginTop: hp(2),
+          }}
+        >
+          No pending orders found.
+        </Text>
+      )}
       <FlatList
         data={filteredOrders}
         renderItem={({ item }) => {
@@ -100,7 +98,7 @@ const PendingScreen = () => {
               style={{
                 backgroundColor: handlePendingCardViewBackgroundColor(item),
                 marginVertical: hp(0.5),
-                padding: wp(2),
+                padding: wp(3),
                 borderRadius: wp(4),
                 flexDirection: "row",
                 alignItems: "center",
@@ -142,12 +140,14 @@ const PendingScreen = () => {
                 >
                   {customer.customerName}
                 </Text>
-                <Text
-                  numberOfLines={1}
-                  style={{ fontFamily: "Gantari-Regular", fontSize: wp(4) }}
-                >
-                  {customer.customerInfo}
-                </Text>
+                {customer.customerInfo && (
+                  <Text
+                    numberOfLines={1}
+                    style={{ fontFamily: "Gantari-Regular", fontSize: wp(4) }}
+                  >
+                    {customer.customerInfo}
+                  </Text>
+                )}
               </View>
               <View
                 style={{

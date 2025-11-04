@@ -74,7 +74,7 @@ const CompleteScreen = () => {
               style={{
                 backgroundColor: secondary,
                 marginVertical: hp(0.5),
-                padding: wp(2),
+                padding: wp(3),
                 borderRadius: wp(4),
                 flexDirection: "row",
                 alignItems: "center",
@@ -93,12 +93,14 @@ const CompleteScreen = () => {
                 >
                   {customer.customerName}
                 </Text>
-                <Text
-                  numberOfLines={1}
-                  style={{ fontFamily: "Gantari-Regular", fontSize: wp(4) }}
-                >
-                  {customer.customerInfo}
-                </Text>
+                {customer.customerInfo && (
+                  <Text
+                    numberOfLines={1}
+                    style={{ fontFamily: "Gantari-Regular", fontSize: wp(4) }}
+                  >
+                    {customer.customerInfo}
+                  </Text>
+                )}
               </View>
               <View
                 style={{

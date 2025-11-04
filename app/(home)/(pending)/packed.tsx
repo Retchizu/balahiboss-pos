@@ -1,14 +1,17 @@
-import { View, Text, FlatList, TouchableOpacity } from 'react-native'
-import React, { useMemo, useState } from 'react'
-import { usePendingOrderContext } from '@/contexts/PendingOrderContext';
-import usePendingOrdersArray from '@/hooks/usePendingOrdersArray';
-import { useCustomerContext } from '@/contexts/CustomerContext';
-import searchOrderByCustomerName from '@/methods/search/searchOrderByCustomerName';
-import { primary, secondary } from '@/theme/backgroundTheme';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import SearchBar from '@/components/searchbars/SearchBar';
-import { router } from 'expo-router';
-import { FontAwesome6 } from '@expo/vector-icons';
+import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import React, { useMemo, useState } from "react";
+import { usePendingOrderContext } from "@/contexts/PendingOrderContext";
+import usePendingOrdersArray from "@/hooks/usePendingOrdersArray";
+import { useCustomerContext } from "@/contexts/CustomerContext";
+import searchOrderByCustomerName from "@/methods/search/searchOrderByCustomerName";
+import { primary, secondary } from "@/theme/backgroundTheme";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import SearchBar from "@/components/searchbars/SearchBar";
+import { router } from "expo-router";
+import { FontAwesome6 } from "@expo/vector-icons";
 
 const PackedScreen = () => {
   const { orders } = usePendingOrderContext();
@@ -18,10 +21,14 @@ const PackedScreen = () => {
 
   const completeArray = useMemo(() => {
     return pendingOrdersArray.filter((orders) => orders.status === "packed");
-  }, [pendingOrdersArray])
+  }, [pendingOrdersArray]);
 
   const [searcQuery, setSearchQuery] = useState("");
-  const filteredOrders = searchOrderByCustomerName(completeArray, customers, searcQuery)
+  const filteredOrders = searchOrderByCustomerName(
+    completeArray,
+    customers,
+    searcQuery
+  );
   return (
     <View
       style={{
@@ -46,20 +53,18 @@ const PackedScreen = () => {
       >
         Packed
       </Text>
-      {
-        filteredOrders.length === 0 && (
-            <Text
-              style={{
-                fontFamily: "Gantari-Medium",
-                fontSize: wp(4),
-                textAlign: "center",
-                marginTop: hp(2),
-              }}
-            >
-              No packed orders found.
-            </Text>
-        )
-      }
+      {filteredOrders.length === 0 && (
+        <Text
+          style={{
+            fontFamily: "Gantari-Medium",
+            fontSize: wp(4),
+            textAlign: "center",
+            marginTop: hp(2),
+          }}
+        >
+          No packed orders found.
+        </Text>
+      )}
       <FlatList
         data={filteredOrders}
         renderItem={({ item }) => {
@@ -69,7 +74,7 @@ const PackedScreen = () => {
               style={{
                 backgroundColor: secondary,
                 marginVertical: hp(0.5),
-                padding: wp(2),
+                padding: wp(3),
                 borderRadius: wp(4),
                 flexDirection: "row",
                 alignItems: "center",
@@ -88,12 +93,14 @@ const PackedScreen = () => {
                 >
                   {customer.customerName}
                 </Text>
-                <Text
-                  numberOfLines={1}
-                  style={{ fontFamily: "Gantari-Regular", fontSize: wp(4) }}
-                >
-                  {customer.customerInfo}
-                </Text>
+                {customer.customerInfo && (
+                  <Text
+                    numberOfLines={1}
+                    style={{ fontFamily: "Gantari-Regular", fontSize: wp(4) }}
+                  >
+                    {customer.customerInfo}
+                  </Text>
+                )}
               </View>
               <View
                 style={{
