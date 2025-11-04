@@ -83,6 +83,7 @@ const EditTimesheet = () => {
 
       await api.patch("/employee/timesheet/update", payload);
 
+      console.log("id from update", id)
       updateSingleTimesheet(id, {
         date: payload.date,
         loginTime: payload.loginTime,

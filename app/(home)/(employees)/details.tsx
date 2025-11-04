@@ -38,8 +38,7 @@ const EmployeeDetails = () => {
   const [rate, setRate] = useState("");
   const [rateModalVisible, setRateModalVisible] = useState(false);
 
-
-  const {setTimesheetInfo, timesheetInfo} = useTimesheetContext();
+  const { setTimesheetInfo, timesheetInfo } = useTimesheetContext();
   useEffect(() => {
     const getTimesheet = async () => {
       try {
@@ -47,13 +46,13 @@ const EmployeeDetails = () => {
           params: {
             uid: selectedEmployee?.uid,
             startDate,
-            endDate
+            endDate,
           },
         });
         setTimesheetInfo({
           timesheets: response.data.timesheets,
           rate: response.data.rate,
-        })
+        });
       } catch (error) {
         if (isAxiosError(error)) {
           Toast.show({ type: "error", text1: error.response?.data.error });
@@ -61,13 +60,18 @@ const EmployeeDetails = () => {
       }
     };
     getTimesheet();
-  }, [endDate, selectedEmployee, setTimesheetInfo, startDate, timesheetInfo]);
+  }, [endDate, selectedEmployee, setTimesheetInfo, startDate]);
 
   const computeTotalHoursWorked = useMemo(() => {
     if (!timesheetInfo?.timesheets) return { totalRate: 0, totalHours: 0 };
 
     const totalMs = timesheetInfo.timesheets.reduce(
-      (acc, curr) => acc + curr.duration,
+      (acc, curr) =>
+        acc +
+        (curr.logoutTime
+          ? new Date(curr.logoutTime).getTime() -
+            new Date(curr.loginTime).getTime()
+          : 0),
       0
     );
 
@@ -76,7 +80,9 @@ const EmployeeDetails = () => {
     const totalRate = totalHours * timesheetInfo.rate;
 
     return { totalRate, totalHours: totalMs };
-  }, [timesheetInfo]);
+  }, [timesheetInfo?.timesheets, timesheetInfo?.rate]);
+
+  console.log(timesheetInfo?.timesheets);
 
   return (
     <View
@@ -266,7 +272,14 @@ const EmployeeDetails = () => {
         zIndex={1}
       />
 
-      <View style={{ padding: wp(4), borderRadius: wp(6), borderWidth:wp(0.4), borderColor:"black"}}>
+      <View
+        style={{
+          padding: wp(4),
+          borderRadius: wp(6),
+          borderWidth: wp(0.4),
+          borderColor: "black",
+        }}
+      >
         <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(5.5) }}>
           Total Hours:{" "}
           {formatMillisecondsToHours(computeTotalHoursWorked.totalHours)}
@@ -329,11 +342,8 @@ const EmployeeDetails = () => {
                   uid: selectedEmployee?.uid,
                   rate: parseFloat(rate),
                 });
-                setTimesheetInfo(
-                  (prev) =>
-                    prev
-                      ? { ...prev, rate: parseFloat(rate) }
-                      : undefined
+                setTimesheetInfo((prev) =>
+                  prev ? { ...prev, rate: parseFloat(rate) } : undefined
                 );
                 setRateModalVisible(false);
                 Toast.show({

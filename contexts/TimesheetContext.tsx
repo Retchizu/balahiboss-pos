@@ -1,4 +1,5 @@
 import { Timesheet } from "@/types/Timesheet";
+import { TimesheetInfo } from "@/types/TimesheetInfo";
 import {
   createContext,
   Dispatch,
@@ -9,14 +10,10 @@ import {
   useState,
 } from "react";
 
-type TimesheetInfo = {
-  timesheets: Timesheet[];
-  rate: number;
-};
 type TimesheetContextType = {
   timesheetInfo: TimesheetInfo | undefined;
   setTimesheetInfo: Dispatch<SetStateAction<TimesheetInfo | undefined>>;
-  updateSingleTimesheet: (id: string, updates: Partial<Timesheet>) => void
+  updateSingleTimesheet: (id: string, updates: Partial<Timesheet>) => void;
 };
 
 const TimesheetContext = createContext<TimesheetContextType | undefined>(
@@ -36,10 +33,7 @@ export const TimesheetProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [timesheetInfo, setTimesheetInfo] = useState<TimesheetInfo | undefined>(
-    {
-      timesheets: [],
-      rate: 0,
-    }
+    undefined
   );
 
   const updateSingleTimesheet = (id: string, updates: Partial<Timesheet>) => {
@@ -50,11 +44,13 @@ export const TimesheetProvider: FC<{ children: ReactNode }> = ({
         t.id === id ? { ...t, ...updates } : t
       );
 
-      return { ...prev, timesheets: updatedTimesheets };
+      return { rate: prev.rate, timesheets: updatedTimesheets };
     });
   };
   return (
-    <TimesheetContext.Provider value={{ timesheetInfo, setTimesheetInfo, updateSingleTimesheet }}>
+    <TimesheetContext.Provider
+      value={{ timesheetInfo, setTimesheetInfo, updateSingleTimesheet }}
+    >
       {children}
     </TimesheetContext.Provider>
   );
