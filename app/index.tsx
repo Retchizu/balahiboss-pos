@@ -14,10 +14,10 @@ import { makeRedirectUri } from "expo-auth-session";
 import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from "expo-web-browser";
 import { isAxiosError } from "axios";
-import { verifyAccountApi } from "@/methods/auth/verifyAccountApi";
 import { router } from "expo-router";
 import { useUserContext } from "@/contexts/UserContext";
 import Toast from "react-native-toast-message";
+import { signInUser } from "@/methods/auth/signInUser";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -98,7 +98,7 @@ const handleGoogleSignIn = async (
     setIsGoogleSignInLoading(true);
     const credential = GoogleAuthProvider.credential(idToken);
     await signInWithCredential(auth, credential);
-    await verifyAccountApi();
+    await signInUser();
   } catch (error) {
     if (isAxiosError(error) && error.response) {
       if (error.response.status === 403 || error.response.status) {

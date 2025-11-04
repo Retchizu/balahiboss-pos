@@ -3,7 +3,7 @@ import {
   DrawerContentScrollView,
   DrawerItem,
 } from "@react-navigation/drawer";
-import { View, Image, Text, StyleSheet } from "react-native";
+import { View, Image, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   widthPercentageToDP as wp,
@@ -17,8 +17,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomDrawerItem from "./CustomDrawerItem";
 import { useUserContext } from "@/contexts/UserContext";
 import usePendingOrdersArray from "@/hooks/usePendingOrdersArray";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { usePendingOrderContext } from "@/contexts/PendingOrderContext";
+import { signOutUser } from "@/methods/auth/signOutUser";
+import Toast from "react-native-toast-message";
+import { isAxiosError } from "axios";
+import { strongPrimary } from "@/theme/backgroundTheme";
 
 const STORAGE_KEY = "CHECKED_ORDERS";
 
@@ -31,8 +35,28 @@ const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
     return pendingOrdersArray.filter((order) => order.status === "pending");
   }, [pendingOrdersArray]);
 
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#AFDDFF" }}>
+      {isSigningOut && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.3)",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 999,
+          }}
+        >
+          <ActivityIndicator size="large" color={strongPrimary} />
+          <Text style={{ color: "#fff", marginTop: 10 }}>Signing out...</Text>
+        </View>
+      )}
       <Image
         source={require("../../assets/balahiboss.png")}
         style={{
@@ -147,9 +171,23 @@ const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
             <Text style={[styles.drawerLabelStyle, { color }]}>Sign out</Text>
           )}
           onPress={async () => {
-            await auth.signOut();
-            AsyncStorage.removeItem(STORAGE_KEY);
-            router.replace("/");
+            try {
+              setIsSigningOut(true);
+              await signOutUser();
+              await auth.signOut();
+              AsyncStorage.removeItem(STORAGE_KEY);
+              router.replace("/");
+            } catch (error) {
+              if (isAxiosError(error)) {
+                Toast.show({
+                  type: "error",
+                  text1: `${error.response?.data.error}`,
+                });
+              }
+              console.log(error);
+            } finally {
+              setIsSigningOut(false);
+            }
           }}
           icon={({ color }) => (
             <Ionicons

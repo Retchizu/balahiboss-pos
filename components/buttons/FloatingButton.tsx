@@ -17,6 +17,7 @@ type FloatingButtonProp = {
   };
   backgroundColor: string;
   loading?: boolean;
+  zIndex?: number;
 };
 
 const FloatingButton = ({
@@ -24,12 +25,13 @@ const FloatingButton = ({
   icon,
   backgroundColor,
   loading,
+  zIndex
 }: FloatingButtonProp) => {
   const IconComponent = Icons[icon.family] ? (Icons[icon.family] as any) : null;
 
   return (
     <TouchableOpacity
-      style={[styles.fab, { backgroundColor: backgroundColor }]}
+      style={[styles.fab, { backgroundColor: backgroundColor, zIndex: zIndex ?? undefined}]}
       onPress={onPress}
       activeOpacity={0.8}
       disabled={loading}
