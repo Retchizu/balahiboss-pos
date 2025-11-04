@@ -13,7 +13,6 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { Timesheet } from "@/types/Timesheet";
 import { isAxiosError } from "axios";
 import Toast from "react-native-toast-message";
 import { api } from "@/config/axios-api";
@@ -23,6 +22,7 @@ import { Entypo } from "@expo/vector-icons";
 import { useSelectedEmployeeContext } from "@/contexts/SelectedEmployee";
 import { router } from "expo-router";
 import formatMillisecondsToHours from "@/methods/date/formatMilisecondsToHours";
+import { useTimesheetContext } from "@/contexts/TimesheetContext";
 
 const EmployeeDetails = () => {
   const { selectedEmployee } = useSelectedEmployeeContext();
@@ -38,14 +38,8 @@ const EmployeeDetails = () => {
   const [rate, setRate] = useState("");
   const [rateModalVisible, setRateModalVisible] = useState(false);
 
-  const [employeeTimesheet, setEmployeeTimesheet] = useState<
-    | {
-        timesheets: Timesheet[];
-        rate: number;
-      }
-    | undefined
-  >(undefined);
 
+  const {setTimesheetInfo, timesheetInfo} = useTimesheetContext();
   useEffect(() => {
     const getTimesheet = async () => {
       try {
@@ -56,7 +50,10 @@ const EmployeeDetails = () => {
             endDate
           },
         });
-        setEmployeeTimesheet(response.data);
+        setTimesheetInfo({
+          timesheets: response.data.timesheets,
+          rate: response.data.rate,
+        })
       } catch (error) {
         if (isAxiosError(error)) {
           Toast.show({ type: "error", text1: error.response?.data.error });
@@ -64,22 +61,22 @@ const EmployeeDetails = () => {
       }
     };
     getTimesheet();
-  }, [endDate, selectedEmployee, startDate]);
+  }, [endDate, selectedEmployee, setTimesheetInfo, startDate, timesheetInfo]);
 
   const computeTotalHoursWorked = useMemo(() => {
-    if (!employeeTimesheet?.timesheets) return { totalRate: 0, totalHours: 0 };
+    if (!timesheetInfo?.timesheets) return { totalRate: 0, totalHours: 0 };
 
-    const totalMs = employeeTimesheet.timesheets.reduce(
+    const totalMs = timesheetInfo.timesheets.reduce(
       (acc, curr) => acc + curr.duration,
       0
     );
 
     const totalHours = totalMs / (1000 * 60 * 60);
 
-    const totalRate = totalHours * employeeTimesheet.rate;
+    const totalRate = totalHours * timesheetInfo.rate;
 
     return { totalRate, totalHours: totalMs };
-  }, [employeeTimesheet]);
+  }, [timesheetInfo]);
 
   return (
     <View
@@ -167,12 +164,12 @@ const EmployeeDetails = () => {
           Hourly Rate
         </Text>
         <Text style={{ fontFamily: "Gantari-Regular", fontSize: wp(4) }}>
-          ₱ {(employeeTimesheet?.rate ?? 0).toFixed(2)}
+          ₱ {(timesheetInfo?.rate ?? 0).toFixed(2)}
         </Text>
       </View>
       <FlatList
         style={{ paddingVertical: hp(1), flex: 1 }}
-        data={employeeTimesheet?.timesheets ?? []}
+        data={timesheetInfo?.timesheets ?? []}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={{
@@ -332,7 +329,7 @@ const EmployeeDetails = () => {
                   uid: selectedEmployee?.uid,
                   rate: parseFloat(rate),
                 });
-                setEmployeeTimesheet(
+                setTimesheetInfo(
                   (prev) =>
                     prev
                       ? { ...prev, rate: parseFloat(rate) }

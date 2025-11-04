@@ -4,8 +4,8 @@ export type Timesheet = {
   status: "active" | "completed";
   date: string;
   duration: number;
-  loginTime: Date;
-  logoutTime: Date | null;
+  loginTime: string;
+  logoutTime: string | null;
   reason: string;
-  updatedAt: Date;
+  updatedAt: string;
 };

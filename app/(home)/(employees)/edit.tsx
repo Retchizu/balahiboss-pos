@@ -1,11 +1,5 @@
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -15,10 +9,11 @@ import { useSelectedEmployeeContext } from "@/contexts/SelectedEmployee";
 import CommonButton from "@/components/buttons/CommonButton";
 import DatePicker from "react-native-date-picker";
 import { api } from "@/config/axios-api";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import Toast from "react-native-toast-message";
 import { isAxiosError } from "axios";
 import formatMillisecondsToHours from "@/methods/date/formatMilisecondsToHours";
+import { useTimesheetContext } from "@/contexts/TimesheetContext";
 
 const EditTimesheet = () => {
   const params = useLocalSearchParams();
@@ -37,8 +32,6 @@ const EditTimesheet = () => {
   const [logoutTime, setLogoutTime] = useState<Date | null>(null);
   const [isLogoutTimePickerVisible, setIsLogoutTimePickerVisible] =
     useState(false);
-
-  const [reason, setReason] = useState("");
 
   useEffect(() => {
     const getTimesheet = async () => {
@@ -73,7 +66,48 @@ const EditTimesheet = () => {
     getTimesheet();
   }, [id]);
 
-  const reasonRef = useRef<TextInput | null>(null);
+  const { updateSingleTimesheet } = useTimesheetContext();
+  const [isUpdatingTimesheet, setIsUpdatingTimesheet] = useState(false);
+  const updateTimeSheet = async () => {
+    if (!id) return;
+
+    try {
+      setIsUpdatingTimesheet(true);
+
+      const payload = {
+        id,
+        date: date?.toISOString(),
+        loginTime: loginTime?.toISOString(),
+        logoutTime: logoutTime?.toISOString(),
+      };
+
+      await api.patch("/employee/timesheet/update", payload);
+
+      updateSingleTimesheet(id, {
+        date: payload.date,
+        loginTime: payload.loginTime,
+        logoutTime: payload.logoutTime,
+      });
+
+      router.back();
+      Toast.show({
+        type: "success",
+        text1: "Timesheet updated successfully",
+      });
+    } catch (error) {
+      const message = isAxiosError(error)
+        ? error.response?.data?.error || "Failed to update timesheet"
+        : "Unexpected error occurred";
+
+      Toast.show({
+        type: "error",
+        text1: message,
+      });
+    } finally {
+      setIsUpdatingTimesheet(false);
+    }
+  };
+
   return (
     <View
       style={{
@@ -194,39 +228,20 @@ const EditTimesheet = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <View>
-        <Text style={styles.inputLabel}>Reason for update:</Text>
-        <TouchableOpacity
-          style={{
-            borderColor: strongPrimary,
-            borderWidth: wp(0.3),
-            borderRadius: wp(2),
-            padding: wp(1),
-            height: hp(15),
-          }}
-          activeOpacity={1}
-          onPress={() => reasonRef.current?.focus()}
-        >
-          <TextInput
-            ref={reasonRef}
-            value={reason}
-            onChangeText={(text) => setReason(text)}
-            placeholder="Enter reason for update"
-            multiline
-            style={{ fontFamily: "Gantari-Regular", fontSize: wp(4.5) }}
-          />
-        </TouchableOpacity>
-      </View>
-
       <View style={{ gap: hp(2), marginTop: hp(2) }}>
         <CommonButton
-          onPress={() => {}}
+          onPress={async () => {
+            await updateTimeSheet();
+          }}
           title="Save Changes"
           backgroundColor={strongPrimary}
           titleColor={primary}
+          loading={isUpdatingTimesheet}
         />
         <CommonButton
-          onPress={() => {}}
+          onPress={() => {
+            router.back();
+          }}
           title="Cancel"
           backgroundColor={primary}
           titleColor={"black"}
@@ -240,7 +255,6 @@ const EditTimesheet = () => {
         mode="date"
         onConfirm={(selectedDate) => {
           setIsDatePickerVisible(false);
-          selectedDate.setHours(11, 59, 59, 999);
           setDate(selectedDate);
         }}
         onCancel={() => setIsDatePickerVisible(false)}
@@ -248,11 +262,10 @@ const EditTimesheet = () => {
       <DatePicker
         modal
         open={isLoginTimePickerVisible}
-        date={date ?? new Date()}
+        date={loginTime ?? new Date()}
         mode="time"
         onConfirm={(selectedDate) => {
           setIsLoginTimePickerVisible(false);
-          selectedDate.setHours(11, 59, 59, 999);
           setLoginTime(selectedDate);
         }}
         onCancel={() => setIsLoginTimePickerVisible(false)}
@@ -260,11 +273,10 @@ const EditTimesheet = () => {
       <DatePicker
         modal
         open={isLogoutTimePickerVisible}
-        date={date ?? new Date()}
+        date={logoutTime ?? new Date()}
         mode="time"
         onConfirm={(selectedDate) => {
           setIsLogoutTimePickerVisible(false);
-          selectedDate.setHours(11, 59, 59, 999);
           setLogoutTime(selectedDate);
         }}
         onCancel={() => setIsLogoutTimePickerVisible(false)}
