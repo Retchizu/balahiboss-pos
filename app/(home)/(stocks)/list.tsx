@@ -5,8 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
-import useGetProducts from "@/hooks/useGetProducts";
+import React, { useMemo, useState } from "react";
 import useProductsArray from "@/hooks/useProductsArray";
 import searchProductsByName from "@/methods/search/searchProductsByName";
 import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
@@ -19,21 +18,22 @@ import { useTransactionContext } from "@/contexts/TransactionContext";
 import Transaction from "@/types/Transaction";
 import DatePicker from "react-native-date-picker";
 import CommonButton from "@/components/buttons/CommonButton";
-import { api } from "@/config/axios-api";
-import { isAxiosError } from "axios";
 import Toast from "react-native-toast-message";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import ModalTemplate from "@/components/modals/ModalTemplate";
+import { Entypo } from "@expo/vector-icons";
 import Input from "@/components/inputs/Input";
 import { Checkbox } from "expo-checkbox";
 import * as XLSX from "xlsx";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import { useProductContext } from "@/contexts/ProductContext";
 
 const StockReportListScreen = () => {
-  const { products } = useGetProducts();
+  const { products } = useProductContext();
   const { productsArray } = useProductsArray(products);
-  const { transactions, setTransactions } = useTransactionContext();
+  const { transactions, startDate, endDate, setStartDate, setEndDate } =
+    useTransactionContext();
   // search bar
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -47,36 +47,11 @@ const StockReportListScreen = () => {
 
   // date range
   // startDate
-  const [startDate, setStartDate] = useState<Date | null>(null);
   const [isStartDatePickerVisible, setIsStartDatePickerVisible] =
     useState(false);
 
   // endDate
-  const [endDate, setEndDate] = useState<Date | null>(null);
   const [isEndDatePickerVisible, setIsEndDatePickerVisible] = useState(false);
-
-  // get transactions
-  useEffect(() => {
-    const getTransactions = async () => {
-      try {
-        const response = await api.get("/transaction/list", {
-          params: {
-            startDate,
-            endDate,
-          },
-        });
-        console.log(response.data.items);
-        setTransactions(response.data.items);
-      } catch (error) {
-        if (isAxiosError(error)) {
-          Toast.show({ type: "error", text1: `${error.response?.data.error}` });
-        }
-        console.error("Get Transaction Failed: ", error);
-      }
-    };
-
-    getTransactions();
-  }, [endDate, setTransactions, startDate, products]);
 
   // excel conversion
   const [excelConversionOptionsModal, setExcelConversionOptionsModal] =
@@ -90,20 +65,24 @@ const StockReportListScreen = () => {
   const stockSoldExportData = useMemo(() => {
     const totalSold = calculateTotalStockSold(transactions);
 
-    return productsArray.map((product) => ({
-      "Product Name": product.productName,
-      "Total Stock Sold": totalSold[product.id] || 0,
-    }));
+    return productsArray
+      .filter((product) => product.deleted !== true)
+      .map((product) => ({
+        "Product Name": product.productName,
+        "Total Stock Sold": totalSold[product.id] || 0,
+      }));
   }, [productsArray, transactions]);
 
   const productsExportData = useMemo(() => {
-    return productsArray.map((product) => ({
-      "Product Name": product.productName,
-      Stock: product.stock,
-      "Stock Price": product.stockPrice,
-      "Sell Price": product.sellPrice,
-      "Current Stock Total Amount": product.stockPrice * product.stock,
-    }));
+    return productsArray
+      .filter((product) => product.deleted !== true)
+      .map((product) => ({
+        "Product Name": product.productName,
+        Stock: product.stock,
+        "Stock Price": product.stockPrice,
+        "Sell Price": product.sellPrice,
+        "Current Stock Total Amount": product.stockPrice * product.stock,
+      }));
   }, [productsArray]);
 
   const exportToExcel = async (data: any[], fileName: string) => {
@@ -117,47 +96,47 @@ const StockReportListScreen = () => {
     }
 
     try {
-    // Create worksheet and set column widths
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    worksheet["!cols"] = [
-      { wch: 40 }, // Product Name
-      { wch: 10 }, // Stock / Sold
-      { wch: 12 }, // Stock Price
-      { wch: 12 }, // Sell Price
-      { wch: 28 }, // Current Stock Total Amount
-    ];
+      // Create worksheet and set column widths
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      worksheet["!cols"] = [
+        { wch: 40 }, // Product Name
+        { wch: 10 }, // Stock / Sold
+        { wch: 12 }, // Stock Price
+        { wch: 12 }, // Sell Price
+        { wch: 28 }, // Current Stock Total Amount
+      ];
 
-    // Create workbook
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+      // Create workbook
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
 
-    // Convert workbook to base64
-    const workbookOutput = XLSX.write(workbook, {
-      type: "base64",
-      bookType: "xlsx",
-    });
-
-    // Save to device storage
-    const fileUri = `${FileSystem.documentDirectory}${fileName}.xlsx`;
-    await FileSystem.writeAsStringAsync(fileUri, workbookOutput, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-
-    // Share if available
-    if (await Sharing.isAvailableAsync()) {
-      await Sharing.shareAsync(fileUri, {
-        mimeType:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        dialogTitle: `Share ${fileName}.xlsx`,
+      // Convert workbook to base64
+      const workbookOutput = XLSX.write(workbook, {
+        type: "base64",
+        bookType: "xlsx",
       });
-    }
 
-    Toast.show({ type: "success", text1: "Export successful" });
-    console.log("Exported Excel:", fileUri);
-  } catch (error) {
-    Toast.show({ type: "error", text1: "Something went wrong" });
-    console.log("Excel Export Error:", error);
-  }
+      // Save to device storage
+      const fileUri = `${FileSystem.documentDirectory}${fileName}.xlsx`;
+      await FileSystem.writeAsStringAsync(fileUri, workbookOutput, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      // Share if available
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(fileUri, {
+          mimeType:
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          dialogTitle: `Share ${fileName}.xlsx`,
+        });
+      }
+
+      Toast.show({ type: "success", text1: "Export successful" });
+      console.log("Exported Excel:", fileUri);
+    } catch (error) {
+      Toast.show({ type: "error", text1: "Something went wrong" });
+      console.log("Excel Export Error:", error);
+    }
   };
 
   return (
@@ -328,50 +307,106 @@ const StockReportListScreen = () => {
           setExcelConversionOptionsModal(false);
         }}
         width={wp(80)}
-        height={hp(35)}
+        height={hp(48)}
       >
-        <Text
+        <View style={{ alignItems: "center", marginBottom: hp(1.2) }}>
+          <Entypo
+            name="documents"
+            size={wp(14)}
+            color="#107C10"
+            style={{ marginBottom: hp(0.8) }}
+          />
+          <Text
+            style={{
+              fontFamily: "Gantari-Bold",
+              fontSize: wp(4.6),
+              textAlign: "center",
+            }}
+          >
+            Export to Excel
+          </Text>
+          <Text
+            style={{
+              fontFamily: "Gantari-Regular",
+              fontSize: wp(3.6),
+              color: "#6B7280",
+              textAlign: "center",
+              marginTop: hp(0.4),
+            }}
+          >
+            Choose a file name and export mode.
+          </Text>
+        </View>
+
+        <View style={{ paddingHorizontal: wp(2) }}>
+          <Input
+            value={excelFileName}
+            onChangeText={setExcelFileName}
+            placeholder="File Name"
+          />
+
+          <TouchableOpacity
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginTop: hp(2),
+              padding: wp(3),
+              borderRadius: wp(2),
+              borderWidth: 1,
+              borderColor:
+                selectedOption === "products" ? "#D1FAE5" : "transparent",
+              backgroundColor:
+                selectedOption === "products" ? "#ECFDF5" : "transparent",
+            }}
+            activeOpacity={0.8}
+            onPress={() => setSelectedOption("products")}
+          >
+            <Checkbox
+              value={selectedOption === "products"}
+              onValueChange={() => setSelectedOption("products")}
+              color={selectedOption === "products" ? "#107C10" : undefined}
+            />
+            <Text style={[styles.optionText, { marginLeft: wp(3) }]}>
+              Products to Excel
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginTop: hp(1),
+              padding: wp(3),
+              borderRadius: wp(2),
+              borderWidth: 1,
+              borderColor:
+                selectedOption === "stockSold" ? "#DBEAFE" : "transparent",
+              backgroundColor:
+                selectedOption === "stockSold" ? "#EFF6FF" : "transparent",
+            }}
+            activeOpacity={0.8}
+            onPress={() => setSelectedOption("stockSold")}
+          >
+            <Checkbox
+              value={selectedOption === "stockSold"}
+              onValueChange={() => setSelectedOption("stockSold")}
+              color={selectedOption === "stockSold" ? "#2563EB" : undefined}
+            />
+            <Text style={[styles.optionText, { marginLeft: wp(3) }]}>
+              Stock Sold to Excel
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View
           style={{
-            fontFamily: "Gantari-SemiBold",
-            fontSize: wp(4.5),
-            marginVertical: hp(2),
+            marginTop: hp(3),
+            paddingHorizontal: wp(2),
+            flexDirection: "row",
+            justifyContent: "space-between",
+            gap: wp(3),
           }}
         >
-          Convert to Excel
-        </Text>
-        <Input
-          value={excelFileName}
-          onChangeText={setExcelFileName}
-          placeholder="File Name"
-        />
-        <TouchableOpacity
-          style={styles.optionRow}
-          activeOpacity={0.7}
-          onPress={() => setSelectedOption("products")}
-        >
-          <Checkbox
-            value={selectedOption === "products"}
-            onValueChange={() => setSelectedOption("products")}
-            color={selectedOption === "products" ? "#007AFF" : undefined}
-          />
-          <Text style={styles.optionText}>Products to Excel</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.optionRow}
-          activeOpacity={0.7}
-          onPress={() => setSelectedOption("stockSold")}
-        >
-          <Checkbox
-            value={selectedOption === "stockSold"}
-            onValueChange={() => setSelectedOption("stockSold")}
-            color={selectedOption === "stockSold" ? "#007AFF" : undefined}
-          />
-          <Text style={styles.optionText}>Stock Sold to Excel</Text>
-        </TouchableOpacity>
-
-        {/* Action Buttons */}
-        <View style={styles.actions}>
           <CommonButton
             title="Cancel"
             onPress={() => {
@@ -379,9 +414,12 @@ const StockReportListScreen = () => {
               setExcelConversionOptionsModal(false);
               setExcelFileName("");
             }}
+            backgroundColor="#F3F4F6"
+            titleColor="#111827"
+            marginTop={0}
           />
           <CommonButton
-            title="Confirm"
+            title="Export"
             onPress={async () => {
               if (selectedOption === "products") {
                 await exportToExcel(productsExportData, excelFileName);
@@ -389,10 +427,12 @@ const StockReportListScreen = () => {
                 await exportToExcel(stockSoldExportData, excelFileName);
               }
             }}
+            backgroundColor={strongPrimary}
+            titleColor="#ffffff"
+            marginTop={0}
           />
         </View>
       </ModalTemplate>
-
     </View>
   );
 };

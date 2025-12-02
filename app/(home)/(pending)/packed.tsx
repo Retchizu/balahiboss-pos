@@ -53,84 +53,94 @@ const PackedScreen = () => {
       >
         Packed
       </Text>
-      {filteredOrders.length === 0 && (
-        <Text
+
+      {filteredOrders.length === 0 ? (
+        <View
           style={{
-            fontFamily: "Gantari-Medium",
-            fontSize: wp(4),
-            textAlign: "center",
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
             marginTop: hp(2),
           }}
         >
-          No packed orders found.
-        </Text>
-      )}
-      <FlatList
-        data={filteredOrders}
-        renderItem={({ item }) => {
-          const customer = customers[item.transaction.customerId];
-          return (
-            <TouchableOpacity
-              style={{
-                backgroundColor: secondary,
-                marginVertical: hp(0.5),
-                padding: wp(3),
-                borderRadius: wp(4),
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-              activeOpacity={0.7}
-              onPress={() => {
-                router.push({
-                  pathname: "../orders/order-details",
-                  params: { id: item.id, fromPending: "false" },
-                });
-              }}
-            >
-              <View style={{ flex: 1 }}>
-                <Text
-                  style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(4) }}
-                >
-                  {customer.customerName}
-                </Text>
-                {customer.customerInfo && (
-                  <Text
-                    numberOfLines={1}
-                    style={{ fontFamily: "Gantari-Regular", fontSize: wp(4) }}
-                  >
-                    {customer.customerInfo}
-                  </Text>
-                )}
-              </View>
-              <View
+          <Text
+            style={{
+              fontFamily: "Gantari-Regular",
+              fontSize: wp(4),
+              color: "#6B7280",
+            }}
+          >
+            No Packed Orders found.
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredOrders}
+          renderItem={({ item }) => {
+            const customer = customers[item.transaction.customerId];
+            return (
+              <TouchableOpacity
                 style={{
+                  backgroundColor: secondary,
+                  marginVertical: hp(0.5),
+                  padding: wp(3),
+                  borderRadius: wp(4),
                   flexDirection: "row",
                   alignItems: "center",
-                  gap: wp(1),
+                }}
+                activeOpacity={0.7}
+                onPress={() => {
+                  router.push({
+                    pathname: "../orders/order-details",
+                    params: { id: item.id, fromPending: "false" },
+                  });
                 }}
               >
-                <FontAwesome6 name="clock-four" size={wp(4)} color="black" />
-                <Text>
-                  {new Date(item.date)
-                    ?.toLocaleString("en-US", {
-                      hour: "numeric",
-                      minute: "2-digit",
-                      hour12: true,
-                    })
-                    .replace(",", "")
-                    .replace(/AM|PM/, (m) => m.toLowerCase())}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          );
-        }}
-        style={{ marginTop: hp(1) }}
-        initialNumToRender={10}
-        maxToRenderPerBatch={5}
-        windowSize={5}
-        removeClippedSubviews={true}
-        showsVerticalScrollIndicator={false}
-      />
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(4) }}
+                  >
+                    {customer.customerName}
+                  </Text>
+                  {customer.customerInfo && (
+                    <Text
+                      numberOfLines={1}
+                      style={{ fontFamily: "Gantari-Regular", fontSize: wp(4) }}
+                    >
+                      {customer.customerInfo}
+                    </Text>
+                  )}
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: wp(1),
+                  }}
+                >
+                  <FontAwesome6 name="clock-four" size={wp(4)} color="black" />
+                  <Text>
+                    {new Date(item.date)
+                      ?.toLocaleString("en-US", {
+                        hour: "numeric",
+                        minute: "2-digit",
+                        hour12: true,
+                      })
+                      .replace(",", "")
+                      .replace(/AM|PM/, (m) => m.toLowerCase())}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            );
+          }}
+          style={{ marginTop: hp(1) }}
+          initialNumToRender={10}
+          maxToRenderPerBatch={5}
+          windowSize={5}
+          removeClippedSubviews={true}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
     </View>
   );
 };

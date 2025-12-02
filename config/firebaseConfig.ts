@@ -1,7 +1,13 @@
 import { FirebaseApp, getApp, getApps, initializeApp } from "firebase/app";
-import { Auth, getAuth, initializeAuth, getReactNativePersistence } from "firebase/auth";
-import AsyncStorage from "@react-native-async-storage/async-storage"
+import {
+  Auth,
+  getAuth,
+  initializeAuth,
+  getReactNativePersistence,
+} from "firebase/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Database, getDatabase } from "firebase/database";
+import { Firestore, getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -13,7 +19,7 @@ const firebaseConfig = {
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
 };
 
-let app: FirebaseApp, auth: Auth, db: Database
+let app: FirebaseApp, auth: Auth, db: Database, firestoreDb: Firestore;
 if (!getApps().length) {
   try {
     app = initializeApp(firebaseConfig);
@@ -21,6 +27,7 @@ if (!getApps().length) {
       persistence: getReactNativePersistence(AsyncStorage),
     });
     db = getDatabase(app);
+    firestoreDb = getFirestore(app);
   } catch (error) {
     console.log("Error initializing app: " + error);
   }
@@ -28,6 +35,7 @@ if (!getApps().length) {
   app = getApp();
   auth = getAuth(app);
   db = getDatabase(app);
+  firestoreDb = getFirestore(app);
 }
 
-export { auth, db };
+export { auth, db, firestoreDb };

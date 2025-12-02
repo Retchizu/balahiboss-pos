@@ -13,7 +13,6 @@ import {
   Switch,
 } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import useGetCustomers from "@/hooks/useGetCustomers";
 import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
 import {
   widthPercentageToDP as wp,
@@ -49,8 +48,6 @@ const EditInvoiceScreen = () => {
     useConvertTransactionArrayToMap(false);
   const transaction = transactionMap[parseId];
 
-  // fetch customer right away
-  useGetCustomers();
   // Invoice Input
   const { invoiceForm, setInvoiceForm } = useInvoiceFormContext();
 

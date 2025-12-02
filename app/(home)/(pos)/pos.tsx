@@ -1,40 +1,37 @@
-import { FlatList, TouchableOpacity, View, Text, Image } from "react-native";
+import { FlatList, TouchableOpacity, View, Text, Image, ActivityIndicator } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { primary, secondary } from "@/theme/backgroundTheme";
+import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
 import SearchBar from "@/components/searchbars/SearchBar";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import useGetProducts from "@/hooks/useGetProducts";
 import Product from "@/types/Product";
 import { useSelectedProductContext } from "@/contexts/SelectedProductContext";
-import useGetCustomers from "@/hooks/useGetCustomers";
 import useProductsArray from "@/hooks/useProductsArray";
 import { usePendingOrderContext } from "@/contexts/PendingOrderContext";
 import { endOfDay, startOfDay } from "date-fns";
 import { fromZonedTime, toZonedTime } from "date-fns-tz";
 import {
-  endAt,
-  onValue,
-  orderByChild,
-  query,
-  ref,
-  startAt,
-} from "firebase/database";
-import { db } from "@/config/firebaseConfig";
+  collection,
+  onSnapshot,
+  query as fsQuery,
+  where,
+  orderBy,
+} from "firebase/firestore";
+import { firestoreDb } from "@/config/firebaseConfig";
 import searchProductsByName from "@/methods/search/searchProductsByName";
-import { useUserContext } from "@/contexts/UserContext";
 import useBluetoothPrinter, {
   permissionForPrint,
 } from "@/hooks/useBluetoothPrinter";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import PendingOrder from "@/types/PendingOrder";
+import { useProductContext } from "@/contexts/ProductContext";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+
 const PosScreen = () => {
-  const { role } = useUserContext();
-  console.log(role);
-  const { products } = useGetProducts();
+  const {products, loading} = useProductContext()
   const { productsArray } = useProductsArray(products);
   // search bar
   const [searchQuery, setSearchQuery] = useState("");
@@ -42,10 +39,10 @@ const PosScreen = () => {
     return searchProductsByName(productsArray, searchQuery);
   }, [productsArray, searchQuery]);
 
-  // fetch customer right away
-  useGetCustomers();
   const { deleteSelectedProduct, addSelectedProduct, selectedProducts } =
     useSelectedProductContext();
+  // allow quantity updates from the POS list
+  const { updateSelectedProduct } = useSelectedProductContext();
 
   // prevents re-render unless depencies have changed
   const renderProductList = useCallback(
@@ -62,6 +59,7 @@ const PosScreen = () => {
         return secondary;
       };
 
+      const selected = selectedProducts.get(item.id);
       return (
         <TouchableOpacity
           style={{
@@ -70,6 +68,7 @@ const PosScreen = () => {
             borderRadius: wp(2),
             backgroundColor: productCardViewBackgroundColor(item),
             alignItems: "center",
+            position: "relative", // allow absolute positioned quantity controls
           }}
           activeOpacity={0.7}
           onPress={
@@ -144,10 +143,88 @@ const PosScreen = () => {
               Stock: {item.stock}
             </Text>
           </View>
+
+          {/* floating quantity controls */}
+          {selected && (
+            <View
+              style={{
+                position: "absolute",
+                right: wp(3),
+                top: hp(1.2),
+                flexDirection: "row",
+                alignItems: "center",
+                backgroundColor: "rgba(255,255,255,0.98)",
+                paddingHorizontal: wp(2),
+                paddingVertical: hp(0.6),
+                borderRadius: wp(3),
+                borderWidth: 0.6,
+                borderColor: "#E5E7EB",
+                // stronger shadow for prominence
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: 0.08,
+                shadowRadius: 8,
+                elevation: 6,
+                zIndex: 20,
+              }}
+            >
+              <TouchableOpacity
+                activeOpacity={0.85}
+                onPress={() => {
+                  const qty = selected.quantity;
+                  if (qty <= 0.5) {
+                    deleteSelectedProduct(item.id);
+                  } else {
+                    const newQty = Math.max(0.5, qty - 0.5);
+                    updateSelectedProduct(item.id, { quantity: newQty });
+                  }
+                }}
+                style={{
+                  padding: wp(1.4),
+                  borderRadius: wp(1.6),
+                  backgroundColor: "#60B5FF",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <FontAwesome5 name="minus" size={wp(4.8)} color="white" />
+              </TouchableOpacity>
+
+              <Text
+                style={{
+                  fontFamily: "Gantari-SemiBold",
+                  fontSize: wp(5),
+                  marginHorizontal: wp(3),
+                  minWidth: wp(8),
+                  textAlign: "center",
+                }}
+              >
+                {selected.quantity}
+              </Text>
+
+              <TouchableOpacity
+                activeOpacity={0.85}
+                onPress={() => {
+                  const qty = selected.quantity;
+                  const newQty = Math.min(item.stock, qty + 0.5);
+                  updateSelectedProduct(item.id, { quantity: newQty });
+                }}
+                style={{
+                  padding: wp(1.4),
+                  borderRadius: wp(1.6),
+                  backgroundColor: strongPrimary,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <FontAwesome5 name="plus" size={wp(4.8)} color="white" />
+              </TouchableOpacity>
+            </View>
+          )}
         </TouchableOpacity>
       );
     },
-    [addSelectedProduct, deleteSelectedProduct, selectedProducts]
+    [addSelectedProduct, deleteSelectedProduct, selectedProducts, updateSelectedProduct]
   );
 
   // get the pending orders
@@ -163,29 +240,38 @@ const PosScreen = () => {
     const startUtc = fromZonedTime(startPHT, timeZone).toISOString();
     const endUtc = fromZonedTime(endPHT, timeZone).toISOString();
 
-    const pendingOrdersRef = query(
-      ref(db, "pendingOrders"),
-      orderByChild("date"),
-      startAt(startUtc),
-      endAt(endUtc)
+    const pendingOrdersRef = fsQuery(
+      collection(firestoreDb, "pendingOrders"),
+      orderBy("date"),
+      where("date", ">=", startUtc),
+      where("date", "<=", endUtc)
     );
 
-    const unsubscribe = onValue(pendingOrdersRef, (snapshot) => {
-      const pendingOrders: Record<string, PendingOrder> = snapshot.val() || {};
+    const unsubscribe = onSnapshot(
+      pendingOrdersRef,
+      (snapshot) => {
+        const pendingOrders: Record<string, PendingOrder> = {};
+        snapshot.docs.forEach((doc) => {
+          pendingOrders[doc.id] = doc.data() as PendingOrder;
+        });
 
-      // normalize each order
-      const normalizedOrders: Record<string, PendingOrder> = Object.fromEntries(
-        Object.entries(pendingOrders).map(([id, order]) => [
-          id,
-          {
-            ...order,
-            checkedBy: order.checkedBy ?? [], // ensure array
-          },
-        ])
-      );
+        const normalizedOrders: Record<string, PendingOrder> =
+          Object.fromEntries(
+            Object.entries(pendingOrders).map(([id, order]) => [
+              id,
+              {
+                ...order,
+                checkedBy: order.checkedBy ?? [],
+              },
+            ])
+          );
 
-      setOrders(normalizedOrders);
-    });
+        setOrders(normalizedOrders);
+      },
+      (error) => {
+        console.error("pendingOrders listener error:", error);
+      }
+    );
 
     return () => unsubscribe();
   }, [setOrders]);
@@ -211,32 +297,39 @@ const PosScreen = () => {
   }, [pairDevice]);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: primary,
-        paddingVertical: hp(2),
-        paddingHorizontal: wp(2),
-      }}
-    >
-      <SearchBar
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        placeholder="Search Products..."
-      />
+    // show centered spinner while loading, otherwise original UI
+    loading ? (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: primary }}>
+        <ActivityIndicator size="large" color="#FF9149" />
+      </View>
+    ) : (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: primary,
+          paddingVertical: hp(2),
+          paddingHorizontal: wp(2),
+        }}
+      >
+        <SearchBar
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder="Search Products..."
+        />
 
-      <FlatList
-        data={filteredProducts}
-        renderItem={renderProductList}
-        initialNumToRender={10}
-        maxToRenderPerBatch={5}
-        windowSize={5}
-        removeClippedSubviews={true}
-        style={{ marginTop: hp(1) }}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      />
-    </View>
+        <FlatList
+          data={filteredProducts}
+          renderItem={renderProductList}
+          initialNumToRender={10}
+          maxToRenderPerBatch={5}
+          windowSize={5}
+          removeClippedSubviews={true}
+          style={{ marginTop: hp(1) }}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        />
+      </View>
+    )
   );
 };
 

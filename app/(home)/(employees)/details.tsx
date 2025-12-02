@@ -18,7 +18,7 @@ import Toast from "react-native-toast-message";
 import { api } from "@/config/axios-api";
 import FloatingButton from "@/components/buttons/FloatingButton";
 import ModalTemplate from "@/components/modals/ModalTemplate";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, FontAwesome5 } from "@expo/vector-icons";
 import { useSelectedEmployeeContext } from "@/contexts/SelectedEmployee";
 import { router } from "expo-router";
 import formatMillisecondsToHours from "@/methods/date/formatMilisecondsToHours";
@@ -288,54 +288,79 @@ const EmployeeDetails = () => {
           Total Rate: ₱{computeTotalHoursWorked.totalRate.toFixed(2)}
         </Text>
       </View>
+      {/* prettier Set Rate modal */}
       <ModalTemplate
         visible={rateModalVisible}
-        height={hp(20)}
-        width={wp(80)}
+        height={hp(35)}
+        width={wp(86)}
         onClose={() => setRateModalVisible(false)}
       >
-        <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(5) }}>
-          Set Rate
-        </Text>
-        <View
-          style={{
-            borderWidth: wp(0.4),
-            borderRadius: wp(3.5),
-            marginTop: hp(1),
-            paddingHorizontal: hp(1),
-          }}
-        >
-          <TextInput
-            keyboardType="number-pad"
-            value={rate}
-            onChangeText={setRate}
+        <View style={{ alignItems: "center", paddingHorizontal: wp(3) }}>
+          <FontAwesome5
+            name="money-bill-wave"
+            size={wp(12)}
+            color={strongPrimary}
+            style={{ marginBottom: hp(1) }}
           />
+          <Text
+            style={{
+              fontFamily: "Gantari-Bold",
+              fontSize: wp(5),
+              textAlign: "center",
+            }}
+          >
+            Set Hourly Rate
+          </Text>
+          <Text
+            style={{
+              fontFamily: "Gantari-Regular",
+              fontSize: wp(3.8),
+              color: "#6B7280",
+              textAlign: "center",
+              marginTop: hp(0.8),
+            }}
+          >
+            Enter new hourly rate for{" "}
+            {selectedEmployee?.displayName ?? "the employee"}.
+          </Text>
         </View>
+
+        <View style={{ marginTop: hp(2), paddingHorizontal: wp(3) }}>
+          <View
+            style={{
+              borderWidth: wp(0.35),
+              borderRadius: wp(3),
+              paddingHorizontal: wp(3),
+              paddingVertical: hp(1),
+            }}
+          >
+            <TextInput
+              keyboardType="number-pad"
+              value={rate}
+              onChangeText={setRate}
+              placeholder="0.00"
+              style={{ fontFamily: "Gantari-Regular", fontSize: wp(4) }}
+            />
+          </View>
+        </View>
+
         <View
           style={{
             flexDirection: "row",
-            justifyContent: "flex-end",
-            flex: 1,
-            gap: wp(4),
-            marginTop: hp(2),
+            justifyContent: "space-between",
+            gap: wp(3),
+            marginTop: hp(3),
           }}
         >
-          <TouchableOpacity
-            activeOpacity={0.7}
+          <CommonButton
+            title="Cancel"
             onPress={() => setRateModalVisible(false)}
-          >
-            <Text
-              style={{
-                fontFamily: "Gantari-SemiBold",
-                fontSize: wp(6),
-                padding: wp(2),
-              }}
-            >
-              No
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.7}
+            backgroundColor="#F3F4F6"
+            titleColor="#111827"
+            marginTop={0}
+          />
+          <CommonButton
+            title="Set Rate"
             onPress={async () => {
               try {
                 const response = await api.post("/employee/set-rate", {
@@ -359,18 +384,10 @@ const EmployeeDetails = () => {
                 }
               }
             }}
-          >
-            <Text
-              style={{
-                color: "#ff6347",
-                fontFamily: "Gantari-SemiBold",
-                fontSize: wp(6),
-                padding: wp(2),
-              }}
-            >
-              Yes
-            </Text>
-          </TouchableOpacity>
+            backgroundColor={strongPrimary}
+            titleColor="#ffffff"
+            marginTop={0}
+          />
         </View>
       </ModalTemplate>
     </View>

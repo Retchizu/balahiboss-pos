@@ -16,13 +16,13 @@ import { useCustomerContext } from "@/contexts/CustomerContext";
 import { FontAwesome6 } from "@expo/vector-icons";
 
 import { router } from "expo-router";
-import useGetProducts from "@/hooks/useGetProducts";
+import { useProductContext } from "@/contexts/ProductContext";
 
 const RecentTransactionScreen = () => {
   const { recentTransactions } = useRecentTrasactionContext();
 
   const { customers } = useCustomerContext();
-  const {products} = useGetProducts();
+  const {products} = useProductContext();
 
   const sortedRecentTransactions = useMemo(() => {
     return recentTransactions.sort(

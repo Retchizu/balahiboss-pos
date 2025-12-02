@@ -3,7 +3,6 @@ import {
   Text,
   DimensionValue,
   StyleSheet,
-  TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
@@ -20,7 +19,7 @@ import calculateTotalProfit from "@/methods/invoice/calculateTotalProfit";
 import InvoiceForm from "@/types/InvoiceForm";
 import { FlatList } from "react-native-gesture-handler";
 import calculateSubTotalPrice from "@/methods/invoice/calculateSubTotalPrice";
-import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
+import { AntDesign, FontAwesome5, Entypo } from "@expo/vector-icons";
 import CommonButton from "@/components/buttons/CommonButton";
 import calculateInvoiceTotalPrice from "@/methods/invoice/calculateInvoiceTotalPrice";
 import { isAxiosError } from "axios";
@@ -333,54 +332,63 @@ const TransactionDetailScreen = () => {
       <ModalTemplate
         visible={isDeleteModalVisible}
         onClose={() => setIsDeleteModalVisible(false)}
-        height={hp(20)}
-        width={wp(90)}
+        height={hp(34)}
+        width={wp(88)}
       >
-        <Text style={{ fontFamily: "Gantari-Bold", fontSize: wp(5) }}>
-          Delete {customer.customerName}&apos;s transaction?
-        </Text>
-        <Text style={{ fontFamily: "Gantari-Regular", fontSize: wp(4) }}>
-          Are you sure you want to delete this transaction?
-        </Text>
+        <View style={{ alignItems: "center", paddingHorizontal: wp(3) }}>
+          <Entypo
+            name="trash"
+            size={wp(14)}
+            color="#ef4444"
+            style={{ marginBottom: hp(1) }}
+          />
+          <Text
+            style={{
+              fontFamily: "Gantari-Bold",
+              fontSize: wp(5),
+              textAlign: "center",
+            }}
+          >
+            Delete {customer.customerName}&apos;s transaction?
+          </Text>
+          <Text
+            style={{
+              fontFamily: "Gantari-Regular",
+              fontSize: wp(4),
+              color: "#6B7280",
+              textAlign: "center",
+              marginTop: hp(1),
+              lineHeight: hp(2.4),
+            }}
+          >
+            This action cannot be undone. The transaction will be permanently
+            removed.
+          </Text>
+        </View>
 
         <View
           style={{
             flexDirection: "row",
-            justifyContent: "flex-end",
-            alignItems: "flex-end",
-            flex: 1,
-            gap: wp(10),
+            justifyContent: "space-between",
+            gap: wp(3),
+            marginTop: hp(3),
           }}
         >
-          <TouchableOpacity
-            activeOpacity={0.7}
+          <CommonButton
+            title="Cancel"
             onPress={() => setIsDeleteModalVisible(false)}
-          >
-            <Text
-              style={{
-                fontFamily: "Gantari-SemiBold",
-                fontSize: wp(6),
-                padding: wp(2),
-              }}
-            >
-              No
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.7}
+            backgroundColor="#F3F4F6"
+            titleColor="#111827"
+            marginTop={0}
+          />
+          <CommonButton
+            title="Delete"
             onPress={async () => await deleteTransaction()}
-          >
-            <Text
-              style={{
-                color: "#ff6347",
-                fontFamily: "Gantari-SemiBold",
-                fontSize: wp(6),
-                padding: wp(2),
-              }}
-            >
-              Yes
-            </Text>
-          </TouchableOpacity>
+            backgroundColor="#ef4444"
+            titleColor="#ffffff"
+            marginTop={0}
+            loading={isDeletingTransaction}
+          />
         </View>
       </ModalTemplate>
     </View>

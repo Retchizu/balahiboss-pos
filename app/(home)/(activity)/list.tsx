@@ -4,6 +4,7 @@ import {
   Text,
   SectionList,
   StyleSheet,
+  ScrollView,
 } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
@@ -384,20 +385,76 @@ const ActivityLogScreen = () => {
       <ModalTemplate
         visible={filerModalVisible}
         onClose={() => setFilterModalVisible(false)}
+        height={hp(38)}
+        width={wp(90)}
       >
-        {renderSection(
-          "Filter By Category",
-          activityFilterOption,
-          activityFilter,
-          setActivityFilter
-        )}
-        <CommonButton
-          title="Close"
-          onPress={() => {
-            setFilterModalVisible(false);
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: wp(3),
+            marginBottom: hp(1),
+            paddingHorizontal: wp(1),
           }}
-          titleColor={primary}
-        />
+        >
+          <Ionicons name="funnel" size={wp(7)} color={strongPrimary} />
+          <View style={{ flex: 1 }}>
+            <Text
+              style={{
+                fontFamily: "Gantari-Bold",
+                fontSize: wp(4.4),
+                color: "#111827",
+              }}
+            >
+              Filters
+            </Text>
+            <Text
+              style={{
+                fontFamily: "Gantari-Regular",
+                fontSize: wp(3.4),
+                color: "#6B7280",
+                marginTop: hp(0.2),
+              }}
+            >
+              Filter activity logs by category.
+            </Text>
+          </View>
+        </View>
+
+        <View style={{ maxHeight: hp(22), marginTop: hp(1) }}>
+          <ScrollView contentContainerStyle={{ paddingBottom: hp(1) }}>
+            {renderSection(
+              "Filter By Category",
+              activityFilterOption,
+              activityFilter,
+              setActivityFilter
+            )}
+          </ScrollView>
+        </View>
+
+        <View
+          style={{
+            marginTop: hp(2),
+            flexDirection: "row",
+            justifyContent: "space-between",
+            gap: wp(3),
+          }}
+        >
+          <CommonButton
+            title="Cancel"
+            onPress={() => setFilterModalVisible(false)}
+            backgroundColor="#F3F4F6"
+            titleColor="#111827"
+            marginTop={0}
+          />
+          <CommonButton
+            title="Apply"
+            onPress={() => setFilterModalVisible(false)}
+            backgroundColor={strongPrimary}
+            titleColor={primary}
+            marginTop={0}
+          />
+        </View>
       </ModalTemplate>
     </View>
   );

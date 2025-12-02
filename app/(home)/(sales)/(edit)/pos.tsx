@@ -6,13 +6,13 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import useGetProducts from "@/hooks/useGetProducts";
 import Product from "@/types/Product";
 import { useSelectedProductContext } from "@/contexts/SelectedProductContext";
 import useProductsArray from "@/hooks/useProductsArray";
+import { useProductContext } from "@/contexts/ProductContext";
 
 const EditPosScreen = () => {
-  const { products } = useGetProducts();
+  const { products } = useProductContext();
   const { productsArray } = useProductsArray(products);
   const { deleteSelectedProduct, addSelectedProduct, selectedProducts } =
     useSelectedProductContext();

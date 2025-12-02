@@ -5,6 +5,8 @@ import {
   Text,
   Keyboard,
   StyleSheet,
+  ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -16,8 +18,6 @@ import SearchBar from "@/components/searchbars/SearchBar";
 import CommonButton from "@/components/buttons/CommonButton";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import DatePicker from "react-native-date-picker";
-import { api } from "@/config/axios-api";
-import { isAxiosError } from "axios";
 import { useCustomerContext } from "@/contexts/CustomerContext";
 import { useTransactionContext } from "@/contexts/TransactionContext";
 import { router } from "expo-router";
@@ -32,20 +32,24 @@ import calculateTotalPriceSold from "@/methods/invoice/report/calculateTotalPric
 import calculateTotalProfit from "@/methods/invoice/report/calculateTotalProfit";
 import ModalTemplate from "@/components/modals/ModalTemplate";
 import { Checkbox } from "expo-checkbox";
-import Toast from "react-native-toast-message";
 
 const TransactionListScreen = () => {
   // startDate
-  const [startDate, setStartDate] = useState<Date | null>(null);
   const [isStartDatePickerVisible, setIsStartDatePickerVisible] =
     useState(false);
 
   // endDate
-  const [endDate, setEndDate] = useState<Date | null>(null);
   const [isEndDatePickerVisible, setIsEndDatePickerVisible] = useState(false);
 
   // for list
-  const { transactions, setTransactions } = useTransactionContext();
+  const {
+    transactions,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    loading,
+  } = useTransactionContext();
   const { customers } = useCustomerContext();
   const { products } = useProductContext();
 
@@ -88,29 +92,6 @@ const TransactionListScreen = () => {
       </View>
     );
   };
-
-  // get transactions
-  useEffect(() => {
-    const getTransactions = async () => {
-      try {
-        const response = await api.get("/transaction/list", {
-          params: {
-            startDate,
-            endDate,
-          },
-        });
-        console.log(response.data.items);
-        setTransactions(response.data.items);
-      } catch (error) {
-        if (isAxiosError(error)) {
-          Toast.show({ type: "error", text1: `${error.response?.data.error}` });
-        }
-        console.error("Get Transaction Failed: ", error);
-      }
-    };
-
-    getTransactions();
-  }, [endDate, setTransactions, startDate, products]);
 
   // for transaction flatlist
   const renderTransactions = useCallback(
@@ -222,7 +203,9 @@ const TransactionListScreen = () => {
             // temporary fix for product not found
             const product = products[item.productId];
             if (!product) return false;
-            return products[item.productId].productName.toLowerCase().includes(searchQuery.toLowerCase());
+            return products[item.productId].productName
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase());
           });
         }
 
@@ -377,17 +360,49 @@ const TransactionListScreen = () => {
         onCancel={() => setIsEndDatePickerVisible(false)}
       />
 
-      <FlatList
-        data={filteredTransactions}
-        renderItem={renderTransactions}
-        style={{
-          marginTop: hp(1),
-        }}
-        initialNumToRender={10}
-        maxToRenderPerBatch={5}
-        windowSize={5}
-        removeClippedSubviews={true}
-      />
+      {loading ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: hp(2),
+          }}
+        >
+          <ActivityIndicator size="large" color="#FF9149" />
+        </View>
+      ) : filteredTransactions.length === 0 ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: hp(4),
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: "Gantari-Regular",
+              fontSize: wp(4),
+              color: "#6B7280",
+            }}
+          >
+            No transactions found.
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredTransactions}
+          renderItem={renderTransactions}
+          style={{
+            marginTop: hp(1),
+          }}
+          initialNumToRender={10}
+          maxToRenderPerBatch={5}
+          windowSize={5}
+          removeClippedSubviews={true}
+        />
+      )}
       {!isKeyboardVisible && (
         <View style={{ elevation: 2, padding: wp(2.5), borderRadius: wp(1) }}>
           <RenderReportValuePair
@@ -424,27 +439,85 @@ const TransactionListScreen = () => {
       <ModalTemplate
         visible={filerModalVisible}
         onClose={() => setFilterModalVisible(false)}
+        height={hp(45)}
+        width={wp(90)}
       >
-        {renderSection<NameFilter>(
-          "Filter by name",
-          nameFilterOptions,
-          nameFilter,
-          setNameFilter
-        )}
-        {renderSection<PaymentFilter>(
-          "Filter by payment",
-          paymentFilterOptions,
-          paymentFilter,
-          setPaymentFilter
-        )}
-
-        <CommonButton
-          title="Close"
-          onPress={() => {
-            setFilterModalVisible(false);
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: wp(3),
+            marginBottom: hp(1),
+            paddingHorizontal: wp(1),
           }}
-          titleColor={primary}
-        />
+        >
+          <Ionicons name="funnel" size={wp(7)} color={strongPrimary} />
+          <View style={{ flex: 1 }}>
+            <Text
+              style={{
+                fontFamily: "Gantari-Bold",
+                fontSize: wp(4.4),
+                color: "#111827",
+              }}
+            >
+              Filters
+            </Text>
+            <Text
+              style={{
+                fontFamily: "Gantari-Regular",
+                fontSize: wp(3.4),
+                color: "#6B7280",
+                marginTop: hp(0.2),
+              }}
+            >
+              Narrow down transactions by name or payment type.
+            </Text>
+          </View>
+        </View>
+
+        <View style={{ maxHeight: hp(38), marginTop: hp(1) }}>
+          {/* sections are scrollable in case content grows */}
+          <ScrollView contentContainerStyle={{ paddingBottom: hp(1) }}>
+            {renderSection<NameFilter>(
+              "Filter by name",
+              nameFilterOptions,
+              nameFilter,
+              setNameFilter
+            )}
+            {renderSection<PaymentFilter>(
+              "Filter by payment",
+              paymentFilterOptions,
+              paymentFilter,
+              setPaymentFilter
+            )}
+          </ScrollView>
+        </View>
+
+        <View
+          style={{
+            marginTop: hp(2),
+            flexDirection: "row",
+            justifyContent: "space-between",
+            gap: wp(3),
+          }}
+        >
+          <CommonButton
+            title="Cancel"
+            onPress={() => setFilterModalVisible(false)}
+            backgroundColor="#F3F4F6"
+            titleColor="#111827"
+            marginTop={0}
+          />
+          <CommonButton
+            title="Apply"
+            onPress={() => {
+              setFilterModalVisible(false);
+            }}
+            backgroundColor={strongPrimary}
+            titleColor={primary}
+            marginTop={0}
+          />
+        </View>
       </ModalTemplate>
     </View>
   );

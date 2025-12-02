@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import { primary, strongPrimary } from "@/theme/backgroundTheme";
 import {
@@ -16,7 +16,7 @@ import { isAxiosError } from "axios";
 import FloatingButton from "@/components/buttons/FloatingButton";
 import ModalTemplate from "@/components/modals/ModalTemplate";
 import Toast from "react-native-toast-message";
-import { ActivityIndicator } from "react-native-paper";
+import { Entypo } from "@expo/vector-icons";
 
 const UpdateScreen = () => {
   // product params
@@ -130,8 +130,8 @@ const UpdateScreen = () => {
   const deleteProduct = async () => {
     try {
       setIsDeleteModalVisible(false);
-      router.back();
       const response = await api.delete(`/product/delete/${id}`);
+      router.back();
       Toast.show({ type: "success", text1: `${response?.data.message}` });
     } catch (error) {
       if (isAxiosError(error)) {
@@ -300,50 +300,64 @@ const UpdateScreen = () => {
       <ModalTemplate
         visible={isDeleteModalVisible}
         onClose={() => setIsDeleteModalVisible(false)}
-        height={hp(20)}
-        width={wp(90)}
+        height={hp(34)}
+        width={wp(88)}
       >
-        <Text style={{ fontFamily: "Gantari-Bold", fontSize: wp(5) }}>
-          Are you sure you want to delete {product.productName}?
-        </Text>
+        <View style={{ alignItems: "center", paddingHorizontal: wp(3) }}>
+          <Entypo
+            name="trash"
+            size={wp(14)}
+            color="#ef4444"
+            style={{ marginBottom: hp(1) }}
+          />
+          <Text
+            style={{
+              fontFamily: "Gantari-Bold",
+              fontSize: wp(5),
+              textAlign: "center",
+            }}
+          >
+            Delete {product.productName}?
+          </Text>
+          <Text
+            style={{
+              fontFamily: "Gantari-Regular",
+              fontSize: wp(3.8),
+              color: "#6B7280",
+              textAlign: "center",
+              marginTop: hp(1),
+              lineHeight: hp(2.4),
+            }}
+          >
+            This action cannot be undone. All records related to this product
+            will be permanently removed.
+          </Text>
+        </View>
+
         <View
           style={{
             flexDirection: "row",
-            justifyContent: "flex-end",
-            alignItems: "flex-end",
-            flex: 1,
-            gap: wp(10),
+            justifyContent: "space-between",
+            gap: wp(3),
+            marginTop: hp(3),
           }}
         >
-          <TouchableOpacity
-            activeOpacity={0.7}
+          <CommonButton
+            title="Cancel"
             onPress={() => setIsDeleteModalVisible(false)}
-          >
-            <Text
-              style={{
-                fontFamily: "Gantari-SemiBold",
-                fontSize: wp(6),
-                padding: wp(2),
-              }}
-            >
-              No
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={async () => await deleteProduct()}
-          >
-            <Text
-              style={{
-                color: "#ff6347",
-                fontFamily: "Gantari-SemiBold",
-                fontSize: wp(6),
-                padding: wp(2),
-              }}
-            >
-              Yes
-            </Text>
-          </TouchableOpacity>
+            backgroundColor="#F3F4F6"
+            titleColor="#111827"
+            marginTop={0}
+          />
+          <CommonButton
+            title="Delete"
+            onPress={async () => {
+              await deleteProduct();
+            }}
+            backgroundColor="#ef4444"
+            titleColor="#ffffff"
+            marginTop={0}
+          />
         </View>
       </ModalTemplate>
       {
@@ -360,6 +374,7 @@ const UpdateScreen = () => {
             fontFamily: "Gantari-Bold",
             fontSize: wp(5),
             marginBottom: hp(2),
+            textAlign: "center",
           }}
         >
           Add Stock for {product.productName}
@@ -370,57 +385,36 @@ const UpdateScreen = () => {
           placeholder="Enter additional stock"
           inputType="numeric"
         />
+
         <View
           style={{
             flexDirection: "row",
-            marginTop: hp(3),
-            alignSelf: "flex-end",
+            justifyContent: "space-between",
             gap: wp(3),
+            marginTop: hp(3),
           }}
         >
-          <TouchableOpacity
-            activeOpacity={0.7}
+          <CommonButton
+            title="Cancel"
             onPress={() => {
               setAddStockModalVisible(false);
               setAdditionalStock("0");
             }}
-          >
-            <Text
-              style={{
-                fontFamily: "Gantari-SemiBold",
-                fontSize: wp(5),
-                padding: wp(2),
-              }}
-            >
-              Cancel
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.7}
+            backgroundColor="#F3F4F6"
+            titleColor="#111827"
+            marginTop={0}
+          />
+          <CommonButton
+            title="Add Stock"
             onPress={async () => {
               await addStock();
               setAddStockModalVisible(false);
             }}
-          >
-            {isAddStockLoading ? (
-              <ActivityIndicator
-                size="small"
-                color={strongPrimary}
-                style={{ padding: wp(2) }}
-              />
-            ) : (
-              <Text
-                style={{
-                  color: strongPrimary,
-                  fontFamily: "Gantari-SemiBold",
-                  fontSize: wp(5),
-                  padding: wp(2),
-                }}
-              >
-                Add Stock
-              </Text>
-            )}
-          </TouchableOpacity>
+            loading={isAddStockLoading}
+            backgroundColor={strongPrimary}
+            titleColor="#ffffff"
+            marginTop={0}
+          />
         </View>
       </ModalTemplate>
     </View>
