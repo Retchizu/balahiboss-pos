@@ -30,35 +30,40 @@ export const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { setRecentTranscations } = useRecentTrasactionContext();
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      collection(firestoreDb, "products"),
-      async (snapshot) => {
-        setLoading(true);
-        const data: Record<string, Product> = {};
-        snapshot.docs.forEach((doc) => {
-          data[doc.id] = doc.data() as Product;
+  setLoading(true);
+
+  const loadRecent = async () => {
+    try {
+      const response = await api.get("/transaction/list");
+      setRecentTranscations(response.data.items);
+    } catch (error) {
+      if (isAxiosError(error)) {
+        Toast.show({
+          type: "error",
+          text1: error.response?.data.message,
         });
-        setProducts(data);
-
-        const getRecentTransaction = async () => {
-          try {
-            const response = await api.get("/transaction/list");
-            setRecentTranscations(response.data.items);
-          } catch (error) {
-            if (isAxiosError(error))
-              Toast.show({
-                type: "error",
-                text1: `${error.response?.data.message}`,
-              });
-          }
-        };
-        await getRecentTransaction();
-        setLoading(false);
       }
-    );
+    }
+  };
 
-    return () => unsubscribe();
-  }, [setProducts, setRecentTranscations]);
+  loadRecent();
+
+  const unsubscribe = onSnapshot(
+    collection(firestoreDb, "products"),
+    (snapshot) => {
+      const data: Record<string, Product> = {};
+
+      snapshot.forEach((doc) => {
+        data[doc.id] = doc.data() as Product;
+      });
+
+      setProducts(data);
+      setLoading(false);
+    }
+  );
+
+  return () => unsubscribe();
+}, [setRecentTranscations]);
 
   return (
     <ProductContext.Provider value={{ products, setProducts,loading }}>
