@@ -1,3 +1,4 @@
+import { api } from "@/config/axios-api";
 import { firestoreDb } from "@/config/firebaseConfig";
 import Customer from "@/types/Customer";
 import { collection, onSnapshot } from "firebase/firestore";
@@ -27,12 +28,9 @@ export const CustomerProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onSnapshot(
       collection(firestoreDb, "customers"),
-      (snapshot) => {
-        const data: Record<string, Customer> = {};
-        snapshot.forEach((doc) => {
-          data[doc.id] = doc.data() as Customer;
-        });
-        setCustomers(data);
+      async (snapshot) => {
+        const response = await api.get("/customer/list");
+        setCustomers(response.data.items);
       }
     );
     return () => unsubscribe();

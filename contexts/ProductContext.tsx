@@ -34,18 +34,17 @@ export const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const loadRecent = async () => {
       try {
         const response = await api.get("/transaction/list");
+        console.log("res", response.data)
         setRecentTranscations(response.data.items);
       } catch (error) {
         if (isAxiosError(error)) {
           Toast.show({
             type: "error",
-            text1: error.response?.data.message,
+            text1: error.response?.data.error,
           });
         }
       }
     };
-
-    loadRecent();
 
     const unsubscribe = onSnapshot(
       collection(firestoreDb, "products"),
@@ -53,6 +52,7 @@ export const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const response = await api.get("/product/list");
         setProducts(response.data.items);
         setLoading(false);
+        loadRecent();
       }
     );
 
