@@ -30,8 +30,6 @@ export const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { setRecentTranscations } = useRecentTrasactionContext();
 
   useEffect(() => {
-    // const productsCollection = collection(firestoreDb, "products");
-    // const q = query(productsCollection, where("deleted", "!=", true));
 
     const getProducts = async () => {
       try {
@@ -39,7 +37,7 @@ export const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setProducts(response.data.items);
       } catch (error) {
         // Handle errors (e.g., network, expired token, or unauthenticated)
-        if (isAxiosError(error)) {
+        if (isAxiosError(error) && error.response?.status !== 401) {
           Toast.show({
             type: "error",
             text1: error.response?.data?.error || "Failed to load products",
@@ -61,7 +59,7 @@ export const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setRecentTranscations(response.data.items);
       } catch (error) {
         // Handle errors (e.g., network, expired token, or unauthenticated)
-        if (isAxiosError(error)) {
+        if (isAxiosError(error) && error.response?.status !== 401) {
           Toast.show({
             type: "error",
             text1: error.response?.data?.error || "Failed to load transactions",
@@ -71,7 +69,7 @@ export const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
     };
 
     loadRecent();
-  }, [setRecentTranscations]);
+  }, [setRecentTranscations, products]);
 
   useEffect(() => {
     const productsCollection = collection(firestoreDb, "products");

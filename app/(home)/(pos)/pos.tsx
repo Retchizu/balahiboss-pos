@@ -29,9 +29,11 @@ import Toast from "react-native-toast-message";
 import PendingOrder from "@/types/PendingOrder";
 import { useProductContext } from "@/contexts/ProductContext";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { useCustomerContext } from "@/contexts/CustomerContext";
 
 const PosScreen = () => {
-  const {products, loading} = useProductContext()
+  const {products, setProducts, loading} = useProductContext()
+  const {setCustomers} = useCustomerContext();
   const { productsArray } = useProductsArray(products);
   // search bar
   const [searchQuery, setSearchQuery] = useState("");
@@ -43,6 +45,37 @@ const PosScreen = () => {
     useSelectedProductContext();
   // allow quantity updates from the POS list
   const { updateSelectedProduct } = useSelectedProductContext();
+
+/*   useEffect(() => {
+    const productsCollection = collection(firestoreDb, "products");
+
+    const unsubscribe = onSnapshot(
+      productsCollection,
+      (snapshot) => {
+        const data: Record<string, Product> = {};
+        snapshot.forEach((doc) => {
+          data[doc.id] = doc.data() as Product;
+        });
+        setProducts(data); // lightweight, no network
+      },
+      (error) => {
+        console.error("products listener error:", error);
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
+
+   useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(firestoreDb, "customers"),
+      async (snapshot) => {
+        const response = await api.get("/customer/list");
+        setCustomers(response.data.items);
+      }
+    );
+    return () => unsubscribe();
+  }, []); */
 
   // prevents re-render unless depencies have changed
   const renderProductList = useCallback(

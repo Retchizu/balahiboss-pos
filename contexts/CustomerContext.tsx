@@ -33,7 +33,7 @@ export const CustomerProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const response = await api.get("/customer/list");
         setCustomers(response.data.items);
       } catch (error) {
-        if(isAxiosError(error)) {
+        if (isAxiosError(error)) {
           Toast.show({
             type: "error",
             text1: error.response?.data?.error || "Failed to load customers",
@@ -46,13 +46,22 @@ export const CustomerProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    const customersCollection = collection(firestoreDb, "customers");
+
     const unsubscribe = onSnapshot(
-      collection(firestoreDb, "customers"),
-      async (snapshot) => {
-        const response = await api.get("/customer/list");
-        setCustomers(response.data.items);
+      customersCollection,
+      (snapshot) => {
+        const data: Record<string, Customer> = {};
+        snapshot.forEach((doc) => {
+          data[doc.id] = doc.data() as Customer;
+        });
+        setCustomers(data);
+      },
+      (error) => {
+        console.error("customers listener error:", error);
       }
     );
+
     return () => unsubscribe();
   }, []);
 
