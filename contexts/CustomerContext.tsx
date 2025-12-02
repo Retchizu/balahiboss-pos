@@ -1,6 +1,7 @@
 import { api } from "@/config/axios-api";
 import { firestoreDb } from "@/config/firebaseConfig";
 import Customer from "@/types/Customer";
+import { isAxiosError } from "axios";
 import { collection, onSnapshot } from "firebase/firestore";
 import {
   createContext,
@@ -12,6 +13,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import Toast from "react-native-toast-message";
 
 type CustomerContextType = {
   customers: Record<string, Customer>;
@@ -26,6 +28,24 @@ export const CustomerProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [customers, setCustomers] = useState<Record<string, Customer>>({});
 
   useEffect(() => {
+    const getCustomers = async () => {
+      try {
+        const response = await api.get("/customer/list");
+        setCustomers(response.data.items);
+      } catch (error) {
+        if(isAxiosError(error)) {
+          Toast.show({
+            type: "error",
+            text1: error.response?.data?.error || "Failed to load customers",
+          });
+        }
+      }
+    };
+
+    getCustomers();
+  }, []);
+
+  useEffect(() => {
     const unsubscribe = onSnapshot(
       collection(firestoreDb, "customers"),
       async (snapshot) => {
@@ -34,7 +54,7 @@ export const CustomerProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }
     );
     return () => unsubscribe();
-  }, [setCustomers]);
+  }, []);
 
   return (
     <customerContext.Provider value={{ customers, setCustomers }}>

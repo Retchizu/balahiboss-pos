@@ -1,8 +1,6 @@
 import { UserProvider } from "@/contexts/UserContext";
-import { auth } from "@/config/firebaseConfig";
 import { useFonts } from "expo-font";
 import { router, SplashScreen, Stack } from "expo-router";
-import { onAuthStateChanged } from "firebase/auth";
 import { useEffect } from "react";
 import { PendingOrderProvider } from "@/contexts/PendingOrderContext";
 import { TransactionProvider } from "@/contexts/TransactionContext";
@@ -17,6 +15,8 @@ import Toast, {
 } from "react-native-toast-message";
 import { ImageBackground, View, StyleSheet } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/config/firebaseConfig";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -31,7 +31,7 @@ export default function RootLayout() {
     "Gantari-Regular": require("@/assets/fonts/Gantari-Regular.ttf"),
     "Gantari-SemiBold": require("@/assets/fonts/Gantari-SemiBold.ttf"),
     "Gantari-Thin": require("@/assets/fonts/Gantari-Thin.ttf"),
-    "Gantari-Italic": require("@/assets/fonts/Gantari-Italic.ttf")
+    "Gantari-Italic": require("@/assets/fonts/Gantari-Italic.ttf"),
   });
   useEffect(() => {
     if (loaded || error) {
@@ -52,30 +52,27 @@ export default function RootLayout() {
   });
 
   return (
-    <PendingOrderProvider>
-      <TransactionProvider>
-        <RecentTransactionProvider>
-          <ProductProvider>
-            <CustomerProvider>
-              <UserProvider>
+    <UserProvider>
+      <PendingOrderProvider>
+        <TransactionProvider>
+          <RecentTransactionProvider>
+            <ProductProvider>
+              <CustomerProvider>
                 <Stack>
                   <Stack.Screen
                     name="(home)"
                     options={{ headerShown: false }}
                   />
                   <Stack.Screen name="index" options={{ headerShown: false }} />
-                  <Stack.Screen
-                    name="about"
-                    options={{ headerShown:false}}
-                  />
+                  <Stack.Screen name="about" options={{ headerShown: false }} />
                 </Stack>
                 <Toast config={toastConfig} position="bottom" />
-              </UserProvider>
-            </CustomerProvider>
-          </ProductProvider>
-        </RecentTransactionProvider>
-      </TransactionProvider>
-    </PendingOrderProvider>
+              </CustomerProvider>
+            </ProductProvider>
+          </RecentTransactionProvider>
+        </TransactionProvider>
+      </PendingOrderProvider>
+    </UserProvider>
   );
 }
 

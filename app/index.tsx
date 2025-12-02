@@ -18,6 +18,7 @@ import { router } from "expo-router";
 import { useUserContext } from "@/contexts/UserContext";
 import Toast from "react-native-toast-message";
 import { signInUser } from "@/methods/auth/signInUser";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -44,16 +45,19 @@ const AuthScreen = () => {
     }
   }, [response]);
 
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      const tokenResult = await getIdTokenResult(user, true);
-      setRole(tokenResult.claims.role as string);
-      router.replace("/(home)/(pos)/pos");
-    } else {
-      // display error
-    }
-    setIsFetchingUser(false);
-  });
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const tokenResult = await getIdTokenResult(user, true);
+        setRole(tokenResult.claims.role as string);
+        await AsyncStorage.setItem("token", tokenResult.token);
+        router.replace("/(home)/(pos)/pos");
+      }
+      setIsFetchingUser(false);
+    });
+
+    return () => unsubscribe();
+  }, [setRole]);
 
   return (
     <SafeAreaView
@@ -104,7 +108,7 @@ const handleGoogleSignIn = async (
       if (error.response.status === 403 || error.response.status) {
         await auth.signOut();
       } else {
-        Toast.show({type:"error", text1: `${error.response.data.error}`})
+        Toast.show({ type: "error", text1: `${error.response.data.error}` });
       }
     }
     console.error("Google Sign-In Error:", (error as Error).message);
