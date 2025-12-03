@@ -1,8 +1,7 @@
 import { api } from "@/config/axios-api";
-import { firestoreDb } from "@/config/firebaseConfig";
 import Customer from "@/types/Customer";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { isAxiosError } from "axios";
-import { collection, onSnapshot } from "firebase/firestore";
 import {
   createContext,
   Dispatch,
@@ -26,44 +25,44 @@ const customerContext = createContext<CustomerContextType | undefined>(
 
 export const CustomerProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [customers, setCustomers] = useState<Record<string, Customer>>({});
+  const [token, setToken] = useState<string>("");
 
   useEffect(() => {
-    const getCustomers = async () => {
+    const fetchToken = async () => {
       try {
-        const response = await api.get("/customer/list");
+        const token = await AsyncStorage.getItem("token");
+        if (token) {
+          setToken(token);
+        }
+      } catch (error) {
+        console.error("Failed to fetch token from storage", error);
+      }
+    };
+
+    fetchToken();
+  }, [token]);
+  useEffect(() => {
+    const getCustomers = async () => {
+      if(!token || token.length <= 0) return;
+      try {
+        const response = await api.get("/customer/list", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setCustomers(response.data.items);
       } catch (error) {
         if (isAxiosError(error)) {
           Toast.show({
             type: "error",
-            text1: error.response?.data?.error || "Failed to load customers",
+            text1: `${error.response?.data?.error}` || "Failed to load customers",
           });
         }
       }
     };
 
     getCustomers();
-  }, []);
-
-  useEffect(() => {
-    const customersCollection = collection(firestoreDb, "customers");
-
-    const unsubscribe = onSnapshot(
-      customersCollection,
-      (snapshot) => {
-        const data: Record<string, Customer> = {};
-        snapshot.forEach((doc) => {
-          data[doc.id] = doc.data() as Customer;
-        });
-        setCustomers(data);
-      },
-      (error) => {
-        console.error("customers listener error:", error);
-      }
-    );
-
-    return () => unsubscribe();
-  }, []);
+  }, [token]);
 
   return (
     <customerContext.Provider value={{ customers, setCustomers }}>

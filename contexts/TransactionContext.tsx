@@ -1,8 +1,7 @@
 import { api } from "@/config/axios-api";
-import { firestoreDb } from "@/config/firebaseConfig";
 import Transaction from "@/types/Transaction";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { isAxiosError } from "axios";
-import { collection, onSnapshot } from "firebase/firestore";
 import {
   createContext,
   Dispatch,
@@ -38,14 +37,34 @@ export const TransactionProvider: FC<{ children: ReactNode }> = ({
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState("");
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        const storedToken = await AsyncStorage.getItem("token");
+        if (storedToken) {
+          setToken(storedToken);
+        }
+      } catch (error) {
+        console.error("Failed to fetch token from storage", error);
+      }
+    };
+
+    fetchToken();
+  }, [token]);
 
   const getTransactions = useCallback(async () => {
+    if (!token || token.length <= 0) return;
     setLoading(true);
     try {
       const response = await api.get("/transaction/list", {
         params: {
           startDate,
           endDate,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
       });
       console.log(response.data.items);
@@ -58,9 +77,9 @@ export const TransactionProvider: FC<{ children: ReactNode }> = ({
     } finally {
       setLoading(false)
     }
-  }, [startDate, endDate]);
+  }, [token, startDate, endDate]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     const unsubscribe = onSnapshot(
       collection(firestoreDb, "transactions"),
       async (snapshot) => {
@@ -70,7 +89,11 @@ export const TransactionProvider: FC<{ children: ReactNode }> = ({
 
     return () => unsubscribe();
   }, [getTransactions]);
+ */
 
+  useEffect(() => {
+    getTransactions();
+  }, [getTransactions]);
   return (
     <TransactionContext.Provider
       value={{

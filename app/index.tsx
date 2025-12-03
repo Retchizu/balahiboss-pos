@@ -50,7 +50,7 @@ const AuthScreen = () => {
       if (user) {
         const tokenResult = await getIdTokenResult(user, true);
         setRole(tokenResult.claims.role as string);
-        await AsyncStorage.setItem("token", tokenResult.token);
+        await AsyncStorage.setItem("token bruh", tokenResult.token);
         router.replace("/(home)/(pos)/pos");
       }
       setIsFetchingUser(false);

@@ -1,4 +1,11 @@
-import { FlatList, TouchableOpacity, View, Text, Image, ActivityIndicator } from "react-native";
+import {
+  FlatList,
+  TouchableOpacity,
+  View,
+  Text,
+  Image,
+  ActivityIndicator,
+} from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
 import SearchBar from "@/components/searchbars/SearchBar";
@@ -18,6 +25,7 @@ import {
   query as fsQuery,
   where,
   orderBy,
+  query,
 } from "firebase/firestore";
 import { firestoreDb } from "@/config/firebaseConfig";
 import searchProductsByName from "@/methods/search/searchProductsByName";
@@ -30,10 +38,11 @@ import PendingOrder from "@/types/PendingOrder";
 import { useProductContext } from "@/contexts/ProductContext";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useCustomerContext } from "@/contexts/CustomerContext";
+import Customer from "@/types/Customer";
 
 const PosScreen = () => {
-  const {products, setProducts, loading} = useProductContext()
-  const {setCustomers} = useCustomerContext();
+  const { products, setProducts, loading, initialized } = useProductContext();
+  const { setCustomers } = useCustomerContext();
   const { productsArray } = useProductsArray(products);
   // search bar
   const [searchQuery, setSearchQuery] = useState("");
@@ -46,36 +55,55 @@ const PosScreen = () => {
   // allow quantity updates from the POS list
   const { updateSelectedProduct } = useSelectedProductContext();
 
-/*   useEffect(() => {
-    const productsCollection = collection(firestoreDb, "products");
+  useEffect(() => {
+    if (!initialized) return;
+    const q = query(
+      collection(firestoreDb, "products")
+    );
 
     const unsubscribe = onSnapshot(
-      productsCollection,
-      (snapshot) => {
+      q,
+      async (snapshot) => {
         const data: Record<string, Product> = {};
         snapshot.forEach((doc) => {
           data[doc.id] = doc.data() as Product;
         });
         setProducts(data); // lightweight, no network
-      },
+        /*         const response = await api.get("/product/list");
+        setProducts(response.data.items); */
+      } /* ,
       (error) => {
         console.error("products listener error:", error);
-      }
+      } */
     );
 
     return () => unsubscribe();
-  }, []);
+  }, [setProducts, initialized]);
 
-   useEffect(() => {
+  useEffect(() => {
+    if (!initialized) return;
+    const customersCollection = collection(firestoreDb, "customers");
+
     const unsubscribe = onSnapshot(
-      collection(firestoreDb, "customers"),
+      customersCollection,
       async (snapshot) => {
-        const response = await api.get("/customer/list");
-        setCustomers(response.data.items);
-      }
+        const data: Record<string, Customer> = {};
+        snapshot.forEach((doc) => {
+          data[doc.id] = doc.data() as Customer;
+        });
+        setCustomers(data);
+        /*         const response = await api.get("/customer/list");
+        setCustomers(response.data.items); */
+      } /* ,
+      (error) => {
+        console.error("customers listener error:", error);
+      } */
     );
+
     return () => unsubscribe();
-  }, []); */
+  }, [setCustomers, initialized]);
+
+  
 
   // prevents re-render unless depencies have changed
   const renderProductList = useCallback(
@@ -257,7 +285,12 @@ const PosScreen = () => {
         </TouchableOpacity>
       );
     },
-    [addSelectedProduct, deleteSelectedProduct, selectedProducts, updateSelectedProduct]
+    [
+      addSelectedProduct,
+      deleteSelectedProduct,
+      selectedProducts,
+      updateSelectedProduct,
+    ]
   );
 
   // get the pending orders
@@ -332,7 +365,14 @@ const PosScreen = () => {
   return (
     // show centered spinner while loading, otherwise original UI
     loading ? (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: primary }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: primary,
+        }}
+      >
         <ActivityIndicator size="large" color="#FF9149" />
       </View>
     ) : (
