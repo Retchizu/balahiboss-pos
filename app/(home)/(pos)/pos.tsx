@@ -26,6 +26,7 @@ import {
   where,
   orderBy,
   query,
+  limit,
 } from "firebase/firestore";
 import { firestoreDb } from "@/config/firebaseConfig";
 import searchProductsByName from "@/methods/search/searchProductsByName";
@@ -38,7 +39,7 @@ import PendingOrder from "@/types/PendingOrder";
 import { useProductContext } from "@/contexts/ProductContext";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useCustomerContext } from "@/contexts/CustomerContext";
-import Customer from "@/types/Customer";
+import { api } from "@/config/axios-api";
 
 const PosScreen = () => {
   const { products, setProducts, loading, initialized } = useProductContext();
@@ -58,42 +59,42 @@ const PosScreen = () => {
   useEffect(() => {
     if (!initialized) return;
     const q = query(
-      collection(firestoreDb, "products")
+      collection(firestoreDb, "products"),
+      orderBy("updatedAt", "desc"),
+      limit(10)
     );
 
-    const unsubscribe = onSnapshot(
-      q,
-      async (snapshot) => {
-        const data: Record<string, Product> = {};
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
+      /*         const data: Record<string, Product> = {};
         snapshot.forEach((doc) => {
           data[doc.id] = doc.data() as Product;
         });
-        setProducts(data); // lightweight, no network
-        /*         const response = await api.get("/product/list");
-        setProducts(response.data.items); */
-      } /* ,
-      (error) => {
-        console.error("products listener error:", error);
-      } */
-    );
+        setProducts(data); // lightweight, no network */
+      const response = await api.get("/product/list");
+      setProducts(response.data.items);
+    });
 
     return () => unsubscribe();
   }, [setProducts, initialized]);
 
   useEffect(() => {
     if (!initialized) return;
-    const customersCollection = collection(firestoreDb, "customers");
+    const q = query(
+      collection(firestoreDb, "customers"),
+      orderBy("updatedAt", "desc"),
+      limit(10)
+    );
 
     const unsubscribe = onSnapshot(
-      customersCollection,
+      q,
       async (snapshot) => {
-        const data: Record<string, Customer> = {};
+        /*         const data: Record<string, Customer> = {};
         snapshot.forEach((doc) => {
           data[doc.id] = doc.data() as Customer;
         });
-        setCustomers(data);
-        /*         const response = await api.get("/customer/list");
-        setCustomers(response.data.items); */
+        setCustomers(data); */
+        const response = await api.get("/customer/list");
+        setCustomers(response.data.items);
       } /* ,
       (error) => {
         console.error("customers listener error:", error);
@@ -102,8 +103,6 @@ const PosScreen = () => {
 
     return () => unsubscribe();
   }, [setCustomers, initialized]);
-
-  
 
   // prevents re-render unless depencies have changed
   const renderProductList = useCallback(
