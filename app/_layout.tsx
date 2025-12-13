@@ -54,9 +54,9 @@ export default function RootLayout() {
   return (
     <UserProvider>
       <PendingOrderProvider>
-        <TransactionProvider>
-          <RecentTransactionProvider>
-            <ProductProvider>
+        <ProductProvider>
+          <TransactionProvider>
+            <RecentTransactionProvider>
               <CustomerProvider>
                 <Stack>
                   <Stack.Screen
@@ -68,9 +68,9 @@ export default function RootLayout() {
                 </Stack>
                 <Toast config={toastConfig} position="bottom" />
               </CustomerProvider>
-            </ProductProvider>
-          </RecentTransactionProvider>
-        </TransactionProvider>
+            </RecentTransactionProvider>
+          </TransactionProvider>
+        </ProductProvider>
       </PendingOrderProvider>
     </UserProvider>
   );

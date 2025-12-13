@@ -1,6 +1,5 @@
 import { api } from "@/config/axios-api";
 import Transaction from "@/types/Transaction";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { isAxiosError } from "axios";
 import {
   createContext,
@@ -14,6 +13,7 @@ import {
   useState,
 } from "react";
 import Toast from "react-native-toast-message";
+import { useProductContext } from "./ProductContext";
 
 type TransactionContextType = {
   transactions: Transaction[];
@@ -33,41 +33,21 @@ export const TransactionProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const {products} = useProductContext();
 
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [loading, setLoading] = useState(false);
-  const [token, setToken] = useState("");
-
-  useEffect(() => {
-    const fetchToken = async () => {
-      try {
-        const storedToken = await AsyncStorage.getItem("token");
-        if (storedToken) {
-          setToken(storedToken);
-        }
-      } catch (error) {
-        console.error("Failed to fetch token from storage", error);
-      }
-    };
-
-    fetchToken();
-  }, [token]);
 
   const getTransactions = useCallback(async () => {
-    if (!token || token.length <= 0) return;
     setLoading(true);
     try {
       const response = await api.get("/transaction/list", {
         params: {
           startDate,
           endDate,
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        }
       });
-      console.log(response.data.items);
       setTransactions(response.data.items);
     } catch (error) {
       if (isAxiosError(error)) {
@@ -77,19 +57,8 @@ export const TransactionProvider: FC<{ children: ReactNode }> = ({
     } finally {
       setLoading(false)
     }
-  }, [token, startDate, endDate]);
-
-  /* useEffect(() => {
-    const unsubscribe = onSnapshot(
-      collection(firestoreDb, "transactions"),
-      async (snapshot) => {
-        await getTransactions();
-      }
-    );
-
-    return () => unsubscribe();
-  }, [getTransactions]);
- */
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startDate, endDate, products]);
 
   useEffect(() => {
     getTransactions();

@@ -26,7 +26,6 @@ import {
   where,
   orderBy,
   query,
-  limit,
 } from "firebase/firestore";
 import { firestoreDb } from "@/config/firebaseConfig";
 import searchProductsByName from "@/methods/search/searchProductsByName";
@@ -40,11 +39,15 @@ import { useProductContext } from "@/contexts/ProductContext";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useCustomerContext } from "@/contexts/CustomerContext";
 import { api } from "@/config/axios-api";
+import { useRecentTrasactionContext } from "@/contexts/RecentTransactionContext";
 
 const PosScreen = () => {
-  const { products, setProducts, loading, initialized } = useProductContext();
+  const { products, setProducts } = useProductContext();
   const { setCustomers } = useCustomerContext();
   const { productsArray } = useProductsArray(products);
+
+  const { setRecentTranscations } = useRecentTrasactionContext();
+
   // search bar
   const [searchQuery, setSearchQuery] = useState("");
   const filteredProducts = useMemo(() => {
@@ -56,53 +59,166 @@ const PosScreen = () => {
   // allow quantity updates from the POS list
   const { updateSelectedProduct } = useSelectedProductContext();
 
+  // Only show loading if no products exist (allows immediate interaction if data exists)
+  const [loading, setLoading] = useState(Object.keys(products).length === 0);
+
+  // Load initial data immediately (non-blocking)
   useEffect(() => {
-    if (!initialized) return;
+    let isMounted = true;
+    let hasLoadedInitial = false;
+
+    const loadInitialData = async () => {
+      try {
+        // Load products and transactions in parallel for faster initial load
+        const [productResponse, transactionResponse] = await Promise.all([
+          api.get("/product/list"),
+          api.get("/transaction/list"),
+        ]);
+
+        if (isMounted) {
+          setProducts(productResponse.data.items);
+          setRecentTranscations(transactionResponse.data.items);
+          setLoading(false);
+          hasLoadedInitial = true;
+        }
+      } catch (error) {
+        console.error("Error loading initial data:", error);
+        if (isMounted) {
+          setLoading(false);
+          hasLoadedInitial = true;
+        }
+      }
+    };
+
+    // Start loading immediately (non-blocking)
+    loadInitialData();
+
+    // Set up Firestore listener for real-time updates (separate from initial load)
+    let debounceTimer: NodeJS.Timeout | null = null;
+    let isFirstSnapshot = true;
+
     const q = query(
       collection(firestoreDb, "products"),
-      orderBy("updatedAt", "desc"),
-      limit(10)
-    );
-
-    const unsubscribe = onSnapshot(q, async (snapshot) => {
-      /*         const data: Record<string, Product> = {};
-        snapshot.forEach((doc) => {
-          data[doc.id] = doc.data() as Product;
-        });
-        setProducts(data); // lightweight, no network */
-      const response = await api.get("/product/list");
-      setProducts(response.data.items);
-    });
-
-    return () => unsubscribe();
-  }, [setProducts, initialized]);
-
-  useEffect(() => {
-    if (!initialized) return;
-    const q = query(
-      collection(firestoreDb, "customers"),
-      orderBy("updatedAt", "desc"),
-      limit(10)
+      where("deleted", "==", false)
     );
 
     const unsubscribe = onSnapshot(
       q,
       async (snapshot) => {
-        /*         const data: Record<string, Customer> = {};
-        snapshot.forEach((doc) => {
-          data[doc.id] = doc.data() as Customer;
-        });
-        setCustomers(data); */
-        const response = await api.get("/customer/list");
-        setCustomers(response.data.items);
-      } /* ,
+        // Skip first snapshot - we're already loading initial data
+        if (isFirstSnapshot) {
+          isFirstSnapshot = false;
+          // If initial load already completed, process this snapshot
+          if (!hasLoadedInitial) {
+            return;
+          }
+        }
+
+        // Only process updates after initial load completes
+        if (!hasLoadedInitial) {
+          return;
+        }
+
+        // Debounce to prevent excessive API calls
+        if (debounceTimer) {
+          clearTimeout(debounceTimer);
+        }
+
+        debounceTimer = setTimeout(async () => {
+          try {
+            const productResponse = await api.get("/product/list");
+            const transactionResponse = await api.get("/transaction/list");
+            if (isMounted) {
+              setProducts(productResponse.data.items);
+              setRecentTranscations(transactionResponse.data.items);
+            }
+          } catch (error) {
+            console.error("Error updating products:", error);
+          }
+        }, 1000); // 500ms debounce for updates
+      },
       (error) => {
-        console.error("customers listener error:", error);
-      } */
+        console.error("Products listener error:", error);
+        if (isMounted && !hasLoadedInitial) {
+          setLoading(false);
+          hasLoadedInitial = true;
+        }
+      }
     );
 
-    return () => unsubscribe();
-  }, [setCustomers, initialized]);
+    return () => {
+      isMounted = false;
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
+      unsubscribe();
+    };
+  }, [setProducts, setRecentTranscations]);
+
+  // Optimized customers listener - load initial data immediately
+  useEffect(() => {
+    let isMounted = true;
+    let debounceTimer: NodeJS.Timeout | null = null;
+    let isFirstSnapshot = true;
+
+    // Load initial customers immediately (non-blocking)
+    const loadInitialCustomers = async () => {
+      try {
+        const response = await api.get("/customer/list");
+        if (isMounted) {
+          setCustomers(response.data.items);
+        }
+      } catch (error) {
+        console.error("Error loading customers:", error);
+      }
+    };
+
+    loadInitialCustomers();
+
+    // Set up Firestore listener for real-time updates
+    const q = query(
+      collection(firestoreDb, "customers"),
+      where("deleted", "==", false)
+    );
+
+    const unsubscribe = onSnapshot(
+      q,
+      async (snapshot) => {
+        // Skip first snapshot
+        if (isFirstSnapshot) {
+          isFirstSnapshot = false;
+          return;
+        }
+
+        // Debounce updates
+        if (debounceTimer) {
+          clearTimeout(debounceTimer);
+        }
+
+        debounceTimer = setTimeout(async () => {
+          try {
+            const response = await api.get("/customer/list");
+            if (isMounted) {
+              setCustomers(response.data.items);
+            }
+          } catch (error) {
+            console.error("Error updating customers:", error);
+          }
+        }, 1000);
+      },
+      (error) => {
+        console.error("Customers listener error:", error);
+      }
+    );
+
+    return () => {
+      isMounted = false;
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
+      unsubscribe();
+    };
+  }, [setCustomers]);
 
   // prevents re-render unless depencies have changed
   const renderProductList = useCallback(
