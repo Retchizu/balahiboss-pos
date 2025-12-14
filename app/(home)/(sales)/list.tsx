@@ -32,6 +32,9 @@ import calculateTotalPriceSold from "@/methods/invoice/report/calculateTotalPric
 import calculateTotalProfit from "@/methods/invoice/report/calculateTotalProfit";
 import ModalTemplate from "@/components/modals/ModalTemplate";
 import { Checkbox } from "expo-checkbox";
+import { api } from "@/config/axios-api";
+import { isAxiosError } from "axios";
+import Toast from "react-native-toast-message";
 
 const TransactionListScreen = () => {
   // startDate
@@ -44,14 +47,40 @@ const TransactionListScreen = () => {
   // for list
   const {
     transactions,
+    setTransactions,
     startDate,
     setStartDate,
     endDate,
     setEndDate,
-    loading,
   } = useTransactionContext();
   const { customers } = useCustomerContext();
   const { products } = useProductContext();
+  const [loading, setLoading] = useState(false);
+
+  // Get transactions function
+  const getTransactions = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await api.get("/transaction/list", {
+        params: {
+          startDate,
+          endDate,
+        }
+      });
+      setTransactions(response.data.items);
+    } catch (error) {
+      if (isAxiosError(error)) {
+        Toast.show({ type: "error", text1: `${error.response?.data.error}` });
+      }
+      console.error("Get Transaction Failed: ", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [startDate, endDate, setTransactions]);
+
+  useEffect(() => {
+    getTransactions();
+  }, [getTransactions]);
 
   // render key value pair
   type RenderLabelValuePairProps = {
