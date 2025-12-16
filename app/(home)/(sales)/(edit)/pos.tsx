@@ -30,7 +30,7 @@ const EditPosScreen = () => {
           return "#AFDDFF";
         }
 
-        return secondary;
+        return "rgba(255,255,255,0.85)";
       };
 
       return (
@@ -40,6 +40,8 @@ const EditPosScreen = () => {
             marginVertical: hp(0.5),
             borderRadius: wp(2),
             backgroundColor: productCardViewBackgroundColor(item),
+            borderWidth: 1,
+            borderColor: "rgba(0,0,0,0.6)",
             alignItems: "center",
           }}
           activeOpacity={0.7}

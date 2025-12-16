@@ -1,17 +1,17 @@
 import {
-  View,
-  TouchableOpacity,
-  FlatList,
-  Text,
-  Keyboard,
-  StyleSheet,
-  ActivityIndicator,
-  ScrollView,
+    View,
+    TouchableOpacity,
+    FlatList,
+    Text,
+    Keyboard,
+    StyleSheet,
+    ActivityIndicator,
+    ScrollView,
 } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
+    heightPercentageToDP as hp,
+    widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
 import SearchBar from "@/components/searchbars/SearchBar";
@@ -37,557 +37,601 @@ import { isAxiosError } from "axios";
 import Toast from "react-native-toast-message";
 
 const TransactionListScreen = () => {
-  // startDate
-  const [isStartDatePickerVisible, setIsStartDatePickerVisible] =
-    useState(false);
+    // startDate
+    const [isStartDatePickerVisible, setIsStartDatePickerVisible] =
+        useState(false);
 
-  // endDate
-  const [isEndDatePickerVisible, setIsEndDatePickerVisible] = useState(false);
+    // endDate
+    const [isEndDatePickerVisible, setIsEndDatePickerVisible] = useState(false);
 
-  // for list
-  const {
-    transactions,
-    setTransactions,
-    startDate,
-    setStartDate,
-    endDate,
-    setEndDate,
-  } = useTransactionContext();
-  const { customers } = useCustomerContext();
-  const { products } = useProductContext();
-  const [loading, setLoading] = useState(false);
+    // for list
+    const {
+        transactions,
+        setTransactions,
+        startDate,
+        setStartDate,
+        endDate,
+        setEndDate,
+    } = useTransactionContext();
+    const { customers } = useCustomerContext();
+    const { products } = useProductContext();
+    const [loading, setLoading] = useState(false);
 
-  // Get transactions function
-  const getTransactions = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await api.get("/transaction/list", {
-        params: {
-          startDate,
-          endDate,
-        }
-      });
-      setTransactions(response.data.items);
-    } catch (error) {
-      if (isAxiosError(error)) {
-        Toast.show({ type: "error", text1: `${error.response?.data.error}` });
-      }
-      console.error("Get Transaction Failed: ", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [startDate, endDate, setTransactions]);
-
-  useEffect(() => {
-    getTransactions();
-  }, [getTransactions]);
-
-  // render key value pair
-  type RenderLabelValuePairProps = {
-    label: string;
-    value: number;
-  };
-
-  const RenderReportValuePair: React.FC<RenderLabelValuePairProps> = ({
-    label,
-    value,
-  }) => {
-    return (
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <Text
-          style={{
-            fontFamily: "Gantari-Medium",
-            fontSize: wp(5),
-            color: "rgba(0,0,0,0.6)",
-          }}
-        >
-          {label}
-        </Text>
-        <Text
-          style={{
-            fontFamily: "Gantari-SemiBold",
-            fontSize: wp(5),
-            textAlign: "right",
-            flex: 2,
-          }}
-        >
-          ₱ {value.toFixed(2)}
-        </Text>
-      </View>
-    );
-  };
-
-  // for transaction flatlist
-  const renderTransactions = useCallback(
-    ({ item }: { item: Transaction }) => {
-      const customer = customers[item.customerId];
-      return (
-        <TouchableOpacity
-          style={{
-            flexDirection: "row",
-            padding: wp(4),
-            backgroundColor: secondary,
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginVertical: hp(0.5),
-            borderRadius: wp(4),
-          }}
-          activeOpacity={0.7}
-          onPress={() => {
-            console.log(item.id);
-            router.push({
-              pathname: "../[id]",
-              params: { id: item.id },
+    // Get transactions function
+    const getTransactions = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response = await api.get("/transaction/list", {
+                params: {
+                    startDate,
+                    endDate,
+                },
             });
-          }}
-        >
-          <Text
-            style={{
-              flex: 1,
-              marginRight: hp(0.5),
-              fontFamily: "Gantari-SemiBold",
-              fontSize: wp(4.5),
-              color:
-                item.cashPayment === 0 && item.onlinePayment === 0
-                  ? "red"
-                  : "black",
-            }}
-          >
-            {customer.customerName}
-          </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: wp(1),
-            }}
-          >
-            <FontAwesome6 name="clock-four" size={wp(4)} color="black" />
-            <Text style={{ fontFamily: "Gantari-Regular", fontSize: wp(3.5) }}>
-              {new Date(item.date).toLocaleString("en-PH", {
-                dateStyle: "medium",
-                timeStyle: "short",
-              })}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      );
-    },
-    [customers]
-  );
-
-  //hide the report summary when searching
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => {
-        setIsKeyboardVisible(true);
-      }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => {
-        setIsKeyboardVisible(false);
-      }
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
-  // search query
-  const [searchQuery, setSearchQuery] = useState("");
-  // filter options
-  type NameFilter = "Customer" | "Product";
-  type PaymentFilter = "All" | "Cash" | "Online";
-
-  const nameFilterOptions: NameFilter[] = ["Customer", "Product"];
-  const paymentFilterOptions: PaymentFilter[] = ["All", "Cash", "Online"];
-
-  const [nameFilter, setNameFilter] = useState<NameFilter>("Customer");
-  const [paymentFilter, setPaymentFilter] = useState<PaymentFilter>("All");
-  const [filerModalVisible, setFilterModalVisible] = useState(false);
-
-  const filteredTransactions = useMemo(() => {
-    return transactions
-      .filter((t) => {
-        // --- Payment filter ---
-        if (paymentFilter === "Cash" && t.cashPayment === 0) return false;
-        if (paymentFilter === "Online" && t.onlinePayment === 0) return false;
-
-        // --- Name / search filter ---
-        if (nameFilter === "Customer") {
-          return customers[t.customerId].customerName
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase());
-        } else if (nameFilter === "Product") {
-          return t.items.some((item) => {
-            // temporary fix for product not found
-            const product = products[item.productId];
-            if (!product) return false;
-            return products[item.productId].productName
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase());
-          });
+            setTransactions(response.data.items);
+        } catch (error) {
+            if (isAxiosError(error)) {
+                Toast.show({
+                    type: "error",
+                    text1: `${error.response?.data.error}`,
+                });
+            }
+            console.error("Get Transaction Failed: ", error);
+        } finally {
+            setLoading(false);
         }
+    }, [startDate, endDate, setTransactions]);
 
-        return true; // fallback
-      })
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [
-    transactions,
-    paymentFilter,
-    nameFilter,
-    customers,
-    searchQuery,
-    products,
-  ]);
+    useEffect(() => {
+        getTransactions();
+    }, [getTransactions]);
 
-  // render the options
-  const renderSection = <T extends string>(
-    title: string,
-    options: readonly T[],
-    selected: T,
-    onChange: (value: T) => void
-  ) => (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      {options.map((opt) => (
-        <TouchableOpacity
-          key={opt}
-          style={styles.option}
-          onPress={() => onChange(opt)}
-        >
-          <Checkbox
-            value={selected === opt}
-            onValueChange={() => onChange(opt)}
-            style={styles.checkbox}
-          />
-          <Text style={styles.optionText}>{opt}</Text>
-        </TouchableOpacity>
-      ))}
-    </View>
-  );
+    // render key value pair
+    type RenderLabelValuePairProps = {
+        label: string;
+        value: number;
+    };
 
-  return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: primary,
-        paddingVertical: hp(2),
-        paddingHorizontal: wp(2),
-      }}
-    >
-      <View style={{ flexDirection: "row", gap: wp(2) }}>
-        <SearchBar
-          onChangeText={setSearchQuery}
-          value={searchQuery}
-          placeholder={
-            nameFilter === "Product"
-              ? "Search By Products..."
-              : "Search By Customers..."
-          }
-          row
-        />
-        <TouchableOpacity
-          style={{
-            padding: wp(2),
-            borderRadius: wp(4),
-            backgroundColor: secondary,
-          }}
-        >
-          <Ionicons
-            name="funnel"
-            size={24}
-            color={"black"}
-            onPress={() => setFilterModalVisible(true)}
-          />
-        </TouchableOpacity>
-      </View>
+    const RenderReportValuePair: React.FC<RenderLabelValuePairProps> = ({
+        label,
+        value,
+    }) => {
+        return (
+            <View
+                style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                }}
+            >
+                <Text
+                    style={{
+                        fontFamily: "Gantari-Medium",
+                        fontSize: wp(5),
+                        color: "rgba(0,0,0,0.6)",
+                    }}
+                >
+                    {label}
+                </Text>
+                <Text
+                    style={{
+                        fontFamily: "Gantari-SemiBold",
+                        fontSize: wp(5),
+                        textAlign: "right",
+                        flex: 2,
+                    }}
+                >
+                    ₱ {value.toFixed(2)}
+                </Text>
+            </View>
+        );
+    };
 
-      <View
-        style={{ flexDirection: "row", justifyContent: "center", gap: wp(10) }}
-      >
-        <CommonButton
-          onPress={() => {
-            setIsStartDatePickerVisible(true);
-          }}
-          title={
-            startDate
-              ? startDate.toLocaleString("en-PH", {
-                  dateStyle: "medium",
-                })
-              : "Start Date"
-          }
-          backgroundColor={strongPrimary}
-          titleColor={"#9A3412"}
-          marginTop={hp(1)}
-          iconLeft={{
-            family: "AntDesign",
-            name: "calendar",
-            color: "#9A3412",
-            size: wp(5.5),
-          }}
-        />
-        <CommonButton
-          onPress={() => {
-            setIsEndDatePickerVisible(true);
-          }}
-          title={
-            endDate
-              ? endDate.toLocaleString("en-PH", {
-                  dateStyle: "medium",
-                })
-              : "End Date"
-          }
-          backgroundColor={strongPrimary}
-          titleColor={"#9A3412"}
-          marginTop={hp(1)}
-          iconLeft={{
-            family: "AntDesign",
-            name: "calendar",
-            color: "#9A3412",
-            size: wp(5.5),
-          }}
-        />
-      </View>
-      {
-        // start date picker
-      }
-      <DatePicker
-        modal
-        open={isStartDatePickerVisible}
-        date={startDate ?? new Date()}
-        mode="date"
-        onConfirm={(selectedDate) => {
-          setIsStartDatePickerVisible(false);
-          selectedDate.setHours(0, 0, 0, 0);
-          setStartDate(selectedDate);
-        }}
-        onCancel={() => setIsStartDatePickerVisible(false)}
-      />
-      {
-        // end date picker
-      }
-      <DatePicker
-        modal
-        open={isEndDatePickerVisible}
-        date={endDate ?? new Date()}
-        mode="date"
-        onConfirm={(selectedDate) => {
-          setIsEndDatePickerVisible(false);
-          selectedDate.setHours(11, 59, 59, 999);
-          setEndDate(selectedDate);
-        }}
-        onCancel={() => setIsEndDatePickerVisible(false)}
-      />
+    // for transaction flatlist
+    const renderTransactions = useCallback(
+        ({ item, index }: { item: Transaction; index: number }) => {
+            const customer = customers[item.customerId];
+            return (
+                <TouchableOpacity
+                    style={{
+                        flexDirection: "row",
+                        padding: wp(4),
+                        backgroundColor: "rgba(255,255,255,0.85)",
+                        borderColor: "rgba(0,0,0,0.6)",
+                        borderWidth: 1,
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginVertical: hp(0.5),
+                        borderRadius: wp(4),
+                    }}
+                    activeOpacity={0.7}
+                    onPress={() => {
+                        console.log(item.id);
+                        router.push({
+                            pathname: "../[id]",
+                            params: { id: item.id },
+                        });
+                    }}
+                >
+                    <Text
+                        style={{
+                            flex: 1,
+                            marginRight: hp(0.5),
+                            fontFamily: "Gantari-SemiBold",
+                            fontSize: wp(4.5),
+                            color:
+                                item.cashPayment === 0 &&
+                                item.onlinePayment === 0
+                                    ? "red"
+                                    : "black",
+                        }}
+                    >
+                        {index + 1}. {customer.customerName}
+                    </Text>
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: wp(1),
+                        }}
+                    >
+                        <FontAwesome6
+                            name="clock-four"
+                            size={wp(4)}
+                            color="black"
+                        />
+                        <Text
+                            style={{
+                                fontFamily: "Gantari-Regular",
+                                fontSize: wp(3.5),
+                            }}
+                        >
+                            {new Date(item.date).toLocaleString("en-PH", {
+                                dateStyle: "medium",
+                                timeStyle: "short",
+                            })}
+                        </Text>
+                    </View>
+                </TouchableOpacity>
+            );
+        },
+        [customers]
+    );
 
-      {loading ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: hp(2),
-          }}
-        >
-          <ActivityIndicator size="large" color="#FF9149" />
+    //hide the report summary when searching
+    const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            "keyboardDidShow",
+            () => {
+                setIsKeyboardVisible(true);
+            }
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            "keyboardDidHide",
+            () => {
+                setIsKeyboardVisible(false);
+            }
+        );
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, []);
+    // search query
+    const [searchQuery, setSearchQuery] = useState("");
+    // filter options
+    type NameFilter = "Customer" | "Product";
+    type PaymentFilter = "All" | "Cash" | "Online";
+
+    const nameFilterOptions: NameFilter[] = ["Customer", "Product"];
+    const paymentFilterOptions: PaymentFilter[] = ["All", "Cash", "Online"];
+
+    const [nameFilter, setNameFilter] = useState<NameFilter>("Customer");
+    const [paymentFilter, setPaymentFilter] = useState<PaymentFilter>("All");
+    const [filerModalVisible, setFilterModalVisible] = useState(false);
+
+    const filteredTransactions = useMemo(() => {
+        return transactions
+            .filter((t) => {
+                // --- Payment filter ---
+                if (paymentFilter === "Cash" && t.cashPayment === 0)
+                    return false;
+                if (paymentFilter === "Online" && t.onlinePayment === 0)
+                    return false;
+
+                // --- Name / search filter ---
+                if (nameFilter === "Customer") {
+                    return customers[t.customerId].customerName
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase());
+                } else if (nameFilter === "Product") {
+                    return t.items.some((item) => {
+                        // temporary fix for product not found
+                        const product = products[item.productId];
+                        if (!product) return false;
+                        return products[item.productId].productName
+                            .toLowerCase()
+                            .includes(searchQuery.toLowerCase());
+                    });
+                }
+
+                return true; // fallback
+            })
+            .sort(
+                (a, b) =>
+                    new Date(b.date).getTime() - new Date(a.date).getTime()
+            );
+    }, [
+        transactions,
+        paymentFilter,
+        nameFilter,
+        customers,
+        searchQuery,
+        products,
+    ]);
+
+    // render the options
+    const renderSection = <T extends string>(
+        title: string,
+        options: readonly T[],
+        selected: T,
+        onChange: (value: T) => void
+    ) => (
+        <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{title}</Text>
+            {options.map((opt) => (
+                <TouchableOpacity
+                    key={opt}
+                    style={styles.option}
+                    onPress={() => onChange(opt)}
+                >
+                    <Checkbox
+                        value={selected === opt}
+                        onValueChange={() => onChange(opt)}
+                        style={styles.checkbox}
+                    />
+                    <Text style={styles.optionText}>{opt}</Text>
+                </TouchableOpacity>
+            ))}
         </View>
-      ) : filteredTransactions.length === 0 ? (
+    );
+
+    return (
         <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: hp(4),
-          }}
-        >
-          <Text
             style={{
-              fontFamily: "Gantari-Regular",
-              fontSize: wp(4),
-              color: "#6B7280",
+                flex: 1,
+                backgroundColor: primary,
+                paddingVertical: hp(2),
+                paddingHorizontal: wp(2),
             }}
-          >
-            No transactions found.
-          </Text>
-        </View>
-      ) : (
-        <FlatList
-          data={filteredTransactions}
-          renderItem={renderTransactions}
-          style={{
-            marginTop: hp(1),
-          }}
-          initialNumToRender={10}
-          maxToRenderPerBatch={5}
-          windowSize={5}
-          removeClippedSubviews={true}
-        />
-      )}
-      {!isKeyboardVisible && (
-        <View style={{ elevation: 2, padding: wp(2.5), borderRadius: wp(1) }}>
-          <RenderReportValuePair
-            label="Total Cash Payment"
-            value={calculateTotalCashPayment(filteredTransactions)}
-          />
-          <RenderReportValuePair
-            label="Total Online Payment"
-            value={calculateTotalOnlinePayment(filteredTransactions)}
-          />
-          <RenderReportValuePair
-            label="Total Discount"
-            value={calculateTotalDiscount(filteredTransactions)}
-          />
-          <RenderReportValuePair
-            label="Total Freebies"
-            value={calculateTotalFreebies(filteredTransactions)}
-          />
-          <RenderReportValuePair
-            label="Total Payment"
-            value={calculateTotalPayment(filteredTransactions)}
-          />
-          <RenderReportValuePair
-            label="Total Price Sold"
-            value={calculateTotalPriceSold(filteredTransactions, products)}
-          />
-          <RenderReportValuePair
-            label="Total Profit"
-            value={calculateTotalProfit(filteredTransactions, products)}
-          />
-        </View>
-      )}
-
-      <ModalTemplate
-        visible={filerModalVisible}
-        onClose={() => setFilterModalVisible(false)}
-        height={hp(45)}
-        width={wp(90)}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: wp(3),
-            marginBottom: hp(1),
-            paddingHorizontal: wp(1),
-          }}
         >
-          <Ionicons name="funnel" size={wp(7)} color={strongPrimary} />
-          <View style={{ flex: 1 }}>
-            <Text
-              style={{
-                fontFamily: "Gantari-Bold",
-                fontSize: wp(4.4),
-                color: "#111827",
-              }}
-            >
-              Filters
-            </Text>
-            <Text
-              style={{
-                fontFamily: "Gantari-Regular",
-                fontSize: wp(3.4),
-                color: "#6B7280",
-                marginTop: hp(0.2),
-              }}
-            >
-              Narrow down transactions by name or payment type.
-            </Text>
-          </View>
-        </View>
+            <View style={{ flexDirection: "row", gap: wp(2) }}>
+                <SearchBar
+                    onChangeText={setSearchQuery}
+                    value={searchQuery}
+                    placeholder={
+                        nameFilter === "Product"
+                            ? "Search By Products..."
+                            : "Search By Customers..."
+                    }
+                    row
+                />
+                <TouchableOpacity
+                    style={{
+                        padding: wp(2),
+                        borderRadius: wp(4),
+                        backgroundColor: secondary,
+                    }}
+                >
+                    <Ionicons
+                        name="funnel"
+                        size={24}
+                        color={"black"}
+                        onPress={() => setFilterModalVisible(true)}
+                    />
+                </TouchableOpacity>
+            </View>
 
-        <View style={{ maxHeight: hp(38), marginTop: hp(1) }}>
-          {/* sections are scrollable in case content grows */}
-          <ScrollView contentContainerStyle={{ paddingBottom: hp(1) }}>
-            {renderSection<NameFilter>(
-              "Filter by name",
-              nameFilterOptions,
-              nameFilter,
-              setNameFilter
-            )}
-            {renderSection<PaymentFilter>(
-              "Filter by payment",
-              paymentFilterOptions,
-              paymentFilter,
-              setPaymentFilter
-            )}
-          </ScrollView>
-        </View>
+            <View
+                style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    gap: wp(10),
+                }}
+            >
+                <CommonButton
+                    onPress={() => {
+                        setIsStartDatePickerVisible(true);
+                    }}
+                    title={
+                        startDate
+                            ? startDate.toLocaleString("en-PH", {
+                                  dateStyle: "medium",
+                              })
+                            : "Start Date"
+                    }
+                    backgroundColor={"#FFDABF"}
+                    titleColor={"#9A3412"}
+                    marginTop={hp(1)}
+                    iconLeft={{
+                        family: "AntDesign",
+                        name: "calendar",
+                        color: "#9A3412",
+                        size: wp(5.5),
+                    }}
+                />
+                <CommonButton
+                    onPress={() => {
+                        setIsEndDatePickerVisible(true);
+                    }}
+                    title={
+                        endDate
+                            ? endDate.toLocaleString("en-PH", {
+                                  dateStyle: "medium",
+                              })
+                            : "End Date"
+                    }
+                    backgroundColor={"#FFDABF"}
+                    titleColor={"#9A3412"}
+                    marginTop={hp(1)}
+                    iconLeft={{
+                        family: "AntDesign",
+                        name: "calendar",
+                        color: "#9A3412",
+                        size: wp(5.5),
+                    }}
+                />
+            </View>
+            {
+                // start date picker
+            }
+            <DatePicker
+                modal
+                open={isStartDatePickerVisible}
+                date={startDate ?? new Date()}
+                mode="date"
+                onConfirm={(selectedDate) => {
+                    setIsStartDatePickerVisible(false);
+                    selectedDate.setHours(0, 0, 0, 0);
+                    setStartDate(selectedDate);
+                }}
+                onCancel={() => setIsStartDatePickerVisible(false)}
+            />
+            {
+                // end date picker
+            }
+            <DatePicker
+                modal
+                open={isEndDatePickerVisible}
+                date={endDate ?? new Date()}
+                mode="date"
+                onConfirm={(selectedDate) => {
+                    setIsEndDatePickerVisible(false);
+                    selectedDate.setHours(11, 59, 59, 999);
+                    setEndDate(selectedDate);
+                }}
+                onCancel={() => setIsEndDatePickerVisible(false)}
+            />
 
-        <View
-          style={{
-            marginTop: hp(2),
-            flexDirection: "row",
-            justifyContent: "space-between",
-            gap: wp(3),
-          }}
-        >
-          <CommonButton
-            title="Cancel"
-            onPress={() => setFilterModalVisible(false)}
-            backgroundColor="#F3F4F6"
-            titleColor="#111827"
-            marginTop={0}
-          />
-          <CommonButton
-            title="Apply"
-            onPress={() => {
-              setFilterModalVisible(false);
-            }}
-            backgroundColor={strongPrimary}
-            titleColor={primary}
-            marginTop={0}
-          />
+            {loading ? (
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: hp(2),
+                    }}
+                >
+                    <ActivityIndicator size="large" color="#FF9149" />
+                </View>
+            ) : filteredTransactions.length === 0 ? (
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: hp(4),
+                    }}
+                >
+                    <Text
+                        style={{
+                            fontFamily: "Gantari-Regular",
+                            fontSize: wp(4),
+                            color: "#6B7280",
+                        }}
+                    >
+                        No transactions found.
+                    </Text>
+                </View>
+            ) : (
+                <FlatList
+                    data={filteredTransactions}
+                    renderItem={renderTransactions}
+                    style={{
+                        marginTop: hp(1),
+                    }}
+                    initialNumToRender={10}
+                    maxToRenderPerBatch={5}
+                    windowSize={5}
+                    removeClippedSubviews={true}
+                />
+            )}
+            {!isKeyboardVisible && (
+                <View
+                    style={{
+                        elevation: 2,
+                        padding: wp(2.5),
+                        borderRadius: wp(1),
+                    }}
+                >
+                    <RenderReportValuePair
+                        label="Total Cash Payment"
+                        value={calculateTotalCashPayment(filteredTransactions)}
+                    />
+                    <RenderReportValuePair
+                        label="Total Online Payment"
+                        value={calculateTotalOnlinePayment(
+                            filteredTransactions
+                        )}
+                    />
+                    <RenderReportValuePair
+                        label="Total Discount"
+                        value={calculateTotalDiscount(filteredTransactions)}
+                    />
+                    <RenderReportValuePair
+                        label="Total Freebies"
+                        value={calculateTotalFreebies(filteredTransactions)}
+                    />
+                    <RenderReportValuePair
+                        label="Total Payment"
+                        value={calculateTotalPayment(filteredTransactions)}
+                    />
+                    <RenderReportValuePair
+                        label="Total Price Sold"
+                        value={calculateTotalPriceSold(
+                            filteredTransactions,
+                            products
+                        )}
+                    />
+                    <RenderReportValuePair
+                        label="Total Profit"
+                        value={calculateTotalProfit(
+                            filteredTransactions,
+                            products
+                        )}
+                    />
+                </View>
+            )}
+
+            <ModalTemplate
+                visible={filerModalVisible}
+                onClose={() => setFilterModalVisible(false)}
+                height={hp(45)}
+                width={wp(90)}
+            >
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: wp(3),
+                        marginBottom: hp(1),
+                        paddingHorizontal: wp(1),
+                    }}
+                >
+                    <Ionicons
+                        name="funnel"
+                        size={wp(7)}
+                        color={strongPrimary}
+                    />
+                    <View style={{ flex: 1 }}>
+                        <Text
+                            style={{
+                                fontFamily: "Gantari-Bold",
+                                fontSize: wp(4.4),
+                                color: "#111827",
+                            }}
+                        >
+                            Filters
+                        </Text>
+                        <Text
+                            style={{
+                                fontFamily: "Gantari-Regular",
+                                fontSize: wp(3.4),
+                                color: "#6B7280",
+                                marginTop: hp(0.2),
+                            }}
+                        >
+                            Narrow down transactions by name or payment type.
+                        </Text>
+                    </View>
+                </View>
+
+                <View style={{ maxHeight: hp(38), marginTop: hp(1) }}>
+                    {/* sections are scrollable in case content grows */}
+                    <ScrollView
+                        contentContainerStyle={{ paddingBottom: hp(1) }}
+                    >
+                        {renderSection<NameFilter>(
+                            "Filter by name",
+                            nameFilterOptions,
+                            nameFilter,
+                            setNameFilter
+                        )}
+                        {renderSection<PaymentFilter>(
+                            "Filter by payment",
+                            paymentFilterOptions,
+                            paymentFilter,
+                            setPaymentFilter
+                        )}
+                    </ScrollView>
+                </View>
+
+                <View
+                    style={{
+                        marginTop: hp(2),
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        gap: wp(3),
+                    }}
+                >
+                    <CommonButton
+                        title="Cancel"
+                        onPress={() => setFilterModalVisible(false)}
+                        backgroundColor="#F3F4F6"
+                        titleColor="#111827"
+                        marginTop={0}
+                    />
+                    <CommonButton
+                        title="Apply"
+                        onPress={() => {
+                            setFilterModalVisible(false);
+                        }}
+                        backgroundColor={strongPrimary}
+                        titleColor={primary}
+                        marginTop={0}
+                    />
+                </View>
+            </ModalTemplate>
         </View>
-      </ModalTemplate>
-    </View>
-  );
+    );
 };
 
 export default TransactionListScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    padding: wp(3), // previously 12
-  },
-  section: {
-    marginBottom: hp(1.5), // previously 12
-  },
-  sectionTitle: {
-    fontFamily: "Gantari-Bold",
-    fontSize: wp(3.5), // previously 14
-    marginBottom: hp(0.8), // previously 6
-  },
-  option: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: hp(0.8), // previously 6
-  },
-  checkbox: {
-    marginRight: wp(2), // previously 8
-  },
-  optionText: {
-    fontSize: wp(3.5), // previously
-    fontFamily: "Gantari-Regular",
-  },
-  applyButton: {
-    backgroundColor: "#007AFF",
-    paddingVertical: hp(1.2), // previously 8
-    paddingHorizontal: wp(3), // previously 12
-    borderRadius: wp(2), // previously 6
-    alignItems: "center",
-    marginTop: hp(1.5), // previously 10
-  },
-  applyText: {
-    color: "white",
-    fontWeight: "600",
-  },
+    container: {
+        padding: wp(3), // previously 12
+    },
+    section: {
+        marginBottom: hp(1.5), // previously 12
+    },
+    sectionTitle: {
+        fontFamily: "Gantari-Bold",
+        fontSize: wp(3.5), // previously 14
+        marginBottom: hp(0.8), // previously 6
+    },
+    option: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: hp(0.8), // previously 6
+    },
+    checkbox: {
+        marginRight: wp(2), // previously 8
+    },
+    optionText: {
+        fontSize: wp(3.5), // previously
+        fontFamily: "Gantari-Regular",
+    },
+    applyButton: {
+        backgroundColor: "#007AFF",
+        paddingVertical: hp(1.2), // previously 8
+        paddingHorizontal: wp(3), // previously 12
+        borderRadius: wp(2), // previously 6
+        alignItems: "center",
+        marginTop: hp(1.5), // previously 10
+    },
+    applyText: {
+        color: "white",
+        fontWeight: "600",
+    },
 });

@@ -12,6 +12,7 @@ api.interceptors.request.use(async (config) => {
 
     if (user) {
         const token = await user.getIdToken() || await AsyncStorage.getItem("token") || "";
+        console.log(token)
         await AsyncStorage.setItem("token", token);
         config.headers = AxiosHeaders.from({
             ...config.headers || {},

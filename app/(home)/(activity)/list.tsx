@@ -311,7 +311,7 @@ const ActivityLogScreen = () => {
                 })
               : "Start Date"
           }
-          backgroundColor={strongPrimary}
+          backgroundColor={"#FFDABF"}
           titleColor={"#9A3412"}
           marginTop={hp(1)}
           iconLeft={{
@@ -332,7 +332,7 @@ const ActivityLogScreen = () => {
                 })
               : "End Date"
           }
-          backgroundColor={strongPrimary}
+          backgroundColor={"#FFDABF"}
           titleColor={"#9A3412"}
           marginTop={hp(1)}
           iconLeft={{

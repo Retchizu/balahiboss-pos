@@ -170,6 +170,19 @@ const DrawerLayout = () => {
           }}
         />
         <Drawer.Screen
+          name="(analytics)"
+          options={{
+            drawerLabel: ({ color }) => (
+              <DrawerLabel title="Analytics" color={color} />
+            ),
+            title: "Analytics",
+            drawerIcon: ({ color }) => (
+              <MaterialCommunityIcons name="chart-line" size={wp(5)} color={color} />
+            ),
+            drawerItemStyle: role === "user" ? { display: "none" } : undefined,
+          }}
+        />
+        <Drawer.Screen
           name="(stocks)"
           options={{
             drawerLabel: ({ color }) => (

@@ -123,7 +123,7 @@ const EmployeeDetails = () => {
                 })
               : "Start Date"
           }
-          backgroundColor={strongPrimary}
+          backgroundColor={"#FFDABF"}
           titleColor={"#9A3412"}
           marginTop={hp(1)}
           iconLeft={{
@@ -144,7 +144,7 @@ const EmployeeDetails = () => {
                 })
               : "End Date"
           }
-          backgroundColor={strongPrimary}
+          backgroundColor={"#FFDABF"}
           titleColor={"#9A3412"}
           marginTop={hp(1)}
           iconLeft={{

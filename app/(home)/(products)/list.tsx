@@ -40,8 +40,9 @@ const ProductListScreen = () => {
               flexDirection: "row",
               marginVertical: hp(0.5),
               borderRadius: wp(2),
-              backgroundColor:
-                item.stock <= 0 ? "rgba(80,109,132,0.3)" : secondary,
+              backgroundColor: "rgba(255,255,255,0.85)",
+              borderWidth: 1,
+              borderColor: "rgba(0,0,0,0.06)",
             }}
             activeOpacity={0.7}
             onPress={() => {

@@ -134,6 +134,15 @@ const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
           restrict
           role={role}
         />
+           <CustomDrawerItem
+          title="Analytics"
+          icon={{ family: "MaterialCommunityIcons", name: "chart-line" }}
+          navigation={navigation}
+          route="(analytics)"
+          state={state}
+          restrict
+          role={role}
+        />
         <CustomDrawerItem
           title="Employees"
           icon={{ family: "Foundation", name: "torso-business" }}

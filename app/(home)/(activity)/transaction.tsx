@@ -32,8 +32,6 @@ const TransactionActivityDetailScreen = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log("transaction", transaction);
-
   const transactionFieldLabels: Record<string, string> = {
     customerId: "Customer",
     date: "Date",

@@ -67,7 +67,9 @@ const CartScreen = () => {
           <View
             style={{
               flexDirection: "row",
-              backgroundColor: secondary,
+              backgroundColor: "rgba(255,255,255,0.85)",
+              borderColor: "rgba(0,0,0,0.6)",
+              borderWidth: 1,
               alignItems: "center",
               borderRadius: wp(2),
               marginVertical: hp(0.5),

@@ -119,9 +119,10 @@ const InvoiceScreen = () => {
       return (
         <TouchableOpacity
           style={{
-            borderColor: strongPrimary,
             marginVertical: hp(0.5),
-            borderWidth: wp(0.4),
+            backgroundColor: "rgba(255,255,255,0.85)",
+            borderColor: "rgba(0,0,0,0.6)",
+            borderWidth: 1,
             borderRadius: wp(2),
             padding: wp(1),
           }}

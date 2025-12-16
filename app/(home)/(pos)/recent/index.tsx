@@ -53,9 +53,10 @@ const RecentTransactionScreen = () => {
               style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
-                borderWidth: wp(0.4),
                 borderRadius: wp(4),
-                borderColor: strongPrimary,
+                backgroundColor: "rgba(255,255,255,0.85)",
+                borderColor: "rgba(0,0,0,0.6)",
+                borderWidth: 1,
                 padding: wp(2),
                 alignItems: "center",
                 marginVertical: hp(0.5),

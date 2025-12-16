@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
+import { primary, strongPrimary } from "@/theme/backgroundTheme";
 import SearchBar from "@/components/searchbars/SearchBar";
 import {
   widthPercentageToDP as wp,
@@ -232,7 +232,7 @@ const PosScreen = () => {
           return "#AFDDFF";
         }
 
-        return secondary;
+        return "rgba(255,255,255,0.85)";
       };
 
       const selected = selectedProducts.get(item.id);
@@ -243,6 +243,8 @@ const PosScreen = () => {
             marginVertical: hp(0.5),
             borderRadius: wp(2),
             backgroundColor: productCardViewBackgroundColor(item),
+            borderWidth: 1,
+            borderColor: "rgba(0,0,0,0.6)",
             alignItems: "center",
             position: "relative", // allow absolute positioned quantity controls
           }}

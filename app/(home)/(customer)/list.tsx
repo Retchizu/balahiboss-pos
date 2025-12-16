@@ -39,7 +39,9 @@ const CustomerListScreen = () => {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={{
-              backgroundColor: secondary,
+              backgroundColor: "rgba(255,255,255,0.85)",
+              borderWidth: 1,
+              borderColor: "rgba(0,0,0,0.6)",
               marginVertical: hp(0.5),
               padding: wp(2),
               borderRadius: wp(4),
