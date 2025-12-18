@@ -4,7 +4,7 @@ import { useSelectedProductContext } from "@/contexts/SelectedProductContext";
 import { useProductContext } from "@/contexts/ProductContext";
 import SelectedProduct from "@/types/SelectedProduct";
 import Product from "@/types/Product";
-import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
+import { primary, strongPrimary } from "@/theme/backgroundTheme";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,

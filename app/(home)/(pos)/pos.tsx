@@ -29,10 +29,6 @@ import {
 } from "firebase/firestore";
 import { firestoreDb } from "@/config/firebaseConfig";
 import searchProductsByName from "@/methods/search/searchProductsByName";
-import useBluetoothPrinter, {
-  permissionForPrint,
-} from "@/hooks/useBluetoothPrinter";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import PendingOrder from "@/types/PendingOrder";
 import { useProductContext } from "@/contexts/ProductContext";
@@ -458,26 +454,6 @@ const PosScreen = () => {
 
     return () => unsubscribe();
   }, [setOrders]);
-
-  const { pairDevice } = useBluetoothPrinter();
-
-  useEffect(() => {
-    const pairSavedPrinter = async () => {
-      try {
-        const permission = await permissionForPrint();
-        const savedCurrentPrinter = await AsyncStorage.getItem("printer");
-        if (permission && savedCurrentPrinter) {
-          const printer = JSON.parse(savedCurrentPrinter);
-          await pairDevice(printer.address);
-          console.log("Paired Successfully");
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    pairSavedPrinter();
-  }, [pairDevice]);
 
   return (
     // show centered spinner while loading, otherwise original UI

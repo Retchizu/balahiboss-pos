@@ -4,7 +4,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
+import { primary, strongPrimary } from "@/theme/backgroundTheme";
 import SearchBar from "@/components/searchbars/SearchBar";
 import useProductsArray from "@/hooks/useProductsArray";
 import { useProductContext } from "@/contexts/ProductContext";
@@ -40,10 +40,11 @@ const ProductListScreen = () => {
               flexDirection: "row",
               marginVertical: hp(0.5),
               borderRadius: wp(2),
-              backgroundColor: "rgba(255,255,255,0.85)",
+              backgroundColor: item.stock <= 0 ? "rgba(80,109,132,0.3)" : "rgba(255,255,255,0.85)",
               borderWidth: 1,
               borderColor: "rgba(0,0,0,0.06)",
             }}
+            disabled={item.stock <= 0}
             activeOpacity={0.7}
             onPress={() => {
               router.navigate(`../${item.id}`);

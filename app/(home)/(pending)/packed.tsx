@@ -4,7 +4,7 @@ import { usePendingOrderContext } from "@/contexts/PendingOrderContext";
 import usePendingOrdersArray from "@/hooks/usePendingOrdersArray";
 import { useCustomerContext } from "@/contexts/CustomerContext";
 import searchOrderByCustomerName from "@/methods/search/searchOrderByCustomerName";
-import { primary, secondary } from "@/theme/backgroundTheme";
+import { primary } from "@/theme/backgroundTheme";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -81,9 +81,11 @@ const PackedScreen = () => {
             return (
               <TouchableOpacity
                 style={{
-                  backgroundColor: secondary,
+                  backgroundColor: "rgba(255,255,255,0.85)",
                   marginVertical: hp(0.5),
                   padding: wp(3),
+                  borderWidth: 1,
+                  borderColor: "rgba(0,0,0,0.6)",
                   borderRadius: wp(4),
                   flexDirection: "row",
                   alignItems: "center",

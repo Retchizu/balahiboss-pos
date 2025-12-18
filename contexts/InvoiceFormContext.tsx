@@ -25,7 +25,7 @@ export const InvoiceFormProvider: FC<{ children: ReactNode }> = ({
         cashPayment: "",
         onlinePayment: "",
         customer: null,
-        date: null,
+        date: new Date(),
         discount: "",
         freebies: "",
         deliveryFee: "",

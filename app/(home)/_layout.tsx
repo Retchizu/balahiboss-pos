@@ -50,8 +50,6 @@ const DrawerLayout = () => {
       .filter((order) => order.status === "pending" && order.checkedBy !== undefined)
       .some((order) => !order.checkedBy.includes(currentUser?.uid!));
 
-    console.log("uncheckedPendingOrder", uncheckedPendingOrder);
-    console.log(pendingOrdersArray);
     const loopPlayer = setInterval(() => {
       if (uncheckedPendingOrder) {
         player.seekTo(0);

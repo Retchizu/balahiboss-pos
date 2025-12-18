@@ -1,6 +1,6 @@
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import React, { useMemo, useState } from "react";
-import { primary, secondary } from "@/theme/backgroundTheme";
+import { primary } from "@/theme/backgroundTheme";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -81,10 +81,12 @@ const CompleteScreen = () => {
             return (
               <TouchableOpacity
                 style={{
-                  backgroundColor: secondary,
+                  backgroundColor: "rgba(255,255,255,0.85)",
                   marginVertical: hp(0.5),
                   padding: wp(3),
                   borderRadius: wp(4),
+                  borderWidth: 1,
+                  borderColor: "rgba(0,0,0,0.6)",
                   flexDirection: "row",
                   alignItems: "center",
                 }}

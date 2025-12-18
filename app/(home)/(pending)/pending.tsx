@@ -45,7 +45,7 @@ const PendingScreen = () => {
   const currentUser = auth.currentUser;
   const handlePendingCardViewBackgroundColor = (item: PendingOrder) => {
     if (item.checkedBy && item.checkedBy.includes(currentUser?.uid!)) {
-      return secondary;
+      return "rgba(255,255,255,0.85)";
     }
 
     return strongPrimary;
@@ -108,6 +108,8 @@ const PendingScreen = () => {
                   backgroundColor: handlePendingCardViewBackgroundColor(item),
                   marginVertical: hp(0.5),
                   padding: wp(3),
+                  borderWidth: 1,
+                  borderColor: "rgba(0,0,0,0.6)",
                   borderRadius: wp(4),
                   flexDirection: "row",
                   alignItems: "center",

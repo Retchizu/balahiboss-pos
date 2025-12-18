@@ -22,7 +22,7 @@ const EditInvoicePreviewScreen = () => {
   const { selectedProductArray } = useSelectedProductsArray(selectedProducts);
   const [status, requestPermission] = MediaLibrary.usePermissions();
   const [isButtonsVisible, setIsButtonsVisible] = useState(true);
-
+  const { pairSavedPrinter } = useBluetoothPrinter();
   if (status === null) {
     requestPermission();
   }
@@ -236,13 +236,24 @@ const EditInvoicePreviewScreen = () => {
               family: "Entypo",
               name: "camera",
               color: "black",
-              size: wp(6),
+              size: wp(4),
             }}
           />
           <CommonButton
             title="Print Invoice"
             onPress={async () => {
-              await printReceipt(invoiceForm, selectedProductArray);
+              const { success } = await pairSavedPrinter();
+              if (success) {
+                  await printReceipt(
+                      invoiceForm,
+                      selectedProductArray
+                  );
+              } else {
+                  Toast.show({
+                      type: "error",
+                      text1: "Failed to pair printer.",
+                  });
+              }
             }}
             backgroundColor={strongPrimary}
             titleColor={"white"}
@@ -250,7 +261,7 @@ const EditInvoicePreviewScreen = () => {
               family: "Entypo",
               name: "print",
               color: "white",
-              size: wp(6),
+              size: wp(4),
             }}
           />
         </View>

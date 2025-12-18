@@ -1,6 +1,6 @@
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
-import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
+import { primary, strongPrimary } from "@/theme/backgroundTheme";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,

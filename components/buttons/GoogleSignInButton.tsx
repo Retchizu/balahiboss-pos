@@ -15,7 +15,7 @@ const GoogleSignInButton = ({ isLoading, ...props }: GoogleSignInProp) => {
                 padding: 10,
                 borderRadius: 10,
                 width: wp(80),
-                height: hp(5),
+                height: hp(7),
                 alignItems: "center",
                 justifyContent: "center",
                 flexDirection: "row",

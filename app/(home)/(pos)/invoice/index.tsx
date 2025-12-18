@@ -201,7 +201,7 @@ const InvoiceScreen = () => {
   };
 
   const { role } = useUserContext();
-  const { isAlreadyConnected, printReceipt } = useBluetoothPrinter();
+  const { isAlreadyConnected, printReceipt, pairSavedPrinter } = useBluetoothPrinter();
 
   return (
     <View
@@ -541,7 +541,15 @@ const InvoiceScreen = () => {
                 await addTransaction();
                 const isPrinterConnected = await isAlreadyConnected();
                 if (isPrinterConnected) {
-                  await printReceipt(invoiceForm, selectedProductArray);
+                  const { success } = await pairSavedPrinter();
+                  if (success) {
+                    await printReceipt(invoiceForm, selectedProductArray);
+                  } else {
+                    Toast.show({
+                      type: "error",
+                      text1: "Failed to pair printer.",
+                    });
+                  }
                 }
               }}
               disabled={isInvoiceSubmitting}
