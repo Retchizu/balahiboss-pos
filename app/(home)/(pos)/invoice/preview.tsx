@@ -294,7 +294,6 @@ const PreviewInvoiceScreen = () => {
                         title="Print Invoice"
                         onPress={async () => {
                             const { success } = await pairSavedPrinter();
-                            console.log("success", success)
                             if (success) {
                                 await printReceipt(
                                     invoiceForm,
