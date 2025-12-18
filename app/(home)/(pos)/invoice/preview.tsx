@@ -280,6 +280,7 @@ const PreviewInvoiceScreen = () => {
             {isButtonsVisible && (
                 <View style={{ flexDirection: "row", gap: wp(2) }}>
                     <CommonButton
+                        row
                         title="Save to Gallery"
                         onPress={() => captureAndHandle()}
                         backgroundColor={primary}
@@ -291,6 +292,7 @@ const PreviewInvoiceScreen = () => {
                         }}
                     />
                     <CommonButton
+                        row
                         title="Print Invoice"
                         onPress={async () => {
                             const { success } = await pairSavedPrinter();

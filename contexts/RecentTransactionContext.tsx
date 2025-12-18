@@ -11,7 +11,7 @@ import {
 
 type RecentContextType = {
     recentTransactions: Transaction[];
-    setRecentTranscations: Dispatch<SetStateAction<Transaction[]>>;
+    setRecentTransactions: Dispatch<SetStateAction<Transaction[]>>;
 };
 
 const RecentTransactionContext = createContext<RecentContextType | undefined>(
@@ -21,13 +21,13 @@ const RecentTransactionContext = createContext<RecentContextType | undefined>(
 export const RecentTransactionProvider: FC<{ children: ReactNode }> = ({
     children,
 }) => {
-    const [recentTransactions, setRecentTranscations] = useState<Transaction[]>(
+    const [recentTransactions, setRecentTransactions] = useState<Transaction[]>(
         []
     );
 
     return (
         <RecentTransactionContext.Provider
-            value={{ recentTransactions, setRecentTranscations }}
+            value={{ recentTransactions, setRecentTransactions }}
         >
             {children}
         </RecentTransactionContext.Provider>
@@ -35,7 +35,7 @@ export const RecentTransactionProvider: FC<{ children: ReactNode }> = ({
 };
 
 
-export  const useRecentTrasactionContext = (): RecentContextType => {
+export  const useRecentTransactionContext = (): RecentContextType => {
     const context = useContext(RecentTransactionContext);
     if(!context){
         throw new Error("RecentTransactionContext must be used within RecentTransactionProvider");

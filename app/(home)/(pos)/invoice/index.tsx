@@ -188,7 +188,7 @@ const InvoiceScreen = () => {
                 cashPayment: "",
                 onlinePayment: "",
                 customer: null,
-                date: null,
+                date: new Date(),
                 discount: "",
                 freebies: "",
                 deliveryFee: "",
@@ -608,11 +608,6 @@ const InvoiceScreen = () => {
                                         invoiceForm,
                                         selectedProductArray
                                     );
-                                } else {
-                                    Toast.show({
-                                        type: "error",
-                                        text1: "Failed to pair printer.",
-                                    });
                                 }
                             }}
                             disabled={isInvoiceSubmitting}

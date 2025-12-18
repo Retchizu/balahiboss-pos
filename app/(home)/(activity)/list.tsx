@@ -25,7 +25,7 @@ import { isAxiosError } from "axios";
 import { api } from "@/config/axios-api";
 import { useProductContext } from "@/contexts/ProductContext";
 import { useTransactionContext } from "@/contexts/TransactionContext";
-import { useRecentTrasactionContext } from "@/contexts/RecentTransactionContext";
+import { useRecentTransactionContext } from "@/contexts/RecentTransactionContext";
 import { useCustomerContext } from "@/contexts/CustomerContext";
 
 import { format, isToday } from "date-fns";
@@ -46,7 +46,7 @@ const ActivityLogScreen = () => {
   // dependencies
   const { products } = useProductContext();
   const { transactions } = useTransactionContext();
-  const { recentTransactions } = useRecentTrasactionContext();
+  const { recentTransactions } = useRecentTransactionContext();
   const { customers } = useCustomerContext();
 
   // startDate

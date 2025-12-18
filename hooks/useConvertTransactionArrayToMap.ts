@@ -1,10 +1,10 @@
-import { useRecentTrasactionContext } from "@/contexts/RecentTransactionContext";
+import { useRecentTransactionContext } from "@/contexts/RecentTransactionContext";
 import { useTransactionContext } from "@/contexts/TransactionContext";
 import Transaction from "@/types/Transaction";
 
 export const useConvertTransactionArrayToMap = (fromRecentScreen: boolean) => {
   const { transactions, setTransactions } = useTransactionContext();
-  const { recentTransactions } = useRecentTrasactionContext();
+  const { recentTransactions } = useRecentTransactionContext();
 
   // check which transaction is from 2 transaction screens
   const transactionList = fromRecentScreen === false? transactions : recentTransactions;

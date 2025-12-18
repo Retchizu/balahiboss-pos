@@ -20,7 +20,7 @@ import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import DatePicker from "react-native-date-picker";
 import { useCustomerContext } from "@/contexts/CustomerContext";
 import { useTransactionContext } from "@/contexts/TransactionContext";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import Transaction from "@/types/Transaction";
 import { useProductContext } from "@/contexts/ProductContext";
 import calculateTotalCashPayment from "@/methods/invoice/report/calculateTotalCashPayment";
@@ -81,10 +81,15 @@ const TransactionListScreen = () => {
         }
     }, [startDate, endDate, setTransactions]);
 
+    useFocusEffect(
+        useCallback(() => {
+            getTransactions();
+        }, [getTransactions])
+    );
+
     useEffect(() => {
         getTransactions();
     }, [getTransactions]);
-
     // render key value pair
     type RenderLabelValuePairProps = {
         label: string;

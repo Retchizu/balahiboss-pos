@@ -14,6 +14,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import Product from "@/types/Product";
+import Customer from "@/types/Customer";
 import { useSelectedProductContext } from "@/contexts/SelectedProductContext";
 import useProductsArray from "@/hooks/useProductsArray";
 import { usePendingOrderContext } from "@/contexts/PendingOrderContext";
@@ -26,6 +27,7 @@ import {
   where,
   orderBy,
   query,
+  limit,
 } from "firebase/firestore";
 import { firestoreDb } from "@/config/firebaseConfig";
 import searchProductsByName from "@/methods/search/searchProductsByName";
@@ -35,14 +37,15 @@ import { useProductContext } from "@/contexts/ProductContext";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useCustomerContext } from "@/contexts/CustomerContext";
 import { api } from "@/config/axios-api";
-import { useRecentTrasactionContext } from "@/contexts/RecentTransactionContext";
+import { useRecentTransactionContext } from "@/contexts/RecentTransactionContext";
 
 const PosScreen = () => {
   const { products, setProducts } = useProductContext();
   const { setCustomers } = useCustomerContext();
   const { productsArray } = useProductsArray(products);
 
-  const { setRecentTranscations } = useRecentTrasactionContext();
+  const { setRecentTransactions } = useRecentTransactionContext();
+
 
   // search bar
   const [searchQuery, setSearchQuery] = useState("");
@@ -73,7 +76,7 @@ const PosScreen = () => {
 
         if (isMounted) {
           setProducts(productResponse.data.items);
-          setRecentTranscations(transactionResponse.data.items);
+          setRecentTransactions(transactionResponse.data.items);
           setLoading(false);
           hasLoadedInitial = true;
         }
@@ -89,49 +92,44 @@ const PosScreen = () => {
     // Start loading immediately (non-blocking)
     loadInitialData();
 
-    // Set up Firestore listener for real-time updates (separate from initial load)
-    let debounceTimer: NodeJS.Timeout | null = null;
-    let isFirstSnapshot = true;
-
+    // Set up Firestore listener for real-time product updates (no full refetch)
     const q = query(
       collection(firestoreDb, "products"),
-      where("deleted", "==", false)
+      where("deleted", "==", false),
+      orderBy("updatedAt", "desc"),
+      limit(10),
     );
 
     const unsubscribe = onSnapshot(
       q,
       async (snapshot) => {
-        // Skip first snapshot - we're already loading initial data
-        if (isFirstSnapshot) {
-          isFirstSnapshot = false;
-          // If initial load already completed, process this snapshot
-          if (!hasLoadedInitial) {
-            return;
-          }
-        }
-
         // Only process updates after initial load completes
-        if (!hasLoadedInitial) {
+        if (!hasLoadedInitial || !isMounted) {
           return;
         }
+       const response = await api.get("/transaction/list");
+        setRecentTransactions(response.data.items);
+        // Merge real-time changes into existing products without refetching all
+        setProducts((prevProducts) => {
+          const updatedProducts = { ...prevProducts };
 
-        // Debounce to prevent excessive API calls
-        if (debounceTimer) {
-          clearTimeout(debounceTimer);
-        }
+          snapshot.docChanges().forEach((change) => {
+            const data = change.doc.data() as Product;
+            const id = change.doc.id;
 
-        debounceTimer = setTimeout(async () => {
-          try {
-            const productResponse = await api.get("/product/list");
-            const transactionResponse = await api.get("/transaction/list");
-            if (isMounted) {
-              setProducts(productResponse.data.items);
-              setRecentTranscations(transactionResponse.data.items);
+            if (change.type === "removed" || data.deleted) {
+              delete updatedProducts[id];
+            } else {
+              updatedProducts[id] = {
+                ...(updatedProducts[id] ?? {}),
+                ...data,
+                id,
+              };
             }
-          } catch (error) {
-            console.error("Error updating products:", error);
-          }
-        }, 1000); // 500ms debounce for updates
+          });
+
+          return updatedProducts;
+        });
       },
       (error) => {
         console.error("Products listener error:", error);
@@ -144,18 +142,14 @@ const PosScreen = () => {
 
     return () => {
       isMounted = false;
-      if (debounceTimer) {
-        clearTimeout(debounceTimer);
-      }
       unsubscribe();
     };
-  }, [setProducts, setRecentTranscations]);
+    }, [setProducts, setRecentTransactions]);
 
   // Optimized customers listener - load initial data immediately
   useEffect(() => {
     let isMounted = true;
-    let debounceTimer: NodeJS.Timeout | null = null;
-    let isFirstSnapshot = true;
+    let hasLoadedInitialCustomers = false;
 
     // Load initial customers immediately (non-blocking)
     const loadInitialCustomers = async () => {
@@ -163,9 +157,13 @@ const PosScreen = () => {
         const response = await api.get("/customer/list");
         if (isMounted) {
           setCustomers(response.data.items);
+          hasLoadedInitialCustomers = true;
         }
       } catch (error) {
         console.error("Error loading customers:", error);
+        if (isMounted) {
+          hasLoadedInitialCustomers = true;
+        }
       }
     };
 
@@ -179,28 +177,33 @@ const PosScreen = () => {
 
     const unsubscribe = onSnapshot(
       q,
-      async (snapshot) => {
-        // Skip first snapshot
-        if (isFirstSnapshot) {
-          isFirstSnapshot = false;
+      (snapshot) => {
+        // Only process updates after initial load completes
+        if (!hasLoadedInitialCustomers || !isMounted) {
           return;
         }
 
-        // Debounce updates
-        if (debounceTimer) {
-          clearTimeout(debounceTimer);
-        }
+        // Merge real-time changes into existing customers without refetching all
+        setCustomers((prevCustomers) => {
+          const updatedCustomers = { ...prevCustomers };
 
-        debounceTimer = setTimeout(async () => {
-          try {
-            const response = await api.get("/customer/list");
-            if (isMounted) {
-              setCustomers(response.data.items);
+          snapshot.docChanges().forEach((change) => {
+            const data = change.doc.data() as Customer;
+            const id = change.doc.id;
+
+            if (change.type === "removed" || data.deleted) {
+              delete updatedCustomers[id];
+            } else {
+              updatedCustomers[id] = {
+                ...(updatedCustomers[id] ?? {}),
+                ...data,
+                id,
+              };
             }
-          } catch (error) {
-            console.error("Error updating customers:", error);
-          }
-        }, 1000);
+          });
+
+          return updatedCustomers;
+        });
       },
       (error) => {
         console.error("Customers listener error:", error);
@@ -209,9 +212,6 @@ const PosScreen = () => {
 
     return () => {
       isMounted = false;
-      if (debounceTimer) {
-        clearTimeout(debounceTimer);
-      }
       unsubscribe();
     };
   }, [setCustomers]);
