@@ -42,9 +42,8 @@ const ProductListScreen = () => {
               borderRadius: wp(2),
               backgroundColor: item.stock <= 0 ? "rgba(80,109,132,0.3)" : "rgba(255,255,255,0.85)",
               borderWidth: 1,
-              borderColor: "rgba(0,0,0,0.06)",
+              borderColor: "rgba(0,0,0,0.6)",
             }}
-            disabled={item.stock <= 0}
             activeOpacity={0.7}
             onPress={() => {
               router.navigate(`../${item.id}`);
