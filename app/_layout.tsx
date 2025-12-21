@@ -47,7 +47,7 @@ export default function RootLayout() {
     if (user) {
       router.replace("/(home)/(pos)/pos");
     } else {
-      // display error
+      // router.replace("/");
     }
   });
 

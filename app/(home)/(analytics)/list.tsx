@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     FlatList,
+    ScrollView,
 } from "react-native";
 import {
     widthPercentageToDP as wp,
@@ -25,16 +26,23 @@ import Toast from "react-native-toast-message";
 import TopCustomer from "@/types/metrics/TopCustomer";
 import Input from "@/components/inputs/Input";
 import MaxStock from "@/types/metrics/MaxStock";
+import {
+    BusiestPeriodResponse,
+    DayOfWeekStats,
+    WeekStats,
+    TimePeriodStats,
+} from "@/types/metrics/BusiestPeriod";
 
-type AnalyticsSection = "topCustomers" | "inventory";
+type AnalyticsSection = "topCustomers" | "inventory" | "busiestPeriod";
 
 const AnalyticsScreen = () => {
     const [section, setSection] = useState<AnalyticsSection>("inventory");
 
     const buttons = useMemo(
         () => [
-            { value: "inventory", label: "Inventory Analytics" },
-            { value: "topCustomers", label: "Top Customers" },
+            { value: "inventory", label: "Inventory" },
+            { value: "topCustomers", label: "Customers" },
+            { value: "busiestPeriod", label: "Period" },
         ],
         []
     );
@@ -60,6 +68,8 @@ const AnalyticsScreen = () => {
             <View style={styles.content}>
                 {section === "topCustomers" ? (
                     <TopCustomersPanel />
+                ) : section === "busiestPeriod" ? (
+                    <BusiestPeriodPanel />
                 ) : (
                     <InventoryAnalyticsPanel />
                 )}
@@ -360,6 +370,351 @@ const TopCustomersPanel = () => {
                     />
                 </View>
             </ModalTemplate>
+        </View>
+    );
+};
+
+const BusiestPeriodPanel = () => {
+    type ViewFilter = "all" | "days" | "weeks" | "timePeriods";
+
+    const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+    const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+
+    const [isStartDatePickerVisible, setIsStartDatePickerVisible] =
+        useState(false);
+    const [isEndDatePickerVisible, setIsEndDatePickerVisible] = useState(false);
+
+    const [viewFilter, setViewFilter] = useState<ViewFilter>("all");
+    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState<BusiestPeriodResponse | null>(null);
+
+    const viewFilterButtons = useMemo(
+        () => [
+            { value: "all", label: "All" },
+            { value: "days", label: "Days" },
+            { value: "weeks", label: "Weeks" },
+            { value: "timePeriods", label: "Hours" },
+        ],
+        []
+    );
+
+    const getBusiestPeriod = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response = await api.get("/analytics/busiest-period", {
+                params: {
+                    startDate: startDate?.toISOString().split("T")[0],
+                    endDate: endDate?.toISOString().split("T")[0],
+                },
+            });
+            setData(response.data);
+        } catch (error) {
+            if (isAxiosError(error)) {
+                const message =
+                    (error.response?.data as any)?.error ??
+                    (error.response?.data as any)?.message ??
+                    "Failed to get busiest period analytics";
+                Toast.show({ type: "error", text1: `${message}` });
+            }
+            console.error("Get Busiest Period Failed: ", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [startDate, endDate]);
+
+    useEffect(() => {
+        getBusiestPeriod();
+    }, [getBusiestPeriod]);
+
+    const renderDayRow = useCallback(
+        ({ item, index }: { item: DayOfWeekStats; index: number }) => {
+            return (
+                <View style={styles.customerRow}>
+                    <View style={{ flex: 1, marginRight: wp(2) }}>
+                        <Text style={styles.customerName}>
+                            {index + 1}. {item.dayName}
+                        </Text>
+                        <Text style={styles.customerMeta}>
+                            Day Number: {item.dayNumber}
+                        </Text>
+                    </View>
+                    <View style={{ alignItems: "flex-end" }}>
+                        <Text style={styles.customerTotal}>
+                            {item.transactionCount}
+                        </Text>
+                        <Text style={styles.customerMeta}>Transactions</Text>
+                    </View>
+                </View>
+            );
+        },
+        []
+    );
+
+    const renderWeekRow = useCallback(
+        ({ item, index }: { item: WeekStats; index: number }) => {
+            return (
+                <View style={styles.customerRow}>
+                    <View style={{ flex: 1, marginRight: wp(2) }}>
+                        <Text style={styles.customerName}>
+                            {index + 1}. {item.weekKey}
+                        </Text>
+                        <Text style={styles.customerMeta}>
+                            {item.readableDate}
+                        </Text>
+                        <Text style={styles.customerMeta}>
+                            Year: {item.year} • Week: {item.weekNumber}
+                        </Text>
+                    </View>
+                    <View style={{ alignItems: "flex-end" }}>
+                        <Text style={styles.customerTotal}>
+                            {item.transactionCount}
+                        </Text>
+                        <Text style={styles.customerMeta}>Transactions</Text>
+                    </View>
+                </View>
+            );
+        },
+        []
+    );
+
+    const renderTimePeriodRow = useCallback(
+        ({ item, index }: { item: TimePeriodStats; index: number }) => {
+            return (
+                <View style={styles.customerRow}>
+                    <View style={{ flex: 1, marginRight: wp(2) }}>
+                        <Text style={styles.customerName}>
+                            {index + 1}. {item.hourLabel}
+                        </Text>
+                        <Text style={styles.customerMeta}>
+                            Hour: {item.hour}:00
+                        </Text>
+                    </View>
+                    <View style={{ alignItems: "flex-end" }}>
+                        <Text style={styles.customerTotal}>
+                            {item.transactionCount}
+                        </Text>
+                        <Text style={styles.customerMeta}>Transactions</Text>
+                    </View>
+                </View>
+            );
+        },
+        []
+    );
+
+    return (
+        <View style={styles.panel}>
+            <Text style={styles.panelTitle}>Busiest Period</Text>
+
+            <View style={styles.dateRow}>
+                <CommonButton
+                    onPress={() => setIsStartDatePickerVisible(true)}
+                    title={
+                        startDate
+                            ? startDate.toLocaleString("en-PH", {
+                                  dateStyle: "medium",
+                              })
+                            : "Start Date"
+                    }
+                    backgroundColor={"#FFDABF"}
+                    titleColor={"#9A3412"}
+                    marginTop={hp(1)}
+                    iconLeft={{
+                        family: "AntDesign",
+                        name: "calendar",
+                        color: "#9A3412",
+                        size: wp(5.5),
+                    }}
+                />
+                <CommonButton
+                    onPress={() => setIsEndDatePickerVisible(true)}
+                    title={
+                        endDate
+                            ? endDate.toLocaleString("en-PH", {
+                                  dateStyle: "medium",
+                              })
+                            : "End Date"
+                    }
+                    backgroundColor={"#FFDABF"}
+                    titleColor={"#9A3412"}
+                    marginTop={hp(1)}
+                    iconLeft={{
+                        family: "AntDesign",
+                        name: "calendar",
+                        color: "#9A3412",
+                        size: wp(5.5),
+                    }}
+                />
+            </View>
+
+            <DatePicker
+                modal
+                open={isStartDatePickerVisible}
+                date={startDate ?? new Date()}
+                mode="date"
+                onConfirm={(selectedDate) => {
+                    setIsStartDatePickerVisible(false);
+                    selectedDate.setHours(0, 0, 0, 0);
+                    setStartDate(selectedDate);
+                }}
+                onCancel={() => setIsStartDatePickerVisible(false)}
+            />
+
+            <DatePicker
+                modal
+                open={isEndDatePickerVisible}
+                date={endDate ?? new Date()}
+                mode="date"
+                onConfirm={(selectedDate) => {
+                    setIsEndDatePickerVisible(false);
+                    selectedDate.setHours(23, 59, 59, 999);
+                    setEndDate(selectedDate);
+                }}
+                onCancel={() => setIsEndDatePickerVisible(false)}
+            />
+
+            {data && (
+                <View style={[styles.segmentWrap, { marginTop: hp(1) }]}>
+                    <SegmentedButtons
+                        value={viewFilter}
+                        onValueChange={(v: string) => setViewFilter(v as ViewFilter)}
+                        buttons={viewFilterButtons}
+                        density="regular"
+                        style={styles.segmented}
+                        theme={{
+                            colors: {
+                                secondaryContainer: "#FF9149",
+                                onSecondaryContainer: "#FFFFFF",
+                            },
+                        }}
+                    />
+                </View>
+            )}
+
+            <View style={{ flex: 1, marginTop: hp(1.5) }}>
+                {loading ? (
+                    <View style={styles.center}>
+                        <ActivityIndicator size="large" color="#FF9149" />
+                    </View>
+                ) : !data ? (
+                    <View style={styles.center}>
+                        <Text style={styles.emptyText}>
+                            No data available. Select date range.
+                        </Text>
+                    </View>
+                ) : (
+                    <ScrollView
+                        contentContainerStyle={{ paddingBottom: hp(1) }}
+                        showsVerticalScrollIndicator={true}
+                    >
+                        {/* Summary Section - Always visible */}
+                        <View
+                            style={{
+                                backgroundColor: "rgba(255,255,255,0.85)",
+                                padding: wp(4),
+                                borderRadius: wp(4),
+                                marginBottom: hp(1.5),
+                                borderWidth: 1,
+                                borderColor: "rgba(0,0,0,0.06)",
+                            }}
+                        >
+                            <Text
+                                style={[
+                                    styles.panelTitle,
+                                    { marginBottom: hp(1) },
+                                ]}
+                            >
+                                Summary
+                            </Text>
+                            <Text style={styles.customerMeta}>
+                                Total Transactions:{" "}
+                                <Text style={styles.customerName}>
+                                    {data.summary.totalTransactions}
+                                </Text>
+                            </Text>
+                            <Text style={styles.customerMeta}>
+                                Avg per Day:{" "}
+                                <Text style={styles.customerName}>
+                                    {data.summary.avgTransactionsPerDay.toFixed(2)}
+                                </Text>
+                            </Text>
+                            <Text style={styles.customerMeta}>
+                                Avg per Week:{" "}
+                                <Text style={styles.customerName}>
+                                    {data.summary.avgTransactionsPerWeek.toFixed(2)}
+                                </Text>
+                            </Text>
+                            {data.range && (
+                                <Text style={styles.customerMeta}>
+                                    Window:{" "}
+                                    <Text style={styles.customerName}>
+                                        {data.range.windowDays} days
+                                    </Text>
+                                </Text>
+                            )}
+                        </View>
+
+                        {/* Busiest Days Section */}
+                        {(viewFilter === "all" || viewFilter === "days") && (
+                            <View style={{ marginBottom: hp(1.5) }}>
+                                <Text
+                                    style={[
+                                        styles.panelTitle,
+                                        { marginBottom: hp(0.8) },
+                                    ]}
+                                >
+                                    Busiest Days
+                                </Text>
+                                {data.busiestDays.map((day, idx) => (
+                                    <View key={day.dayNumber}>
+                                        {renderDayRow({ item: day, index: idx })}
+                                    </View>
+                                ))}
+                            </View>
+                        )}
+
+                        {/* Busiest Weeks Section */}
+                        {(viewFilter === "all" || viewFilter === "weeks") && (
+                            <View style={{ marginBottom: hp(1.5) }}>
+                                <Text
+                                    style={[
+                                        styles.panelTitle,
+                                        { marginBottom: hp(0.8) },
+                                    ]}
+                                >
+                                    Busiest Weeks
+                                </Text>
+                                {data.busiestWeeks.map((week, idx) => (
+                                    <View key={week.weekKey}>
+                                        {renderWeekRow({ item: week, index: idx })}
+                                    </View>
+                                ))}
+                            </View>
+                        )}
+
+                        {/* Busiest Time Periods Section */}
+                        {(viewFilter === "all" || viewFilter === "timePeriods") && (
+                            <View style={{ marginBottom: hp(1) }}>
+                                <Text
+                                    style={[
+                                        styles.panelTitle,
+                                        { marginBottom: hp(0.8) },
+                                    ]}
+                                >
+                                    Busiest Time Periods
+                                </Text>
+                                {data.busiestTimePeriods.map((period, idx) => (
+                                    <View key={period.hour}>
+                                        {renderTimePeriodRow({
+                                            item: period,
+                                            index: idx,
+                                        })}
+                                    </View>
+                                ))}
+                            </View>
+                        )}
+                    </ScrollView>
+                )}
+            </View>
         </View>
     );
 };
