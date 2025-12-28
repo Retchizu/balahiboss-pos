@@ -106,6 +106,16 @@ const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
         />
 
         <CustomDrawerItem
+          title="Categories"
+          icon={{ family: "MaterialCommunityIcons", name: "tag" }}
+          navigation={navigation}
+          route="(categories)"
+          state={state}
+          restrict
+          role={role}
+        />
+
+        <CustomDrawerItem
           title="Customers"
           icon={{ family: "Feather", name: "users" }}
           navigation={navigation}

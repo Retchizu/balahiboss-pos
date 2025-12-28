@@ -151,6 +151,20 @@ const DrawerLayout = () => {
         />
 
         <Drawer.Screen
+          name="(categories)"
+          options={{
+            drawerLabel: ({ color }) => (
+              <DrawerLabel title="Categories" color={color} />
+            ),
+            title: "Categories",
+            drawerIcon: ({ color }) => (
+              <MaterialCommunityIcons name="tag" size={wp(5)} color={color} />
+            ),
+            drawerItemStyle: role === "user" ? { display: "none" } : undefined,
+          }}
+        />
+
+        <Drawer.Screen
           name="(sales)"
           options={{
             drawerLabel: ({ color }) => (

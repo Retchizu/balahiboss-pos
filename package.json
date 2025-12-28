@@ -47,6 +47,7 @@
     "react-native-screens": "~4.11.1",
     "react-native-toast-message": "^2.3.3",
     "react-native-view-shot": "4.0.3",
+    "reanimated-color-picker": "^4.1.1",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
