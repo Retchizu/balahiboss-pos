@@ -1,9 +1,4 @@
-import {
-  View,
-  Text,
-  DimensionValue,
-  StyleSheet,
-} from "react-native";
+import { View, Text, DimensionValue, StyleSheet } from "react-native";
 import React, { useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { primary } from "@/theme/backgroundTheme";
@@ -303,7 +298,7 @@ const TransactionDetailScreen = () => {
       </View>
 
       <TransactionDetailCardView>
-        <View style={{ flexDirection: "row", gap: wp(3) }}>
+        <View style={{ flexDirection: "row", gap: wp(3)}}>
           <CommonButton
             onPress={() => {
               setSelectedProductList(
@@ -466,8 +461,9 @@ const TransactionDetailCardView = ({
   return (
     <View
       style={{
-        elevation: 4,
-        backgroundColor: primary,
+        backgroundColor: "rgba(255,255,255,0.85)",
+        borderColor:"rgba(0,0,0,0.6)",
+        borderWidth:wp(0.3),
         padding: wp(1),
         borderRadius: wp(5),
         height,

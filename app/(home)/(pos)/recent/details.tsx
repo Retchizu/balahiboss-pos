@@ -368,34 +368,26 @@ type TransactionDetailCardViewProp = {
 };
 
 // cardView
-
 const TransactionDetailCardView = ({
   children,
-
   width,
-
   height,
 }: TransactionDetailCardViewProp) => {
   return (
     <View
       style={{
-        elevation: 4,
-
-        backgroundColor: primary,
-
+        backgroundColor: "rgba(255,255,255,0.85)",
+        borderColor:"rgba(0,0,0,0.6)",
+        borderWidth:wp(0.3),
         padding: wp(1),
-
         borderRadius: wp(5),
-
         height,
-
         width,
       }}
     >
       <View
         style={{
           borderRadius: wp(4),
-
           padding: wp(4),
         }}
       >
