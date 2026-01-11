@@ -12,7 +12,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
+import { primary, strongPrimary } from "@/theme/backgroundTheme";
 import SearchBar from "@/components/searchbars/SearchBar";
 import { router } from "expo-router";
 import { useCustomerContext } from "@/contexts/CustomerContext";
@@ -120,7 +120,7 @@ const PendingScreen = () => {
                     setMarkAsReadLoading(true);
                     if (!item.checkedBy.includes(currentUser?.uid!)) {
                       await api.post(
-                        "/pending-order/view",
+                        "/orders/view",
                         {},
                         {
                           params: { transactionId: item.id },

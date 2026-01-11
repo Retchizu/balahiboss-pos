@@ -170,7 +170,7 @@ const InvoiceScreen = () => {
                 })
             );
 
-            const response = await api.post("/transaction/add", {
+            const response = await api.post("/transactions/add", {
                 customerId: invoiceForm.customer?.id,
                 items: productTransactionBody,
                 onlinePayment: parseFloat(invoiceForm.onlinePayment || "0"),

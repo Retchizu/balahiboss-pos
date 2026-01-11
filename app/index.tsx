@@ -108,7 +108,7 @@ const handleGoogleSignIn = async (
       if (error.response.status === 403 || error.response.status) {
         await auth.signOut();
       } else {
-        Toast.show({ type: "error", text1: `${error.response.data.error}` });
+        Toast.show({ type: "error", text1: `${error.response.status} ${error.response.data.error}` });
       }
     }
     console.error("Google Sign-In Error:", (error as Error).message);

@@ -36,7 +36,7 @@ const EditTimesheet = () => {
   useEffect(() => {
     const getTimesheet = async () => {
       try {
-        const response = await api.get("/employee/timesheet", {
+        const response = await api.get("/employees/timesheet", {
           params: {
             id: id,
           },
@@ -81,7 +81,7 @@ const EditTimesheet = () => {
         logoutTime: logoutTime?.toISOString(),
       };
 
-      await api.patch("/employee/timesheet/update", payload);
+      await api.patch("/employees/timesheet/update", payload);
 
       console.log("id from update", id)
       updateSingleTimesheet(id, {

@@ -181,7 +181,7 @@ const EditInvoiceScreen = () => {
         freebies: parseFloat(invoiceForm.freebies || "0"),
       };
 
-      const response = await api.put(`/transaction/update/${transaction.id}`, {
+      const response = await api.put(`/transactions/update/${transaction.id}`, {
         customerId: invoiceForm.customer?.id,
         items: productTransactionBody,
         onlinePayment: parseFloat(invoiceForm.onlinePayment || "0"),

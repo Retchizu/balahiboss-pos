@@ -223,11 +223,11 @@ const DrawerLayout = () => {
         />
 
         <Drawer.Screen
-          name="(pending)"
+          name="(orders)"
           options={{
             drawerLabel: ({ color }) => (
               <DrawerLabel
-                title="Pending Orders"
+                title="Orders"
                 badgeCount={
                   pendingOrdersArray.filter(
                     (order) => order.status === "pending"
@@ -236,7 +236,7 @@ const DrawerLayout = () => {
                 color={color}
               />
             ),
-            title: "Pending Orders",
+            title: "Orders",
             drawerIcon: ({ color }) => (
               <MaterialIcons
                 name="pending-actions"

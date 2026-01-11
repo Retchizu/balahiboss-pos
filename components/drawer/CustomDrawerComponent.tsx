@@ -83,7 +83,7 @@ const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
           title="Orders"
           icon={{ family: "MaterialIcons", name: "pending-actions" }}
           navigation={navigation}
-          route="(pending)"
+          route="(orders)"
           state={state}
           pendingOrdersArray={pendingOrders}
         />

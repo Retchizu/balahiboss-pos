@@ -97,8 +97,8 @@ const PosScreen = () => {
       try {
         // Load products and transactions in parallel for faster initial load
         const [productResponse, transactionResponse] = await Promise.all([
-          api.get("/product/list"),
-          api.get("/transaction/list"),
+          api.get("/products"),
+          api.get("/transactions"),
         ]);
 
         if (isMounted) {
@@ -134,7 +134,7 @@ const PosScreen = () => {
         if (!hasLoadedInitial || !isMounted) {
           return;
         }
-       const response = await api.get("/transaction/list");
+       const response = await api.get("/transactions");
         setRecentTransactions(response.data.items);
         // Merge real-time changes into existing products without refetching all
         setProducts((prevProducts) => {
@@ -181,7 +181,7 @@ const PosScreen = () => {
     // Load initial customers immediately (non-blocking)
     const loadInitialCustomers = async () => {
       try {
-        const response = await api.get("/customer/list");
+        const response = await api.get("/customers");
         if (isMounted) {
           setCustomers(response.data.items);
           hasLoadedInitialCustomers = true;
@@ -345,11 +345,8 @@ const PosScreen = () => {
         >
           <View
             style={{
-              borderColor: "#FF9149",
-              borderWidth: wp(0.2),
               height: hp(8),
               width: wp(16),
-              borderRadius: wp(3),
             }}
           >
             <Image
@@ -358,7 +355,8 @@ const PosScreen = () => {
                   ? { uri: item.imageUrl }
                   : require("../../../assets/balahiboss.png")
               }
-              style={{ height: hp(8), width: wp(16), borderRadius: wp(3) }}
+              style={{ height: hp(8), width: wp(16), borderRadius: wp(2)}}
+              resizeMode="cover"
             />
           </View>
           <View style={{ maxWidth: wp(60), paddingHorizontal: wp(1.5) }}>

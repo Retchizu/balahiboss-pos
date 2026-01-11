@@ -20,7 +20,7 @@ const Employees = () => {
   useEffect(() => {
     const getEmployees = async () => {
       try {
-        const response = await api.get("/employee/list");
+        const response = await api.get("/employees/list");
         setEmployees(response.data.employees);
       } catch (error) {
         if (isAxiosError(error)) {

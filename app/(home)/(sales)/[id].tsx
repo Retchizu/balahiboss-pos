@@ -73,7 +73,7 @@ const TransactionDetailScreen = () => {
     try {
       setIsDeletingTransaction(true);
       const response = await api.delete(
-        `/transaction/delete/${transaction.id}`
+        `/transactions/delete/${transaction.id}`
       );
       Toast.show({ type: "success", text1: `${response?.data.message}` });
       router.replace("../list");

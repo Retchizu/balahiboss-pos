@@ -69,7 +69,7 @@ const TransactionListScreen = () => {
   const getTransactions = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await api.get("/transaction/list", {
+      const response = await api.get("/transactions", {
         params: {
           startDate,
           endDate,

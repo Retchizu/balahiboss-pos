@@ -38,7 +38,7 @@ const AddCustomerScreen = () => {
   const addCustomer = async () => {
     try {
       setIsAddingCustomer(true);
-      const response = await api.post("/customer/add", customerForm);
+      const response = await api.post("/customers/add", customerForm);
       router.back();
       Toast.show({ type: "success", text1: `${response?.data.message}` });
     } catch (error) {

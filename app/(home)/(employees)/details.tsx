@@ -42,7 +42,7 @@ const EmployeeDetails = () => {
   useEffect(() => {
     const getTimesheet = async () => {
       try {
-        const response = await api.get(`/employee/timesheet/list`, {
+        const response = await api.get(`/employees/timesheet/list`, {
           params: {
             uid: selectedEmployee?.uid,
             startDate,
@@ -363,7 +363,7 @@ const EmployeeDetails = () => {
             title="Set Rate"
             onPress={async () => {
               try {
-                const response = await api.post("/employee/set-rate", {
+                const response = await api.post("/employees/set-rate", {
                   uid: selectedEmployee?.uid,
                   rate: parseFloat(rate),
                 });

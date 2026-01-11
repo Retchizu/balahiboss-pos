@@ -91,7 +91,7 @@ const ActivityLogScreen = () => {
   useEffect(() => {
     const getActivityLogs = async () => {
       try {
-        const response = await api.get("/activity/list", {
+        const response = await api.get("/activities", {
           params: {
             startDate,
             endDate,

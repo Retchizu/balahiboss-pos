@@ -311,7 +311,7 @@ const UpdateScreen = () => {
         categoryIds: Array.from(selectedCategoryIds),
       };
 
-      const response = await api.put(`/product/update/${id}`, updatedProduct);
+      const response = await api.put(`/products/update/${id}`, updatedProduct);
 
       // Update local products state
       setProducts((prevProducts) => ({
@@ -338,7 +338,7 @@ const UpdateScreen = () => {
   const deleteProduct = async () => {
     try {
       setIsDeleteModalVisible(false);
-      const response = await api.delete(`/product/delete/${id}`);
+      const response = await api.delete(`/products/delete/${id}`);
       router.back();
       Toast.show({ type: "success", text1: `${response?.data.message}` });
     } catch (error) {
@@ -357,7 +357,7 @@ const UpdateScreen = () => {
   const addStock = async () => {
     try {
       setIsAddStockLoading(true);
-      const response = await api.patch(`/product/add-stock/${id}`, {
+      const response = await api.patch(`/products/add-stock/${id}`, {
         additionalStock: parseFloat(additionalStock),
       });
       Toast.show({

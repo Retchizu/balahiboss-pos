@@ -49,7 +49,7 @@ const UpdateCustomerScreen = () => {
     try {
       setIsUpdatingCustomer(true);
       const { customerName, customerInfo } = customerForm;
-      const response = await api.put(`/customer/update/${id}`, {
+      const response = await api.put(`/customers/update/${id}`, {
         customerName,
         customerInfo,
       });
@@ -71,7 +71,7 @@ const UpdateCustomerScreen = () => {
     try {
       setIsDeleteModalVisible(false);
       router.back();
-      const response = await api.delete(`/customer/delete/${id}`);
+      const response = await api.delete(`/customers/delete/${id}`);
       Toast.show({ type: "success", text1: `${response?.data.message}` });
     } catch (error) {
       if (isAxiosError(error)) {
