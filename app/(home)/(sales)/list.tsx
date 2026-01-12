@@ -23,13 +23,6 @@ import { useTransactionContext } from "@/contexts/TransactionContext";
 import { router, useFocusEffect } from "expo-router";
 import Transaction from "@/types/Transaction";
 import { useProductContext } from "@/contexts/ProductContext";
-import calculateTotalCashPayment from "@/methods/invoice/report/calculateTotalCashPayment";
-import calculateTotalOnlinePayment from "@/methods/invoice/report/calculateTotalOnlinePayment";
-import calculateTotalDiscount from "@/methods/invoice/report/calculateTotalDiscount";
-import calculateTotalFreebies from "@/methods/invoice/report/calculateTotalFreebies";
-import calculateTotalPayment from "@/methods/invoice/report/calculateTotalPayment";
-import calculateTotalPriceSold from "@/methods/invoice/report/calculateTotalPriceSold";
-import calculateTotalProfit from "@/methods/invoice/report/calculateTotalProfit";
 import ModalTemplate from "@/components/modals/ModalTemplate";
 import { Checkbox } from "expo-checkbox";
 import { api } from "@/config/axios-api";
@@ -40,6 +33,7 @@ import calculateSubTotalPrice from "@/methods/invoice/calculateSubTotalPrice";
 import calculateInvoiceTotalPrice from "@/methods/invoice/calculateInvoiceTotalPrice";
 import calculateSingleTransactionProfit from "@/methods/invoice/calculateTotalProfit";
 import InvoiceForm from "@/types/InvoiceForm";
+import Summary from "@/types/metrics/Summary";
 
 const TransactionListScreen = () => {
   // startDate
@@ -65,6 +59,27 @@ const TransactionListScreen = () => {
     new Set()
   );
 
+  // Summary state
+  const [summary, setSummary] = useState<Summary | null>(null);
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [isSummaryCollapsed, setIsSummaryCollapsed] = useState(false);
+
+  // search query
+  const [searchQuery, setSearchQuery] = useState("");
+  // Debounced search query for API calls
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  
+  // filter options
+  type NameFilter = "Customer" | "Product";
+  type PaymentFilter = "All" | "Cash" | "Online";
+
+  const nameFilterOptions: NameFilter[] = ["Customer", "Product"];
+  const paymentFilterOptions: PaymentFilter[] = ["All", "Cash", "Online"];
+
+  const [nameFilter, setNameFilter] = useState<NameFilter>("Customer");
+  const [paymentFilter, setPaymentFilter] = useState<PaymentFilter>("All");
+  const [filerModalVisible, setFilterModalVisible] = useState(false);
+
   // Get transactions function
   const getTransactions = useCallback(async () => {
     setLoading(true);
@@ -89,15 +104,65 @@ const TransactionListScreen = () => {
     }
   }, [startDate, endDate, setTransactions]);
 
+  // Get summary function
+  const getSummary = useCallback(async () => {
+    setSummaryLoading(true);
+    try {
+      const params: Record<string, string | Date> = {};
+      
+      if (startDate) {
+        params.startDate = startDate;
+      }
+      if (endDate) {
+        params.endDate = endDate;
+      }
+      
+      // Add payment filter (only if not "All")
+      if (paymentFilter !== "All") {
+        params.paymentFilter = paymentFilter;
+      }
+      
+      // Add name filter and search query (only if debounced search query exists)
+      if (debouncedSearchQuery.trim()) {
+        params.nameFilter = nameFilter;
+        params.searchQuery = debouncedSearchQuery.trim().toLowerCase();
+      }
+      
+      const response = await api.get("/transactions/summary", { params });
+      setSummary(response.data);
+    } catch (error) {
+      if (isAxiosError(error)) {
+        Toast.show({
+          type: "error",
+          text1: `${error.response?.data.error}`,
+        });
+      }
+      console.error("Get Summary Failed: ", error);
+    } finally {
+      setSummaryLoading(false);
+    }
+  }, [startDate, endDate, paymentFilter, nameFilter, debouncedSearchQuery]);
+
   useFocusEffect(
     useCallback(() => {
       getTransactions();
-    }, [getTransactions])
+      getSummary();
+    }, [getTransactions, getSummary])
   );
+
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500); // 500ms debounce delay
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   useEffect(() => {
     getTransactions();
-  }, [getTransactions]);
+    getSummary();
+  }, [getTransactions, getSummary]);
   // render key value pair
   type RenderLabelValuePairProps = {
     label: string;
@@ -454,18 +519,6 @@ const TransactionListScreen = () => {
       keyboardDidHideListener.remove();
     };
   }, []);
-  // search query
-  const [searchQuery, setSearchQuery] = useState("");
-  // filter options
-  type NameFilter = "Customer" | "Product";
-  type PaymentFilter = "All" | "Cash" | "Online";
-
-  const nameFilterOptions: NameFilter[] = ["Customer", "Product"];
-  const paymentFilterOptions: PaymentFilter[] = ["All", "Cash", "Online"];
-
-  const [nameFilter, setNameFilter] = useState<NameFilter>("Customer");
-  const [paymentFilter, setPaymentFilter] = useState<PaymentFilter>("All");
-  const [filerModalVisible, setFilterModalVisible] = useState(false);
 
   const filteredTransactions = useMemo(() => {
     return transactions
@@ -692,41 +745,85 @@ const TransactionListScreen = () => {
       {!isKeyboardVisible && (
         <View
           style={{
-            padding: wp(2.5),
             borderRadius: wp(1),
             borderTopWidth: wp(1),
             borderColor: strongPrimary,
             backgroundColor: "rgba(255,255,255,0.85)",
+            overflow: "hidden",
           }}
         >
-          <RenderReportValuePair
-            label="Total Cash Payment"
-            value={calculateTotalCashPayment(filteredTransactions)}
-          />
-          <RenderReportValuePair
-            label="Total Online Payment"
-            value={calculateTotalOnlinePayment(filteredTransactions)}
-          />
-          <RenderReportValuePair
-            label="Total Discount"
-            value={calculateTotalDiscount(filteredTransactions)}
-          />
-          <RenderReportValuePair
-            label="Total Freebies"
-            value={calculateTotalFreebies(filteredTransactions)}
-          />
-          <RenderReportValuePair
-            label="Total Payment"
-            value={calculateTotalPayment(filteredTransactions)}
-          />
-          <RenderReportValuePair
-            label="Total Price Sold"
-            value={calculateTotalPriceSold(filteredTransactions, products)}
-          />
-          <RenderReportValuePair
-            label="Total Profit"
-            value={calculateTotalProfit(filteredTransactions, products)}
-          />
+          <TouchableOpacity
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: wp(2.5),
+              paddingBottom: isSummaryCollapsed ? wp(2.5) : wp(1),
+            }}
+            activeOpacity={0.7}
+            onPress={() => setIsSummaryCollapsed(!isSummaryCollapsed)}
+          >
+            <Text
+              style={{
+                fontFamily: "Gantari-SemiBold",
+                fontSize: wp(4.5),
+                color: strongPrimary,
+              }}
+            >
+              Summary
+            </Text>
+            <Ionicons
+              name={isSummaryCollapsed ? "chevron-up" : "chevron-down"}
+              size={wp(5)}
+              color={strongPrimary}
+            />
+          </TouchableOpacity>
+          {!isSummaryCollapsed && (
+            <View style={{ padding: wp(2.5), paddingTop: 0 }}>
+              {summaryLoading ? (
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingVertical: hp(2),
+                  }}
+                >
+                  <ActivityIndicator size="small" color="#FF9149" />
+                </View>
+              ) : summary ? (
+                <>
+                  <RenderReportValuePair
+                    label="Total Cash Payment"
+                    value={summary.totalCashPayment}
+                  />
+                  <RenderReportValuePair
+                    label="Total Online Payment"
+                    value={summary.totalOnlinePayment}
+                  />
+                  <RenderReportValuePair
+                    label="Total Discount"
+                    value={summary.totalDiscount}
+                  />
+                  <RenderReportValuePair
+                    label="Total Freebies"
+                    value={summary.totalFreebies}
+                  />
+                  <RenderReportValuePair
+                    label="Total Payment"
+                    value={summary.totalPayment}
+                  />
+                  <RenderReportValuePair
+                    label="Total Price Sold"
+                    value={summary.totalPriceSold}
+                  />
+                  <RenderReportValuePair
+                    label="Total Profit"
+                    value={summary.totalProfit}
+                  />
+                </>
+              ) : null}
+            </View>
+          )}
         </View>
       )}
 
