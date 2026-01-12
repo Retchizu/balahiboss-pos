@@ -38,7 +38,7 @@ import calculateTotalSellPrice from "@/methods/invoice/calculateTotalSellPrice";
 import { useConvertTransactionArrayToMap } from "@/hooks/useConvertTransactionArrayToMap";
 import { usePendingOrderContext } from "@/contexts/PendingOrderContext";
 import Toast from "react-native-toast-message";
-import Transaction from "@/types/Transaction";
+import Transaction, { TransactionItem } from "@/types/Transaction";
 
 const EditInvoiceScreen = () => {
   // params
@@ -162,28 +162,20 @@ const EditInvoiceScreen = () => {
   const updateTransaction = async () => {
     try {
       setIsInvoiceSubmitting(true);
-      const productTransactionBody = selectedProductArray.map(
+      const transactionItems: TransactionItem[] = selectedProductArray.map(
         (selectedProduct) => ({
           productId: selectedProduct.id,
+          productName: selectedProduct.productName,
+          stockPrice: selectedProduct.stockPrice,
+          sellPrice: selectedProduct.sellPrice,
           quantity: selectedProduct.quantity,
         })
       );
 
-      const updatedTransaction: Transaction = {
-        id: parseId,
+      const dateISOString = invoiceForm.date!.toISOString();
+      const payload = {
         customerId: invoiceForm.customer!.id,
-        items: productTransactionBody,
-        onlinePayment: parseFloat(invoiceForm.onlinePayment || "0"),
-        cashPayment: parseFloat(invoiceForm.cashPayment || "0"),
-        date: invoiceForm.date!.toISOString(),
-        deliveryFee: parseFloat(invoiceForm.deliveryFee || "0"),
-        discount: parseFloat(invoiceForm.discount || "0"),
-        freebies: parseFloat(invoiceForm.freebies || "0"),
-      };
-
-      const response = await api.put(`/transactions/update/${transaction.id}`, {
-        customerId: invoiceForm.customer?.id,
-        items: productTransactionBody,
+        items: transactionItems,
         onlinePayment: parseFloat(invoiceForm.onlinePayment || "0"),
         cashPayment: parseFloat(invoiceForm.cashPayment || "0"),
         date: invoiceForm.date,
@@ -192,7 +184,21 @@ const EditInvoiceScreen = () => {
         freebies: parseFloat(invoiceForm.freebies || "0"),
         pending: isPendingOrder,
         orderInformation: pendingOrderInformation,
-      });
+      };
+
+      const response = await api.put(`/transactions/update/${transaction.id}`, payload);
+
+      const updatedTransaction: Transaction = {
+        id: parseId,
+        customerId: payload.customerId,
+        items: payload.items,
+        onlinePayment: payload.onlinePayment,
+        cashPayment: payload.cashPayment,
+        date: dateISOString,
+        deliveryFee: payload.deliveryFee,
+        discount: payload.discount,
+        freebies: payload.freebies,
+      };
 
       setTransactions(prev => prev.map(transaction => transaction.id === parseId ? updatedTransaction : transaction))
       router.back();

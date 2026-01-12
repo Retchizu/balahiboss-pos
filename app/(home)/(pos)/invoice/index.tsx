@@ -38,6 +38,7 @@ import searchCustomerByName from "@/methods/search/searchCustomerByName";
 import { useUserContext } from "@/contexts/UserContext";
 import Toast from "react-native-toast-message";
 import useBluetoothPrinter from "@/hooks/useBluetoothPrinter";
+import { TransactionItem } from "@/types/Transaction";
 
 // UI
 const InvoiceScreen = () => {
@@ -163,16 +164,19 @@ const InvoiceScreen = () => {
     const addTransaction = async () => {
         try {
             setIsInvoiceSubmitting(true);
-            const productTransactionBody = selectedProductArray.map(
+            const transactionItems: TransactionItem[] = selectedProductArray.map(
                 (selectedProduct) => ({
                     productId: selectedProduct.id,
+                    productName: selectedProduct.productName,
+                    sellPrice: selectedProduct.sellPrice,
+                    stockPrice: selectedProduct.stockPrice,
                     quantity: selectedProduct.quantity,
                 })
             );
 
             const response = await api.post("/transactions/add", {
                 customerId: invoiceForm.customer?.id,
-                items: productTransactionBody,
+                items: transactionItems,
                 onlinePayment: parseFloat(invoiceForm.onlinePayment || "0"),
                 cashPayment: parseFloat(invoiceForm.cashPayment || "0"),
                 date: invoiceForm.date,

@@ -4,10 +4,19 @@ type Transaction = {
     date: string;
     deliveryFee: number;
     discount: number;
-    items: {productId: string,  quantity: number}[];
+    items: TransactionItem[];
     cashPayment: number;
     onlinePayment: number;
     freebies: number;
 }
 
 export default Transaction;
+
+
+export type TransactionItem = {
+    productId: string;
+    productName: string;
+    sellPrice: number;
+    stockPrice: number;
+    quantity: number;
+}
