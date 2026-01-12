@@ -1,4 +1,3 @@
-import { api } from "@/config/axios-api";
 import Customer from "@/types/Customer";
 import {
   createContext,
