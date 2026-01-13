@@ -4,8 +4,9 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import useProductsArray from "@/hooks/useProductsArray";
 import searchProductsByName from "@/methods/search/searchProductsByName";
 import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
@@ -28,15 +29,44 @@ import * as XLSX from "xlsx";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import { useProductContext } from "@/contexts/ProductContext";
+import { api } from "@/config/axios-api";
+import { isAxiosError } from "axios";
 
 const StockReportListScreen = () => {
   const { products } = useProductContext();
   const { productsArray } = useProductsArray(products);
-  const { transactions, startDate, endDate, setStartDate, setEndDate } =
+  const { transactions, setTransactions, startDate, endDate, setStartDate, setEndDate } =
     useTransactionContext();
+  const [loading, setLoading] = useState(false);
   // search bar
   const [searchQuery, setSearchQuery] = useState("");
 
+  const getTransactions = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await api.get("/transactions", {
+        params: {
+          startDate,
+          endDate,
+        },
+      });
+      setTransactions(response.data.items);
+    } catch (error) {
+      if (isAxiosError(error)) {
+        Toast.show({
+          type: "error",
+          text1: `${error.response?.data.error}`,
+        });
+      }
+      console.error("Get Transaction Failed: ", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [startDate, endDate, setTransactions]);
+
+  useEffect(() => {
+    getTransactions()
+  }, [getTransactions])
   const filteredProducts = useMemo(() => {
     return searchProductsByName(productsArray, searchQuery);
   }, [productsArray, searchQuery]);
@@ -262,7 +292,19 @@ const StockReportListScreen = () => {
           Stock Sold
         </Text>
       </View>
-      <FlatList
+      {loading ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: hp(2),
+          }}
+        >
+          <ActivityIndicator size="large" color="#FF9149" />
+        </View>
+      ) : (
+        <FlatList
         data={filteredProducts}
         renderItem={({ item }) => (
           <View
@@ -301,6 +343,7 @@ const StockReportListScreen = () => {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       />
+      )}
       <ModalTemplate
         visible={excelConversionOptionsModal}
         onClose={() => {

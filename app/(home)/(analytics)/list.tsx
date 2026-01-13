@@ -32,6 +32,10 @@ import {
     WeekStats,
     TimePeriodStats,
 } from "@/types/metrics/BusiestPeriod";
+import * as XLSX from "xlsx";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 type AnalyticsSection = "topCustomers" | "inventory" | "busiestPeriod";
 
@@ -137,6 +141,70 @@ const TopCustomersPanel = () => {
         );
     }, [items, searchQuery]);
 
+    const exportToExcel = useCallback(async () => {
+        if (!filteredItems || filteredItems.length === 0) {
+            Toast.show({ type: "error", text1: "No data to export" });
+            return;
+        }
+
+        try {
+            // Prepare data based on TopCustomer type
+            const exportData = filteredItems.map((item, index) => ({
+                Rank: index + 1,
+                "Customer ID": item.customerId,
+                "Customer Name": item.customerName ?? "Unknown customer",
+                "Purchase Count": item.purchaseCount,
+                "Total Paid": Number(item.totalPaid || 0).toFixed(2),
+            }));
+
+            // Create worksheet
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            worksheet["!cols"] = [
+                { wch: 8 }, // Rank
+                { wch: 30 }, // Customer ID
+                { wch: 40 }, // Customer Name
+                { wch: 15 }, // Purchase Count
+                { wch: 15 }, // Total Paid
+            ];
+
+            // Create workbook
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Top Customers");
+
+            // Convert workbook to base64
+            const workbookOutput = XLSX.write(workbook, {
+                type: "base64",
+                bookType: "xlsx",
+            });
+
+            // Generate filename with date range
+            const dateRange = startDate && endDate
+                ? `${startDate.toISOString().split("T")[0]}_to_${endDate.toISOString().split("T")[0]}`
+                : new Date().toISOString().split("T")[0];
+            const fileName = `top_customers_${dateRange}`;
+
+            // Save to device storage
+            const fileUri = `${FileSystem.documentDirectory}${fileName}.xlsx`;
+            await FileSystem.writeAsStringAsync(fileUri, workbookOutput, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+
+            // Share if available
+            if (await Sharing.isAvailableAsync()) {
+                await Sharing.shareAsync(fileUri, {
+                    mimeType:
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    dialogTitle: `Share ${fileName}.xlsx`,
+                });
+            }
+
+            Toast.show({ type: "success", text1: "Export successful" });
+        } catch (error) {
+            Toast.show({ type: "error", text1: "Export failed" });
+            console.error("Excel Export Error:", error);
+        }
+    }, [filteredItems, startDate, endDate]);
+
     const renderRow = useCallback(
         ({ item, index }: { item: TopCustomer; index: number }) => {
             const displayName = item.customerName ?? "Unknown customer";
@@ -185,6 +253,17 @@ const TopCustomersPanel = () => {
                     onPress={() => setFilterModalVisible(true)}
                 >
                     <Ionicons name="funnel" size={24} color={"black"} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.funnelButton}
+                    activeOpacity={0.7}
+                    onPress={exportToExcel}
+                >
+                    <MaterialCommunityIcons
+                        name="microsoft-excel"
+                        size={24}
+                        color="black"
+                    />
                 </TouchableOpacity>
             </View>
 
@@ -426,6 +505,121 @@ const BusiestPeriodPanel = () => {
         getBusiestPeriod();
     }, [getBusiestPeriod]);
 
+    const exportToExcel = useCallback(async () => {
+        if (!data) {
+            Toast.show({ type: "error", text1: "No data to export" });
+            return;
+        }
+
+        try {
+            // Create workbook
+            const workbook = XLSX.utils.book_new();
+
+            // Summary sheet
+            const summaryData = [
+                { Metric: "Total Transactions", Value: data.summary.totalTransactions },
+                { Metric: "Avg Transactions Per Day", Value: data.summary.avgTransactionsPerDay.toFixed(2) },
+                { Metric: "Avg Transactions Per Week", Value: data.summary.avgTransactionsPerWeek.toFixed(2) },
+            ];
+            if (data.range) {
+                summaryData.push({ Metric: "Window Days", Value: data.range.windowDays });
+                summaryData.push({ Metric: "Start Date", Value: data.range.startIso });
+                summaryData.push({ Metric: "End Date", Value: data.range.endIso });
+            }
+            const summarySheet = XLSX.utils.json_to_sheet(summaryData);
+            summarySheet["!cols"] = [{ wch: 30 }, { wch: 20 }];
+            XLSX.utils.book_append_sheet(workbook, summarySheet, "Summary");
+
+            // Busiest Days sheet - using DayOfWeekStats type
+            const daysData = data.busiestDays.map((item, index) => ({
+                Rank: index + 1,
+                "Day Name": item.dayName,
+                "Day Number": item.dayNumber,
+                "Transaction Count": item.transactionCount,
+            }));
+            const daysSheet = XLSX.utils.json_to_sheet(daysData);
+            daysSheet["!cols"] = [
+                { wch: 8 }, // Rank
+                { wch: 20 }, // Day Name
+                { wch: 12 }, // Day Number
+                { wch: 18 }, // Transaction Count
+            ];
+            XLSX.utils.book_append_sheet(workbook, daysSheet, "Busiest Days");
+
+            // Busiest Weeks sheet - using WeekStats type
+            const weeksData = data.busiestWeeks.map((item, index) => ({
+                Rank: index + 1,
+                "Week Key": item.weekKey,
+                Year: item.year,
+                "Week Number": item.weekNumber,
+                "Readable Date": item.readableDate,
+                "Week Start": item.weekStart,
+                "Week End": item.weekEnd,
+                "Transaction Count": item.transactionCount,
+            }));
+            const weeksSheet = XLSX.utils.json_to_sheet(weeksData);
+            weeksSheet["!cols"] = [
+                { wch: 8 }, // Rank
+                { wch: 15 }, // Week Key
+                { wch: 8 }, // Year
+                { wch: 12 }, // Week Number
+                { wch: 25 }, // Readable Date
+                { wch: 15 }, // Week Start
+                { wch: 15 }, // Week End
+                { wch: 18 }, // Transaction Count
+            ];
+            XLSX.utils.book_append_sheet(workbook, weeksSheet, "Busiest Weeks");
+
+            // Busiest Time Periods sheet - using TimePeriodStats type
+            const timePeriodsData = data.busiestTimePeriods.map((item, index) => ({
+                Rank: index + 1,
+                Hour: item.hour,
+                "Hour Label": item.hourLabel,
+                "Transaction Count": item.transactionCount,
+            }));
+            const timePeriodsSheet = XLSX.utils.json_to_sheet(timePeriodsData);
+            timePeriodsSheet["!cols"] = [
+                { wch: 8 }, // Rank
+                { wch: 8 }, // Hour
+                { wch: 15 }, // Hour Label
+                { wch: 18 }, // Transaction Count
+            ];
+            XLSX.utils.book_append_sheet(workbook, timePeriodsSheet, "Busiest Time Periods");
+
+            // Convert workbook to base64
+            const workbookOutput = XLSX.write(workbook, {
+                type: "base64",
+                bookType: "xlsx",
+            });
+
+            // Generate filename with date range
+            const dateRange = startDate && endDate
+                ? `${startDate.toISOString().split("T")[0]}_to_${endDate.toISOString().split("T")[0]}`
+                : new Date().toISOString().split("T")[0];
+            const fileName = `busiest_period_${dateRange}`;
+
+            // Save to device storage
+            const fileUri = `${FileSystem.documentDirectory}${fileName}.xlsx`;
+            await FileSystem.writeAsStringAsync(fileUri, workbookOutput, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+
+            // Share if available
+            if (await Sharing.isAvailableAsync()) {
+                await Sharing.shareAsync(fileUri, {
+                    mimeType:
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    dialogTitle: `Share ${fileName}.xlsx`,
+                });
+            }
+
+            Toast.show({ type: "success", text1: "Export successful" });
+        } catch (error) {
+            Toast.show({ type: "error", text1: "Export failed" });
+            console.error("Excel Export Error:", error);
+        }
+    }, [data, startDate, endDate]);
+
     const renderDayRow = useCallback(
         ({ item, index }: { item: DayOfWeekStats; index: number }) => {
             return (
@@ -503,7 +697,22 @@ const BusiestPeriodPanel = () => {
 
     return (
         <View style={styles.panel}>
-            <Text style={styles.panelTitle}>Busiest Period</Text>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: hp(0.8) }}>
+                <Text style={styles.panelTitle}>Busiest Period</Text>
+                {data && (
+                    <TouchableOpacity
+                        style={styles.funnelButton}
+                        activeOpacity={0.7}
+                        onPress={exportToExcel}
+                    >
+                        <MaterialCommunityIcons
+                            name="microsoft-excel"
+                            size={24}
+                            color="black"
+                        />
+                    </TouchableOpacity>
+                )}
+            </View>
 
             <View style={styles.dateRow}>
                 <CommonButton
@@ -772,6 +981,80 @@ const InventoryAnalyticsPanel = () => {
         );
     }, [items, searchQuery]);
 
+    const exportToExcel = useCallback(async () => {
+        if (!filteredItems || filteredItems.length === 0) {
+            Toast.show({ type: "error", text1: "No data to export" });
+            return;
+        }
+
+        try {
+            // Prepare data based on MaxStock type
+            const exportData = filteredItems.map((item, index) => ({
+                Rank: index + 1,
+                "Product ID": item.productId,
+                "Product Name": item.productName ?? "Unknown product",
+                Stock: typeof item.stock === "number" ? item.stock : "Unknown",
+                "Units Sold": item.unitsSold,
+                "Window Days": item.windowDays,
+                "Avg Daily Units": Number(item.avgDailyUnits || 0).toFixed(2),
+                "Target Cover Days": item.targetCoverDays,
+                "Max Stock Level": item.maxStockLevel,
+                "Suggested Order Qty": item.suggestedOrderQty,
+            }));
+
+            // Create worksheet
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            worksheet["!cols"] = [
+                { wch: 8 }, // Rank
+                { wch: 30 }, // Product ID
+                { wch: 40 }, // Product Name
+                { wch: 12 }, // Stock
+                { wch: 12 }, // Units Sold
+                { wch: 12 }, // Window Days
+                { wch: 15 }, // Avg Daily Units
+                { wch: 15 }, // Target Cover Days
+                { wch: 15 }, // Max Stock Level
+                { wch: 18 }, // Suggested Order Qty
+            ];
+
+            // Create workbook
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Inventory Analytics");
+
+            // Convert workbook to base64
+            const workbookOutput = XLSX.write(workbook, {
+                type: "base64",
+                bookType: "xlsx",
+            });
+
+            // Generate filename with date range
+            const dateRange = startDate && endDate
+                ? `${startDate.toISOString().split("T")[0]}_to_${endDate.toISOString().split("T")[0]}`
+                : new Date().toISOString().split("T")[0];
+            const fileName = `inventory_analytics_${dateRange}`;
+
+            // Save to device storage
+            const fileUri = `${FileSystem.documentDirectory}${fileName}.xlsx`;
+            await FileSystem.writeAsStringAsync(fileUri, workbookOutput, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+
+            // Share if available
+            if (await Sharing.isAvailableAsync()) {
+                await Sharing.shareAsync(fileUri, {
+                    mimeType:
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    dialogTitle: `Share ${fileName}.xlsx`,
+                });
+            }
+
+            Toast.show({ type: "success", text1: "Export successful" });
+        } catch (error) {
+            Toast.show({ type: "error", text1: "Export failed" });
+            console.error("Excel Export Error:", error);
+        }
+    }, [filteredItems, startDate, endDate]);
+
     const renderRow = useCallback(
         ({ item, index }: { item: MaxStock; index: number }) => {
             const displayName = item.productName ?? "Unknown product";
@@ -837,6 +1120,17 @@ const InventoryAnalyticsPanel = () => {
                     onPress={() => setFilterModalVisible(true)}
                 >
                     <Ionicons name="funnel" size={24} color={"black"} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.funnelButton}
+                    activeOpacity={0.7}
+                    onPress={exportToExcel}
+                >
+                    <MaterialCommunityIcons
+                        name="microsoft-excel"
+                        size={24}
+                        color="black"
+                    />
                 </TouchableOpacity>
             </View>
 
