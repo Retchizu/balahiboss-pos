@@ -5,7 +5,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { primary, secondary } from "@/theme/backgroundTheme";
+import { primary } from "@/theme/backgroundTheme";
 import { router } from "expo-router";
 import { User } from "@/types/User";
 import SearchBar from "@/components/searchbars/SearchBar";

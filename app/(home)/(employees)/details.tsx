@@ -6,8 +6,9 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
-import DatePicker from "react-native-date-picker";
+import { format } from "date-fns";
 import CommonButton from "@/components/buttons/CommonButton";
+import DateRangePickerModal from "@/components/modals/DateRangePickerModal";
 import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
 import {
   widthPercentageToDP as wp,
@@ -26,14 +27,10 @@ import { useTimesheetContext } from "@/contexts/TimesheetContext";
 
 const EmployeeDetails = () => {
   const { selectedEmployee } = useSelectedEmployeeContext();
-  // startDate
   const [startDate, setStartDate] = useState<Date | null>(null);
-  const [isStartDatePickerVisible, setIsStartDatePickerVisible] =
-    useState(false);
-
-  // endDate
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [isEndDatePickerVisible, setIsEndDatePickerVisible] = useState(false);
+  const [isDateRangePickerVisible, setIsDateRangePickerVisible] =
+    useState(false);
 
   const [rate, setRate] = useState("");
   const [rateModalVisible, setRateModalVisible] = useState(false);
@@ -82,8 +79,6 @@ const EmployeeDetails = () => {
     return { totalRate, totalHours: totalMs };
   }, [timesheetInfo?.timesheets, timesheetInfo?.rate]);
 
-  console.log(timesheetInfo?.timesheets);
-
   return (
     <View
       style={{
@@ -113,36 +108,13 @@ const EmployeeDetails = () => {
         style={{ flexDirection: "row", justifyContent: "center", gap: wp(10) }}
       >
         <CommonButton
-          onPress={() => {
-            setIsStartDatePickerVisible(true);
-          }}
+          onPress={() => setIsDateRangePickerVisible(true)}
           title={
-            startDate
-              ? startDate.toLocaleString("en-PH", {
-                  dateStyle: "medium",
-                })
-              : "Start Date"
-          }
-          backgroundColor={"#FFDABF"}
-          titleColor={"#9A3412"}
-          marginTop={hp(1)}
-          iconLeft={{
-            family: "AntDesign",
-            name: "calendar",
-            color: "#9A3412",
-            size: wp(5.5),
-          }}
-        />
-        <CommonButton
-          onPress={() => {
-            setIsEndDatePickerVisible(true);
-          }}
-          title={
-            endDate
-              ? endDate.toLocaleString("en-PH", {
-                  dateStyle: "medium",
-                })
-              : "End Date"
+            startDate && endDate
+              ? `${format(startDate, "MMM d, yyyy")} – ${format(endDate, "MMM d, yyyy")}`
+              : startDate
+                ? format(startDate, "MMM d, yyyy") + " – ..."
+                : "Select date range"
           }
           backgroundColor={"#FFDABF"}
           titleColor={"#9A3412"}
@@ -155,6 +127,17 @@ const EmployeeDetails = () => {
           }}
         />
       </View>
+      <DateRangePickerModal
+        visible={isDateRangePickerVisible}
+        onClose={() => setIsDateRangePickerVisible(false)}
+        onApply={(start, end) => {
+          setStartDate(start);
+          setEndDate(end);
+          setIsDateRangePickerVisible(false);
+        }}
+        initialStartDate={startDate}
+        initialEndDate={endDate}
+      />
 
       <View
         style={{
@@ -199,27 +182,21 @@ const EmployeeDetails = () => {
             >
               <View>
                 <Text style={{ fontFamily: "Gantari-Medium", fontSize: wp(4) }}>
-                  {new Date(item.date).toLocaleString("en-PH", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  })}
+                  {format(new Date(item.date), "MMM d, yyyy")} at{" "}
+                  {format(new Date(item.loginTime), "h:mm a")}
                 </Text>
                 <View style={{ flexDirection: "row" }}>
                   <Text
                     style={{ fontFamily: "Gantari-Regular", fontSize: wp(3.5) }}
                   >
-                    {new Date(item.loginTime).toLocaleString("en-PH", {
-                      timeStyle: "short",
-                    })}
+                    {format(new Date(item.loginTime), "h:mm a")}
                   </Text>
-                  <Text style={{ fontFamily: "Gantari-Regular" }}> - </Text>
+                  <Text style={{ fontFamily: "Gantari-Regular" }}> – </Text>
                   <Text
                     style={{ fontFamily: "Gantari-Regular", fontSize: wp(3.5) }}
                   >
                     {item.logoutTime
-                      ? new Date(item.logoutTime).toLocaleString("en-PH", {
-                          timeStyle: "short",
-                        })
+                      ? format(new Date(item.logoutTime), "h:mm a")
                       : "On going"}
                   </Text>
                 </View>
@@ -229,36 +206,6 @@ const EmployeeDetails = () => {
             </View>
           </TouchableOpacity>
         )}
-      />
-      {
-        // start date picker
-      }
-      <DatePicker
-        modal
-        open={isStartDatePickerVisible}
-        date={startDate ?? new Date()}
-        mode="date"
-        onConfirm={(selectedDate) => {
-          setIsStartDatePickerVisible(false);
-          selectedDate.setHours(0, 0, 0, 0);
-          setStartDate(selectedDate);
-        }}
-        onCancel={() => setIsStartDatePickerVisible(false)}
-      />
-      {
-        // end date picker
-      }
-      <DatePicker
-        modal
-        open={isEndDatePickerVisible}
-        date={endDate ?? new Date()}
-        mode="date"
-        onConfirm={(selectedDate) => {
-          setIsEndDatePickerVisible(false);
-          selectedDate.setHours(11, 59, 59, 999);
-          setEndDate(selectedDate);
-        }}
-        onCancel={() => setIsEndDatePickerVisible(false)}
       />
       <FloatingButton
         backgroundColor={strongPrimary}

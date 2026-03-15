@@ -15,7 +15,7 @@ import {
 import SearchBar from "@/components/searchbars/SearchBar";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import CommonButton from "@/components/buttons/CommonButton";
-import DatePicker from "react-native-date-picker";
+import DateRangePickerModal from "@/components/modals/DateRangePickerModal";
 import Activity, {
   ActivityAction,
   ActivityEntity,
@@ -49,14 +49,11 @@ const ActivityLogScreen = () => {
   const { recentTransactions } = useRecentTransactionContext();
   const { customers } = useCustomerContext();
 
-  // startDate
+  // date range
   const [startDate, setStartDate] = useState<Date | null>(null);
-  const [isStartDatePickerVisible, setIsStartDatePickerVisible] =
-    useState(false);
-
-  // endDate
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [isEndDatePickerVisible, setIsEndDatePickerVisible] = useState(false);
+  const [isDateRangePickerVisible, setIsDateRangePickerVisible] =
+    useState(false);
 
   // search query
   const [searchQuery, setSearchQuery] = useState("");
@@ -301,36 +298,13 @@ const ActivityLogScreen = () => {
         style={{ flexDirection: "row", justifyContent: "center", gap: wp(10) }}
       >
         <CommonButton
-          onPress={() => {
-            setIsStartDatePickerVisible(true);
-          }}
+          onPress={() => setIsDateRangePickerVisible(true)}
           title={
-            startDate
-              ? startDate.toLocaleString("en-PH", {
-                  dateStyle: "medium",
-                })
-              : "Start Date"
-          }
-          backgroundColor={"#FFDABF"}
-          titleColor={"#9A3412"}
-          marginTop={hp(1)}
-          iconLeft={{
-            family: "AntDesign",
-            name: "calendar",
-            color: "#9A3412",
-            size: wp(5.5),
-          }}
-        />
-        <CommonButton
-          onPress={() => {
-            setIsEndDatePickerVisible(true);
-          }}
-          title={
-            endDate
-              ? endDate.toLocaleString("en-PH", {
-                  dateStyle: "medium",
-                })
-              : "End Date"
+            startDate && endDate
+              ? `${format(startDate, "MMM d, yyyy")} – ${format(endDate, "MMM d, yyyy")}`
+              : startDate
+                ? `${format(startDate, "MMM d, yyyy")} – Present`
+                : "Select date range"
           }
           backgroundColor={"#FFDABF"}
           titleColor={"#9A3412"}
@@ -343,35 +317,23 @@ const ActivityLogScreen = () => {
           }}
         />
       </View>
-      {
-        // start date picker
-      }
-      <DatePicker
-        modal
-        open={isStartDatePickerVisible}
-        date={startDate ?? new Date()}
-        mode="date"
-        onConfirm={(selectedDate) => {
-          setIsStartDatePickerVisible(false);
-          selectedDate.setHours(0, 0, 0, 0);
-          setStartDate(selectedDate);
+
+      <DateRangePickerModal
+        visible={isDateRangePickerVisible}
+        onClose={() => setIsDateRangePickerVisible(false)}
+        onApply={(newStart, newEnd) => {
+          if (newStart) {
+            newStart.setHours(0, 0, 0, 0);
+            setStartDate(newStart);
+          } else setStartDate(null);
+          if (newEnd) {
+            newEnd.setHours(23, 59, 59, 999);
+            setEndDate(newEnd);
+          } else setEndDate(null);
+          setIsDateRangePickerVisible(false);
         }}
-        onCancel={() => setIsStartDatePickerVisible(false)}
-      />
-      {
-        // end date picker
-      }
-      <DatePicker
-        modal
-        open={isEndDatePickerVisible}
-        date={endDate ?? new Date()}
-        mode="date"
-        onConfirm={(selectedDate) => {
-          setIsEndDatePickerVisible(false);
-          selectedDate.setHours(11, 59, 59, 999);
-          setEndDate(selectedDate);
-        }}
-        onCancel={() => setIsEndDatePickerVisible(false)}
+        initialStartDate={startDate}
+        initialEndDate={endDate}
       />
 
       <SectionList

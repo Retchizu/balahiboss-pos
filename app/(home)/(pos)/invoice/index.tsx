@@ -20,7 +20,7 @@ import {
 } from "react-native-responsive-screen";
 import InvoiceForm from "@/types/InvoiceForm";
 import Customer from "@/types/Customer";
-import DatePicker from "react-native-date-picker";
+import DatePickerModal from "@/components/modals/DatePickerModal";
 import { AntDesign, FontAwesome6 } from "@expo/vector-icons";
 import ModalTemplate from "@/components/modals/ModalTemplate";
 import SearchBar from "@/components/searchbars/SearchBar";
@@ -349,19 +349,18 @@ const InvoiceScreen = () => {
                             size={wp(6)}
                         />
                     </TouchableOpacity>
-                    <DatePicker
-                        modal
-                        open={isDatePickerVisible}
-                        date={invoiceForm.date ?? new Date()}
-                        mode="datetime" // 👈 supports both date & time
-                        onConfirm={(selectedDate) => {
+                    <DatePickerModal
+                        visible={isDatePickerVisible}
+                        onClose={() => setDatePickerVisibility(false)}
+                        onApply={(date) => {
                             setDatePickerVisibility(false);
                             setInvoiceForm((prev) => ({
                                 ...prev,
-                                date: new Date(selectedDate),
+                                date: date ?? new Date(),
                             }));
                         }}
-                        onCancel={() => setDatePickerVisibility(false)}
+                        initialDate={invoiceForm.date ?? new Date()}
+                        showTimePicker={true}
                     />
                     <View style={{ flexDirection: "row", gap: wp(2) }}>
                         <Input

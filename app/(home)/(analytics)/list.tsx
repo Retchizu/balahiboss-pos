@@ -16,7 +16,7 @@ import { SegmentedButtons } from "react-native-paper";
 import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
 import SearchBar from "@/components/searchbars/SearchBar";
 import CommonButton from "@/components/buttons/CommonButton";
-import DatePicker from "react-native-date-picker";
+import DateRangePickerModal from "@/components/modals/DateRangePickerModal";
 import { Ionicons } from "@expo/vector-icons";
 import ModalTemplate from "@/components/modals/ModalTemplate";
 import { Checkbox } from "expo-checkbox";
@@ -86,12 +86,9 @@ const TopCustomersPanel = () => {
     type SortBy = "totalPaid" | "purchaseCount";
 
     const [searchQuery, setSearchQuery] = useState("");
-    const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-    const [endDate, setEndDate] = useState<Date | undefined>(undefined);
-
-    const [isStartDatePickerVisible, setIsStartDatePickerVisible] =
-        useState(false);
-    const [isEndDatePickerVisible, setIsEndDatePickerVisible] = useState(false);
+    const [startDate, setStartDate] = useState<Date | null>(null);
+    const [endDate, setEndDate] = useState<Date | null>(null);
+    const [isDateRangePickerVisible, setIsDateRangePickerVisible] = useState(false);
 
     const [sortBy, setSortBy] = useState<SortBy>("totalPaid");
     const [limit, setLimit] = useState<number>(20);
@@ -269,32 +266,11 @@ const TopCustomersPanel = () => {
 
             <View style={styles.dateRow}>
                 <CommonButton
-                    onPress={() => setIsStartDatePickerVisible(true)}
+                    onPress={() => setIsDateRangePickerVisible(true)}
                     title={
-                        startDate
-                            ? startDate.toLocaleString("en-PH", {
-                                  dateStyle: "medium",
-                              })
-                            : "Start Date"
-                    }
-                    backgroundColor={"#FFDABF"}
-                    titleColor={"#9A3412"}
-                    marginTop={hp(1)}
-                    iconLeft={{
-                        family: "AntDesign",
-                        name: "calendar",
-                        color: "#9A3412",
-                        size: wp(5.5),
-                    }}
-                />
-                <CommonButton
-                    onPress={() => setIsEndDatePickerVisible(true)}
-                    title={
-                        endDate
-                            ? endDate.toLocaleString("en-PH", {
-                                  dateStyle: "medium",
-                              })
-                            : "End Date"
+                        startDate && endDate
+                            ? `${startDate.toLocaleString("en-PH", { dateStyle: "medium" })} – ${endDate.toLocaleString("en-PH", { dateStyle: "medium" })}`
+                            : "Select date range"
                     }
                     backgroundColor={"#FFDABF"}
                     titleColor={"#9A3412"}
@@ -308,30 +284,26 @@ const TopCustomersPanel = () => {
                 />
             </View>
 
-            <DatePicker
-                modal
-                open={isStartDatePickerVisible}
-                date={startDate ?? new Date()}
-                mode="date"
-                onConfirm={(selectedDate) => {
-                    setIsStartDatePickerVisible(false);
-                    selectedDate.setHours(0, 0, 0, 0);
-                    setStartDate(selectedDate);
+            <DateRangePickerModal
+                visible={isDateRangePickerVisible}
+                onClose={() => setIsDateRangePickerVisible(false)}
+                onApply={(newStart, newEnd) => {
+                    if (newStart) {
+                        newStart.setHours(0, 0, 0, 0);
+                        setStartDate(newStart);
+                    } else {
+                        setStartDate(null);
+                    }
+                    if (newEnd) {
+                        newEnd.setHours(23, 59, 59, 999);
+                        setEndDate(newEnd);
+                    } else {
+                        setEndDate(null);
+                    }
+                    setIsDateRangePickerVisible(false);
                 }}
-                onCancel={() => setIsStartDatePickerVisible(false)}
-            />
-
-            <DatePicker
-                modal
-                open={isEndDatePickerVisible}
-                date={endDate ?? new Date()}
-                mode="date"
-                onConfirm={(selectedDate) => {
-                    setIsEndDatePickerVisible(false);
-                    selectedDate.setHours(23, 59, 59, 999);
-                    setEndDate(selectedDate);
-                }}
-                onCancel={() => setIsEndDatePickerVisible(false)}
+                initialStartDate={startDate}
+                initialEndDate={endDate}
             />
 
             <View style={{ flex: 1, marginTop: hp(1.5) }}>
@@ -456,12 +428,9 @@ const TopCustomersPanel = () => {
 const BusiestPeriodPanel = () => {
     type ViewFilter = "all" | "days" | "weeks" | "timePeriods";
 
-    const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-    const [endDate, setEndDate] = useState<Date | undefined>(undefined);
-
-    const [isStartDatePickerVisible, setIsStartDatePickerVisible] =
-        useState(false);
-    const [isEndDatePickerVisible, setIsEndDatePickerVisible] = useState(false);
+    const [startDate, setStartDate] = useState<Date | null>(null);
+    const [endDate, setEndDate] = useState<Date | null>(null);
+    const [isDateRangePickerVisible, setIsDateRangePickerVisible] = useState(false);
 
     const [viewFilter, setViewFilter] = useState<ViewFilter>("all");
     const [loading, setLoading] = useState(false);
@@ -716,32 +685,11 @@ const BusiestPeriodPanel = () => {
 
             <View style={styles.dateRow}>
                 <CommonButton
-                    onPress={() => setIsStartDatePickerVisible(true)}
+                    onPress={() => setIsDateRangePickerVisible(true)}
                     title={
-                        startDate
-                            ? startDate.toLocaleString("en-PH", {
-                                  dateStyle: "medium",
-                              })
-                            : "Start Date"
-                    }
-                    backgroundColor={"#FFDABF"}
-                    titleColor={"#9A3412"}
-                    marginTop={hp(1)}
-                    iconLeft={{
-                        family: "AntDesign",
-                        name: "calendar",
-                        color: "#9A3412",
-                        size: wp(5.5),
-                    }}
-                />
-                <CommonButton
-                    onPress={() => setIsEndDatePickerVisible(true)}
-                    title={
-                        endDate
-                            ? endDate.toLocaleString("en-PH", {
-                                  dateStyle: "medium",
-                              })
-                            : "End Date"
+                        startDate && endDate
+                            ? `${startDate.toLocaleString("en-PH", { dateStyle: "medium" })} – ${endDate.toLocaleString("en-PH", { dateStyle: "medium" })}`
+                            : "Select date range"
                     }
                     backgroundColor={"#FFDABF"}
                     titleColor={"#9A3412"}
@@ -755,30 +703,26 @@ const BusiestPeriodPanel = () => {
                 />
             </View>
 
-            <DatePicker
-                modal
-                open={isStartDatePickerVisible}
-                date={startDate ?? new Date()}
-                mode="date"
-                onConfirm={(selectedDate) => {
-                    setIsStartDatePickerVisible(false);
-                    selectedDate.setHours(0, 0, 0, 0);
-                    setStartDate(selectedDate);
+            <DateRangePickerModal
+                visible={isDateRangePickerVisible}
+                onClose={() => setIsDateRangePickerVisible(false)}
+                onApply={(newStart, newEnd) => {
+                    if (newStart) {
+                        newStart.setHours(0, 0, 0, 0);
+                        setStartDate(newStart);
+                    } else {
+                        setStartDate(null);
+                    }
+                    if (newEnd) {
+                        newEnd.setHours(23, 59, 59, 999);
+                        setEndDate(newEnd);
+                    } else {
+                        setEndDate(null);
+                    }
+                    setIsDateRangePickerVisible(false);
                 }}
-                onCancel={() => setIsStartDatePickerVisible(false)}
-            />
-
-            <DatePicker
-                modal
-                open={isEndDatePickerVisible}
-                date={endDate ?? new Date()}
-                mode="date"
-                onConfirm={(selectedDate) => {
-                    setIsEndDatePickerVisible(false);
-                    selectedDate.setHours(23, 59, 59, 999);
-                    setEndDate(selectedDate);
-                }}
-                onCancel={() => setIsEndDatePickerVisible(false)}
+                initialStartDate={startDate}
+                initialEndDate={endDate}
             />
 
             {data && (
@@ -930,12 +874,9 @@ const BusiestPeriodPanel = () => {
 
 const InventoryAnalyticsPanel = () => {
     const [searchQuery, setSearchQuery] = useState("");
-    const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-    const [endDate, setEndDate] = useState<Date | undefined>(undefined);
-
-    const [isStartDatePickerVisible, setIsStartDatePickerVisible] =
-        useState(false);
-    const [isEndDatePickerVisible, setIsEndDatePickerVisible] = useState(false);
+    const [startDate, setStartDate] = useState<Date | null>(null);
+    const [endDate, setEndDate] = useState<Date | null>(null);
+    const [isDateRangePickerVisible, setIsDateRangePickerVisible] = useState(false);
 
     const [targetCoverDays, setTargetCoverDays] = useState<number>(14);
     const [targetCoverDaysText, setTargetCoverDaysText] = useState<string>("14");
@@ -1136,32 +1077,11 @@ const InventoryAnalyticsPanel = () => {
 
             <View style={styles.dateRow}>
                 <CommonButton
-                    onPress={() => setIsStartDatePickerVisible(true)}
+                    onPress={() => setIsDateRangePickerVisible(true)}
                     title={
-                        startDate
-                            ? startDate.toLocaleString("en-PH", {
-                                  dateStyle: "medium",
-                              })
-                            : "Start Date"
-                    }
-                    backgroundColor={"#FFDABF"}
-                    titleColor={"#9A3412"}
-                    marginTop={hp(1)}
-                    iconLeft={{
-                        family: "AntDesign",
-                        name: "calendar",
-                        color: "#9A3412",
-                        size: wp(5.5),
-                    }}
-                />
-                <CommonButton
-                    onPress={() => setIsEndDatePickerVisible(true)}
-                    title={
-                        endDate
-                            ? endDate.toLocaleString("en-PH", {
-                                  dateStyle: "medium",
-                              })
-                            : "End Date"
+                        startDate && endDate
+                            ? `${startDate.toLocaleString("en-PH", { dateStyle: "medium" })} – ${endDate.toLocaleString("en-PH", { dateStyle: "medium" })}`
+                            : "Select date range"
                     }
                     backgroundColor={"#FFDABF"}
                     titleColor={"#9A3412"}
@@ -1175,30 +1095,26 @@ const InventoryAnalyticsPanel = () => {
                 />
             </View>
 
-            <DatePicker
-                modal
-                open={isStartDatePickerVisible}
-                date={startDate ?? new Date()}
-                mode="date"
-                onConfirm={(selectedDate) => {
-                    setIsStartDatePickerVisible(false);
-                    selectedDate.setHours(0, 0, 0, 0);
-                    setStartDate(selectedDate);
+            <DateRangePickerModal
+                visible={isDateRangePickerVisible}
+                onClose={() => setIsDateRangePickerVisible(false)}
+                onApply={(newStart, newEnd) => {
+                    if (newStart) {
+                        newStart.setHours(0, 0, 0, 0);
+                        setStartDate(newStart);
+                    } else {
+                        setStartDate(null);
+                    }
+                    if (newEnd) {
+                        newEnd.setHours(23, 59, 59, 999);
+                        setEndDate(newEnd);
+                    } else {
+                        setEndDate(null);
+                    }
+                    setIsDateRangePickerVisible(false);
                 }}
-                onCancel={() => setIsStartDatePickerVisible(false)}
-            />
-
-            <DatePicker
-                modal
-                open={isEndDatePickerVisible}
-                date={endDate ?? new Date()}
-                mode="date"
-                onConfirm={(selectedDate) => {
-                    setIsEndDatePickerVisible(false);
-                    selectedDate.setHours(23, 59, 59, 999);
-                    setEndDate(selectedDate);
-                }}
-                onCancel={() => setIsEndDatePickerVisible(false)}
+                initialStartDate={startDate}
+                initialEndDate={endDate}
             />
 
             <View style={{ flex: 1, marginTop: hp(1.5) }}>

@@ -17,7 +17,7 @@ import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
 import SearchBar from "@/components/searchbars/SearchBar";
 import CommonButton from "@/components/buttons/CommonButton";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
-import DatePicker from "react-native-date-picker";
+import DateRangePickerModal from "@/components/modals/DateRangePickerModal";
 import { useCustomerContext } from "@/contexts/CustomerContext";
 import { useTransactionContext } from "@/contexts/TransactionContext";
 import { router, useFocusEffect } from "expo-router";
@@ -36,12 +36,8 @@ import InvoiceForm from "@/types/InvoiceForm";
 import Summary from "@/types/metrics/Summary";
 
 const TransactionListScreen = () => {
-  // startDate
-  const [isStartDatePickerVisible, setIsStartDatePickerVisible] =
+  const [isDateRangePickerVisible, setIsDateRangePickerVisible] =
     useState(false);
-
-  // endDate
-  const [isEndDatePickerVisible, setIsEndDatePickerVisible] = useState(false);
 
   // for list
   const {
@@ -617,85 +613,36 @@ const TransactionListScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          gap: wp(10),
+      <CommonButton
+        onPress={() => setIsDateRangePickerVisible(true)}
+        title={
+          startDate && endDate
+            ? `${startDate.toLocaleString("en-PH", { dateStyle: "medium" })}  →  ${endDate.toLocaleString("en-PH", { dateStyle: "medium" })}`
+            : startDate
+              ? `${startDate.toLocaleString("en-PH", { dateStyle: "medium" })}  →  Present`
+              : "Select Date Range"
+        }
+        backgroundColor={"#FFDABF"}
+        titleColor={"#9A3412"}
+        marginTop={hp(1)}
+        iconLeft={{
+          family: "AntDesign",
+          name: "calendar",
+          color: "#9A3412",
+          size: wp(5.5),
         }}
-      >
-        <CommonButton
-          onPress={() => {
-            setIsStartDatePickerVisible(true);
-          }}
-          title={
-            startDate
-              ? startDate.toLocaleString("en-PH", {
-                  dateStyle: "medium",
-                })
-              : "Start Date"
-          }
-          backgroundColor={"#FFDABF"}
-          titleColor={"#9A3412"}
-          marginTop={hp(1)}
-          iconLeft={{
-            family: "AntDesign",
-            name: "calendar",
-            color: "#9A3412",
-            size: wp(5.5),
-          }}
-        />
-        <CommonButton
-          onPress={() => {
-            setIsEndDatePickerVisible(true);
-          }}
-          title={
-            endDate
-              ? endDate.toLocaleString("en-PH", {
-                  dateStyle: "medium",
-                })
-              : "End Date"
-          }
-          backgroundColor={"#FFDABF"}
-          titleColor={"#9A3412"}
-          marginTop={hp(1)}
-          iconLeft={{
-            family: "AntDesign",
-            name: "calendar",
-            color: "#9A3412",
-            size: wp(5.5),
-          }}
-        />
-      </View>
-      {
-        // start date picker
-      }
-      <DatePicker
-        modal
-        open={isStartDatePickerVisible}
-        date={startDate ?? new Date()}
-        mode="date"
-        onConfirm={(selectedDate) => {
-          setIsStartDatePickerVisible(false);
-          selectedDate.setHours(0, 0, 0, 0);
-          setStartDate(selectedDate);
-        }}
-        onCancel={() => setIsStartDatePickerVisible(false)}
       />
-      {
-        // end date picker
-      }
-      <DatePicker
-        modal
-        open={isEndDatePickerVisible}
-        date={endDate ?? new Date()}
-        mode="date"
-        onConfirm={(selectedDate) => {
-          setIsEndDatePickerVisible(false);
-          selectedDate.setHours(11, 59, 59, 999);
-          setEndDate(selectedDate);
+
+      <DateRangePickerModal
+        visible={isDateRangePickerVisible}
+        onClose={() => setIsDateRangePickerVisible(false)}
+        onApply={(newStart, newEnd) => {
+          setStartDate(newStart);
+          setEndDate(newEnd);
+          setIsDateRangePickerVisible(false);
         }}
-        onCancel={() => setIsEndDatePickerVisible(false)}
+        initialStartDate={startDate}
+        initialEndDate={endDate}
       />
 
       {loading ? (

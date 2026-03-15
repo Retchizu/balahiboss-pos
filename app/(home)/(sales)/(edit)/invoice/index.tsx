@@ -28,7 +28,7 @@ import { useSelectedProductsArray } from "@/hooks/useSelectedProductsArray";
 import { isAxiosError } from "axios";
 import { AntDesign, FontAwesome6 } from "@expo/vector-icons";
 import Input from "@/components/inputs/Input";
-import DatePicker from "react-native-date-picker";
+import DatePickerModal from "@/components/modals/DatePickerModal";
 import calculateTotalProfit from "@/methods/invoice/calculateTotalProfit";
 import { router, useLocalSearchParams } from "expo-router";
 import ModalTemplate from "@/components/modals/ModalTemplate";
@@ -313,19 +313,18 @@ const EditInvoiceScreen = () => {
             </Text>
             <AntDesign name="calendar" color={"rgba(0,0,0,0.4)"} size={wp(6)} />
           </TouchableOpacity>
-          <DatePicker
-            modal
-            open={isDatePickerVisible}
-            date={invoiceForm.date ?? new Date()}
-            mode="datetime" // 👈 supports both date & time
-            onConfirm={(selectedDate) => {
+          <DatePickerModal
+            visible={isDatePickerVisible}
+            onClose={() => setDatePickerVisibility(false)}
+            onApply={(date) => {
               setDatePickerVisibility(false);
               setInvoiceForm((prev) => ({
                 ...prev,
-                date: new Date(selectedDate),
+                date: date ?? new Date(),
               }));
             }}
-            onCancel={() => setDatePickerVisibility(false)}
+            initialDate={invoiceForm.date ?? new Date()}
+            showTimePicker={true}
           />
           <View style={{ flexDirection: "row", gap: wp(2) }}>
             <Input
