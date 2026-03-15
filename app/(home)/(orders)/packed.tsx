@@ -4,7 +4,7 @@ import { usePendingOrderContext } from "@/contexts/PendingOrderContext";
 import usePendingOrdersArray from "@/hooks/usePendingOrdersArray";
 import { useCustomerContext } from "@/contexts/CustomerContext";
 import searchOrderByCustomerName from "@/methods/search/searchOrderByCustomerName";
-import { primary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -14,6 +14,7 @@ import { router } from "expo-router";
 import { FontAwesome6 } from "@expo/vector-icons";
 
 const PackedScreen = () => {
+  const { primary, textOnPrimary, textMuted } = useTheme();
   const { orders } = usePendingOrderContext();
 
   const { pendingOrdersArray } = usePendingOrdersArray(orders);
@@ -49,6 +50,7 @@ const PackedScreen = () => {
           fontSize: wp(5),
           textAlign: "center",
           marginVertical: hp(1),
+          color: textOnPrimary,
         }}
       >
         Packed
@@ -67,7 +69,7 @@ const PackedScreen = () => {
             style={{
               fontFamily: "Gantari-Regular",
               fontSize: wp(4),
-              color: "#6B7280",
+              color: textMuted,
             }}
           >
             No Packed Orders found.
@@ -85,7 +87,7 @@ const PackedScreen = () => {
                   marginVertical: hp(0.5),
                   padding: wp(3),
                   borderWidth: 1,
-                  borderColor: "rgba(0,0,0,0.6)",
+                  borderColor: textMuted,
                   borderRadius: wp(4),
                   flexDirection: "row",
                   alignItems: "center",
@@ -120,8 +122,8 @@ const PackedScreen = () => {
                     gap: wp(1),
                   }}
                 >
-                  <FontAwesome6 name="clock-four" size={wp(4)} color="black" />
-                  <Text>
+                  <FontAwesome6 name="clock-four" size={wp(4)} color={textMuted} />
+                  <Text style={{ color: textOnPrimary }}>
                     {new Date(item.date)
                       ?.toLocaleString("en-US", {
                         hour: "numeric",

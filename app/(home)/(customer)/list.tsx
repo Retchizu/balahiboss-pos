@@ -1,6 +1,6 @@
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
-import { primary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -13,6 +13,7 @@ import { router } from "expo-router";
 import searchCustomerByName from "@/methods/search/searchCustomerByName";
 
 const CustomerListScreen = () => {
+  const { primary, strongPrimary, textMuted, textOnStrongPrimary } = useTheme();
   const { customers } = useCustomerContext();
   const { customerArray } = useCustomersArray(customers);
 
@@ -41,7 +42,7 @@ const CustomerListScreen = () => {
             style={{
               backgroundColor: "rgba(255,255,255,0.85)",
               borderWidth: 1,
-              borderColor: "rgba(0,0,0,0.6)",
+              borderColor: textMuted,
               marginVertical: hp(0.5),
               padding: wp(2),
               borderRadius: wp(4),
@@ -49,12 +50,12 @@ const CustomerListScreen = () => {
             activeOpacity={0.7}
             onPress={() => {router.navigate(`../${item.id}`)}}
           >
-            <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(4) }}>
+            <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(4), color: textOnStrongPrimary }}>
               {item.customerName}
             </Text>
             <Text
               numberOfLines={1}
-              style={{ fontFamily: "Gantari-Regular", fontSize: wp(4) }}
+              style={{ fontFamily: "Gantari-Regular", fontSize: wp(4), color: textMuted }}
             >
               {item.customerInfo}
             </Text>
@@ -71,7 +72,7 @@ const CustomerListScreen = () => {
         onPress={() => {
           router.navigate("../add");
         }}
-        icon={{ name: "plus", family: "Entypo", color: "white", size: wp(6) }}
+        icon={{ name: "plus", family: "Entypo", color: textOnStrongPrimary, size: wp(6) }}
         backgroundColor={strongPrimary}
       />
     </View>

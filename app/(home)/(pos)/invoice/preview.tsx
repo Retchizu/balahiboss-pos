@@ -1,6 +1,6 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import React, { useRef, useState } from "react";
-import { primary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -17,6 +17,7 @@ import useBluetoothPrinter from "@/hooks/useBluetoothPrinter";
 import Toast from "react-native-toast-message";
 
 const PreviewInvoiceScreen = () => {
+    const { primary, strongPrimary } = useTheme();
     const { invoiceForm } = useInvoiceFormContext();
     const { selectedProducts } = useSelectedProductContext();
     const { selectedProductArray } = useSelectedProductsArray(selectedProducts);

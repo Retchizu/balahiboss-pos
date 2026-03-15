@@ -1,4 +1,3 @@
-import { primary } from "@/theme/backgroundTheme";
 import React from "react";
 import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import {
@@ -6,6 +5,8 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "@/contexts/ThemeContext";
+
 const teamMembers = [
   {
     name: "Richmond Baltazar",
@@ -13,10 +14,10 @@ const teamMembers = [
     company: "Hypepilot LLC (Austin, Texas - Remote)",
     contribution: `Richmond was responsible for the overall application flow, 
     making sure the architecture is scalable, maintainable, and efficient. 
-    He implemented the core features, integrated APIs, and ensured the app’s 
+    He implemented the core features, integrated APIs, and ensured the app's 
     performance remains smooth across devices. Beyond development, Richmond 
     also collaborated closely with design to bring UI/UX concepts into working code.`,
-    image: require("@/assets/riche.jpg"), // Replace with actual profile photo
+    image: require("@/assets/riche.jpg"),
   },
   {
     name: "Erlyn De Leon",
@@ -27,23 +28,41 @@ const teamMembers = [
     She planned the user experience flow, ensuring that each screen 
     and interaction feels intuitive. Her role bridged creativity and functionality, 
     providing design assets and collaborating with development for seamless execution.`,
-    image: require("@/assets/erlyn.jpg"), // Replace with actual profile photo
+    image: require("@/assets/erlyn.jpg"),
   },
 ];
 
 export default function AboutUs() {
+  const { primary, secondary, strongPrimary, textMuted, textOnPrimary } =
+    useTheme();
+
   return (
-    <SafeAreaView style={{flex:1, backgroundColor:primary}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: primary }}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>About Us</Text>
+        <Text style={[styles.title, { color: strongPrimary }]}>About Us</Text>
         {teamMembers.map((member, index) => (
-          <View key={index} style={styles.card}>
-            <Image source={member.image} style={styles.image} resizeMode="cover"/>
+          <View
+            key={index}
+            style={[styles.card, { backgroundColor: secondary }]}
+          >
+            <Image
+              source={member.image}
+              style={styles.image}
+              resizeMode="cover"
+            />
             <View style={styles.textContainer}>
-              <Text style={styles.name}>{member.name}</Text>
-              <Text style={styles.role}>{member.role}</Text>
-              <Text style={styles.company}>{member.company}</Text>
-              <Text style={styles.contribution}>{member.contribution}</Text>
+              <Text style={[styles.name, { color: textOnPrimary }]}>
+                {member.name}
+              </Text>
+              <Text style={[styles.role, { color: textMuted }]}>
+                {member.role}
+              </Text>
+              <Text style={[styles.company, { color: textMuted }]}>
+                {member.company}
+              </Text>
+              <Text style={[styles.contribution, { color: textMuted }]}>
+                {member.contribution}
+              </Text>
             </View>
           </View>
         ))}
@@ -59,13 +78,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: wp(8),
-    fontFamily:"Gantari-Bold",
+    fontFamily: "Gantari-Bold",
     marginBottom: 20,
-    color: "#333",
   },
   card: {
     width: "100%",
-    backgroundColor: "#fff",
     borderRadius: wp(3),
     padding: wp(4),
     marginBottom: hp(2),
@@ -91,24 +108,20 @@ const styles = StyleSheet.create({
     fontSize: wp(5),
     fontFamily: "Gantari-SemiBold",
     marginBottom: 4,
-    color: "#222",
   },
   role: {
     fontSize: wp(4),
-    fontFamily:"Gantari-Italic",
-    color: "#666",
+    fontFamily: "Gantari-Italic",
     marginBottom: 4,
   },
   company: {
     fontSize: wp(3.5),
-    fontFamily:"Gantari-Regular",
-    color: "#444",
+    fontFamily: "Gantari-Regular",
     marginBottom: 8,
   },
   contribution: {
     fontSize: wp(3.5),
-    fontFamily:"Gantari-Regular",
-    color: "#555",
+    fontFamily: "Gantari-Regular",
     lineHeight: 20,
   },
 });

@@ -6,7 +6,7 @@ import {
 } from "react-native";
 import React from "react";
 import { useLocalSearchParams } from "expo-router";
-import { primary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -24,6 +24,7 @@ import calculateInvoiceTotalPrice from "@/methods/invoice/calculateInvoiceTotalP
 
 
 const TransactionDetailScreen = () => {
+  const { primary } = useTheme();
   // params
   const { id } = useLocalSearchParams();
   const parsedId = id as string;
@@ -324,6 +325,7 @@ const TransactionDetailCardView = ({
   width,
   height,
 }: TransactionDetailCardViewProp) => {
+  const { primary } = useTheme();
   return (
     <View
       style={{

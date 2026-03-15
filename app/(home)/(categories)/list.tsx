@@ -1,6 +1,6 @@
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
-import { primary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -15,6 +15,8 @@ import Toast from "react-native-toast-message";
 
 // TODO: Replace with actual category context/hook when implemented
 const CategoryListScreen = () => {
+  const { primary, strongPrimary, textMuted, textOnStrongPrimary } =
+    useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
 
@@ -73,7 +75,7 @@ const CategoryListScreen = () => {
               alignItems: "center",
               backgroundColor: "rgba(255,255,255,0.85)",
               borderWidth: 1,
-              borderColor: "rgba(0,0,0,0.6)",
+              borderColor: textMuted,
               marginVertical: hp(1),
               padding: wp(2),
               borderRadius: wp(4),
@@ -85,7 +87,6 @@ const CategoryListScreen = () => {
               style={{
                 fontSize: wp(4),
                 fontFamily: "Gantari-SemiBold",
-                color: "black",
                 flex: 1
               }}
             >
@@ -115,7 +116,7 @@ const CategoryListScreen = () => {
               style={{
                 fontSize: wp(4),
                 fontFamily: "Gantari-Regular",
-                color: "rgba(0,0,0,0.6)",
+                color: textMuted,
               }}
             >
               No categories found
@@ -125,7 +126,7 @@ const CategoryListScreen = () => {
       />
       <FloatingButton
         onPress={() => router.navigate("../add")}
-        icon={{ name: "plus", family: "Entypo", color: "white", size: wp(6) }}
+        icon={{ name: "plus", family: "Entypo", color: textOnStrongPrimary, size: wp(6) }}
         backgroundColor={strongPrimary}
       />
     </View>

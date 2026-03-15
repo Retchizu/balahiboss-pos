@@ -12,8 +12,8 @@ import {
   ScrollView,
   Switch,
 } from "react-native";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -41,6 +41,8 @@ import Toast from "react-native-toast-message";
 import Transaction, { TransactionItem } from "@/types/Transaction";
 
 const EditInvoiceScreen = () => {
+  const { primary, secondary, strongPrimary, textMuted, textOnPrimary } =
+    useTheme();
   // params
   const { id } = useLocalSearchParams();
   const parseId = id as string;
@@ -123,9 +125,10 @@ const EditInvoiceScreen = () => {
       return (
         <TouchableOpacity
           style={{
-            borderColor: strongPrimary,
             marginVertical: hp(0.5),
-            borderWidth: wp(0.4),
+            backgroundColor: "rgba(255,255,255,0.85)",
+            borderColor: "rgba(0,0,0,0.6)",
+            borderWidth: 1,
             borderRadius: wp(2),
             padding: wp(1),
           }}
@@ -138,14 +141,19 @@ const EditInvoiceScreen = () => {
             setCustomerPickerVisibility(false);
           }}
         >
-          <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(4) }}>
+          <Text
+            style={{
+              fontFamily: "Gantari-SemiBold",
+              fontSize: wp(4),
+            }}
+          >
             {item.customerName}
           </Text>
           <Text
             style={{
               fontFamily: "Gantari-Regular",
               fontSize: wp(3.5),
-              color: "rgba(0,0,0,0.4)",
+              color: textMuted,
             }}
             numberOfLines={1}
           >
@@ -154,10 +162,9 @@ const EditInvoiceScreen = () => {
         </TouchableOpacity>
       );
     },
-    [setInvoiceForm]
+    [setInvoiceForm, textMuted]
   );
 
-  console.log(invoiceForm.customer);
   // on form submit
   const updateTransaction = async () => {
     try {
@@ -212,6 +219,39 @@ const EditInvoiceScreen = () => {
     }
   };
 
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        buttonLabel: {
+          fontFamily: "Gantari-Regular",
+          fontSize: wp(4.5),
+        },
+        totalView: {
+          flexDirection: "row",
+          justifyContent: "space-between",
+        },
+        totalValue: {
+          fontFamily: "Gantari-Bold",
+          fontSize: wp(5),
+          color: textOnPrimary,
+        },
+        totalLabel: {
+          fontSize: wp(5),
+          fontFamily: "Gantari-Regular",
+          color: textOnPrimary,
+        },
+        invoiceButton: {
+          borderRadius: wp(2),
+          borderWidth: wp(0.3),
+          borderColor: strongPrimary,
+          alignItems: "center",
+          padding: wp(2),
+          width: wp(25),
+        },
+      }),
+    [strongPrimary, textOnPrimary],
+  );
+
   return (
     <View
       style={{
@@ -236,7 +276,7 @@ const EditInvoiceScreen = () => {
               icon={{
                 name: "cash",
                 family: "MaterialCommunityIcons",
-                color: "rgba(0,0,0,0.4)",
+                color: textMuted,
               }}
               row
               inputType="numeric"
@@ -250,7 +290,7 @@ const EditInvoiceScreen = () => {
               icon={{
                 name: "online-prediction",
                 family: "MaterialIcons",
-                color: "rgba(0,0,0,0.4)",
+                color: textMuted,
               }}
               row
               inputType="numeric"
@@ -264,7 +304,7 @@ const EditInvoiceScreen = () => {
             icon={{
               name: "delivery-dining",
               family: "MaterialIcons",
-              color: "rgba(0,0,0,0.4)",
+              color: textMuted,
             }}
             inputType="numeric"
           />
@@ -282,12 +322,21 @@ const EditInvoiceScreen = () => {
             activeOpacity={0.7}
             onPress={() => setCustomerPickerVisibility(true)}
           >
-            <Text style={styles.buttonLabel}>
+            <Text
+              style={[
+                styles.buttonLabel,
+                {
+                  color: invoiceForm.customer?.customerName
+                    ? textOnPrimary
+                    : textMuted,
+                },
+              ]}
+            >
               {invoiceForm.customer
                 ? invoiceForm.customer.customerName
                 : "Select Customer"}
             </Text>
-            <FontAwesome6 name="person" size={wp(6)} color="rgba(0,0,0,0.4)" />
+            <FontAwesome6 name="person" size={wp(6)} color={textMuted} />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setDatePickerVisibility(true)}
@@ -303,7 +352,14 @@ const EditInvoiceScreen = () => {
             }}
             activeOpacity={0.7}
           >
-            <Text style={styles.buttonLabel}>
+            <Text
+              style={[
+                styles.buttonLabel,
+                {
+                  color: invoiceForm.date ? textOnPrimary : textMuted,
+                },
+              ]}
+            >
               {invoiceForm.date
                 ? invoiceForm.date.toLocaleString("en-PH", {
                     dateStyle: "medium",
@@ -311,7 +367,7 @@ const EditInvoiceScreen = () => {
                   })
                 : "Set Date"}
             </Text>
-            <AntDesign name="calendar" color={"rgba(0,0,0,0.4)"} size={wp(6)} />
+            <AntDesign name="calendar" color={textMuted} size={wp(6)} />
           </TouchableOpacity>
           <DatePickerModal
             visible={isDatePickerVisible}
@@ -334,7 +390,7 @@ const EditInvoiceScreen = () => {
               icon={{
                 name: "discount",
                 family: "MaterialIcons",
-                color: "rgba(0,0,0,0.4)",
+                color: textMuted,
                 size: wp(6),
               }}
               row
@@ -347,7 +403,7 @@ const EditInvoiceScreen = () => {
               icon={{
                 name: "gift",
                 family: "AntDesign",
-                color: "rgba(0,0,0,0.4)",
+                color: textMuted,
               }}
               row
               inputType="numeric"
@@ -356,7 +412,13 @@ const EditInvoiceScreen = () => {
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
-            <Text style={{ fontFamily: "Gantari-Regular", fontSize: wp(4.5) }}>
+            <Text
+              style={{
+                fontFamily: "Gantari-Regular",
+                fontSize: wp(4.5),
+                color: textOnPrimary,
+              }}
+            >
               Send to Pending Orders
             </Text>
             <Switch
@@ -369,7 +431,11 @@ const EditInvoiceScreen = () => {
           {isPendingOrder && (
             <View style={{ height: orderInformationHeight }}>
               <Text
-                style={{ fontFamily: "Gantari-Regular", fontSize: wp(4.5) }}
+                style={{
+                  fontFamily: "Gantari-Regular",
+                  fontSize: wp(4.5),
+                  color: textOnPrimary,
+                }}
               >
                 Information
               </Text>
@@ -389,7 +455,13 @@ const EditInvoiceScreen = () => {
                 <TextInput
                   ref={orderInformationRef}
                   multiline
-                  style={{ fontFamily: "Gantari-Regular", fontSize: wp(4) }}
+                  style={{
+                    fontFamily: "Gantari-Regular",
+                    fontSize: wp(4),
+                    color: textOnPrimary,
+                  }}
+                  placeholder="Info..."
+                  placeholderTextColor={textMuted}
                   value={pendingOrderInformation}
                   onChangeText={(text) => setPendingOrderInformation(text)}
                 />
@@ -476,6 +548,7 @@ const EditInvoiceScreen = () => {
                 style={{
                   fontFamily: "Gantari-Regular",
                   fontSize: wp(5),
+                  color: textOnPrimary,
                 }}
               >
                 Clear
@@ -494,6 +567,7 @@ const EditInvoiceScreen = () => {
                 style={{
                   fontFamily: "Gantari-Regular",
                   fontSize: wp(5),
+                  color: textOnPrimary,
                 }}
               >
                 Preview
@@ -556,31 +630,3 @@ const EditInvoiceScreen = () => {
 };
 
 export default EditInvoiceScreen;
-
-const styles = StyleSheet.create({
-  buttonLabel: {
-    fontFamily: "Gantari-Regular",
-    fontSize: wp(4.5),
-  },
-  totalView: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  totalValue: {
-    fontFamily: "Gantari-Bold",
-    fontSize: wp(5),
-    color: strongPrimary,
-  },
-  totalLabel: {
-    fontSize: wp(5),
-    fontFamily: "Gantari-Regular",
-  },
-  invoiceButton: {
-    borderRadius: wp(2),
-    borderWidth: wp(0.3),
-    borderColor: strongPrimary,
-    alignItems: "center",
-    padding: wp(2),
-    width: wp(25),
-  },
-});

@@ -9,6 +9,7 @@ import {
   ViewStyle,
   StyleProp,
 } from 'react-native';
+import { useTheme } from "@/contexts/ThemeContext";
 
 type ModalTemplateProp = {
   visible: boolean;
@@ -20,6 +21,7 @@ type ModalTemplateProp = {
 };
 
 const ModalTemplate = ({ visible, onClose, children, width, height, style }: ModalTemplateProp) => {
+  const { primary } = useTheme();
   return (
     <Modal
       transparent
@@ -32,7 +34,7 @@ const ModalTemplate = ({ visible, onClose, children, width, height, style }: Mod
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.overlay}>
           <TouchableWithoutFeedback>
-            <View style={[styles.modalContainer, {width, height}, style]}>
+            <View style={[styles.modalContainer, { width, height, backgroundColor: primary }, style]}>
               {children}
             </View>
           </TouchableWithoutFeedback>
@@ -52,7 +54,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContainer: {
-    backgroundColor: '#FFFDF0',
     borderRadius: 12,
     padding: 20,
     maxWidth: '90%',

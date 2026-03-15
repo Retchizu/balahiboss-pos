@@ -1,7 +1,7 @@
 import { View, Text, DimensionValue, StyleSheet } from "react-native";
 import React, { useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
-import { primary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -25,6 +25,7 @@ import { useSelectedProductContext } from "@/contexts/SelectedProductContext";
 import Toast from "react-native-toast-message";
 
 const TransactionDetailScreen = () => {
+  const { primary, textOnStrongPrimary, textMuted } = useTheme();
   // params
   const { id } = useLocalSearchParams();
   const parsedId = id as string;
@@ -350,7 +351,7 @@ const TransactionDetailScreen = () => {
             style={{
               fontFamily: "Gantari-Regular",
               fontSize: wp(4),
-              color: "#6B7280",
+              color: textMuted,
               textAlign: "center",
               marginTop: hp(1),
               lineHeight: hp(2.4),
@@ -373,7 +374,7 @@ const TransactionDetailScreen = () => {
             title="Cancel"
             onPress={() => setIsDeleteModalVisible(false)}
             backgroundColor="#F3F4F6"
-            titleColor="#111827"
+            titleColor={textOnStrongPrimary}
             marginTop={0}
           />
           <CommonButton

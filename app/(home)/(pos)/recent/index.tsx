@@ -2,7 +2,7 @@ import { FlatList, Text, TouchableOpacity, View } from "react-native";
 
 import React, { useCallback, useMemo, useState } from "react";
 
-import { primary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 
 import {
   heightPercentageToDP as hp,
@@ -26,6 +26,7 @@ import calculateInvoiceTotalPrice from "@/methods/invoice/calculateInvoiceTotalP
 import calculateTotalProfit from "@/methods/invoice/calculateTotalProfit";
 
 const RecentTransactionScreen = () => {
+  const { primary, strongPrimary, textOnPrimary} = useTheme();
   const { recentTransactions } = useRecentTransactionContext();
 
   const { customers } = useCustomerContext();
@@ -329,14 +330,7 @@ const RecentTransactionScreen = () => {
         </View>
       );
     },
-    [
-      customers,
-      expandedTransactions,
-      convertTransactionItemsToSelectedProductArray,
-      convertTransactionToInvoiceForm,
-      toggleTransactionExpansion,
-      role,
-    ]
+    [customers, expandedTransactions, convertTransactionItemsToSelectedProductArray, convertTransactionToInvoiceForm, role, strongPrimary, primary, toggleTransactionExpansion]
   );
 
   return (
@@ -354,6 +348,7 @@ const RecentTransactionScreen = () => {
           fontSize: wp(4.5),
           textAlign: "center",
           marginBottom: hp(1),
+          color: textOnPrimary
         }}
       >
         Today&apos;s Transactions

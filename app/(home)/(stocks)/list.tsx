@@ -9,7 +9,7 @@ import {
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import useProductsArray from "@/hooks/useProductsArray";
 import searchProductsByName from "@/methods/search/searchProductsByName";
-import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -34,6 +34,42 @@ import { isAxiosError } from "axios";
 import { format } from "date-fns";
 
 const StockReportListScreen = () => {
+  const { primary, secondary, strongPrimary, textOnPrimary, textOnSecondary, textMuted, textOnStrongPrimary} =
+    useTheme();
+
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        valueStyle: {
+          fontFamily: "Gantari-Regular",
+          fontSize: wp(3.5),
+          color: textOnPrimary,
+        },
+        labelStyle: {
+          fontFamily: "Gantari-SemiBold",
+          fontSize: wp(4),
+          color: textOnPrimary,
+        },
+        optionRow: {
+          flexDirection: "row",
+          alignItems: "center",
+          marginTop: hp(2),
+        },
+        optionText: {
+          marginLeft: wp(2),
+          fontSize: wp(4),
+          color: textOnPrimary,
+        },
+        actions: {
+          flexDirection: "row",
+          marginTop: hp(2),
+          gap: wp(4),
+          justifyContent: "flex-end",
+        },
+      }),
+    [textOnPrimary]
+  );
+
   const { products } = useProductContext();
   const { productsArray } = useProductsArray(products);
   const { transactions, setTransactions, startDate, endDate, setStartDate, setEndDate } =
@@ -194,7 +230,7 @@ const StockReportListScreen = () => {
           <MaterialCommunityIcons
             name="microsoft-excel"
             size={24}
-            color="black"
+            color={textOnSecondary}
           />
         </TouchableOpacity>
       </View>
@@ -211,13 +247,13 @@ const StockReportListScreen = () => {
                 ? `${format(startDate, "MMM d, yyyy")} – Present`
                 : "Select date range"
           }
-          backgroundColor={"#FFDABF"}
-          titleColor={"#9A3412"}
+          backgroundColor={secondary}
+          titleColor={textOnSecondary}
           marginTop={hp(1)}
           iconLeft={{
             family: "AntDesign",
             name: "calendar",
-            color: "#9A3412",
+            color: textOnSecondary,
             size: wp(5.5),
           }}
         />
@@ -263,7 +299,7 @@ const StockReportListScreen = () => {
             marginTop: hp(2),
           }}
         >
-          <ActivityIndicator size="large" color="#FF9149" />
+          <ActivityIndicator size="large" color={strongPrimary} />
         </View>
       ) : (
         <FlatList
@@ -283,7 +319,7 @@ const StockReportListScreen = () => {
             <Text
               style={[
                 styles.valueStyle,
-                { width: wp(20), color: "#60B5FF", textAlign: "center" },
+                { width: wp(20), color: strongPrimary, textAlign: "center" },
               ]}
             >
               {item.stock}
@@ -318,7 +354,7 @@ const StockReportListScreen = () => {
           <Entypo
             name="documents"
             size={wp(14)}
-            color="#107C10"
+            color={strongPrimary}
             style={{ marginBottom: hp(0.8) }}
           />
           <Text
@@ -326,6 +362,7 @@ const StockReportListScreen = () => {
               fontFamily: "Gantari-Bold",
               fontSize: wp(4.6),
               textAlign: "center",
+              color: textOnPrimary,
             }}
           >
             Export to Excel
@@ -334,7 +371,7 @@ const StockReportListScreen = () => {
             style={{
               fontFamily: "Gantari-Regular",
               fontSize: wp(3.6),
-              color: "#6B7280",
+              color: textMuted,
               textAlign: "center",
               marginTop: hp(0.4),
             }}
@@ -420,7 +457,7 @@ const StockReportListScreen = () => {
               setExcelFileName("");
             }}
             backgroundColor="#F3F4F6"
-            titleColor="#111827"
+            titleColor={textOnStrongPrimary}
             marginTop={0}
           />
           <CommonButton
@@ -433,7 +470,6 @@ const StockReportListScreen = () => {
               }
             }}
             backgroundColor={strongPrimary}
-            titleColor="#ffffff"
             marginTop={0}
           />
         </View>
@@ -443,32 +479,6 @@ const StockReportListScreen = () => {
 };
 
 export default StockReportListScreen;
-
-const styles = StyleSheet.create({
-  valueStyle: {
-    fontFamily: "Gantari-Regular",
-    fontSize: wp(3.5),
-  },
-  labelStyle: {
-    fontFamily: "Gantari-SemiBold",
-    fontSize: wp(4),
-  },
-  optionRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: hp(2),
-  },
-  optionText: {
-    marginLeft: wp(2),
-    fontSize: wp(4),
-  },
-  actions: {
-    flexDirection: "row",
-    marginTop: hp(2),
-    gap: wp(4),
-    justifyContent: "flex-end",
-  },
-});
 
 const calculateTotalStockSold = (
   transactions: Transaction[]

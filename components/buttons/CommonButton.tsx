@@ -9,7 +9,7 @@ import {
   DimensionValue,
 } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import { primary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import * as Icons from "@expo/vector-icons";
 
 type CommonButtonProp = {
@@ -30,7 +30,7 @@ type CommonButtonProp = {
 };
 
 const CommonButton = ({
-  backgroundColor = strongPrimary,
+  backgroundColor,
   onPress,
   title,
   iconLeft,
@@ -40,6 +40,7 @@ const CommonButton = ({
   marginTop,
   disabled,
 }: CommonButtonProp) => {
+  const { strongPrimary, textOnStrongPrimary } = useTheme();
   const IconComponent =
     iconLeft?.family && Icons[iconLeft.family]
       ? (Icons[iconLeft.family] as any)
@@ -53,7 +54,7 @@ const CommonButton = ({
         alignItems: "center",
         padding: wp(3),
         marginTop: marginTop,
-        backgroundColor: backgroundColor ?? primary,
+        backgroundColor: backgroundColor ?? strongPrimary,
         flexDirection: "row",
         justifyContent: "center",
         gap: wp(1),
@@ -64,14 +65,14 @@ const CommonButton = ({
       disabled={loading ? loading : disabled ? disabled : undefined}
     >
       {loading ? (
-        <ActivityIndicator size={wp(5.5)} color="white" />
+        <ActivityIndicator size={wp(5.5)} color={textOnStrongPrimary} />
       ) : (
         <>
           {IconComponent && iconLeft?.name && (
             <IconComponent
               name={iconLeft.name}
               size={iconLeft.size ?? wp(8)}
-              color={iconLeft.color ?? strongPrimary}
+              color={iconLeft.color ?? textOnStrongPrimary}
               style={{ marginLeft: wp(2) }}
             />
           )}
@@ -79,7 +80,7 @@ const CommonButton = ({
             style={{
               fontFamily: "Gantari-Regular",
               fontSize: wp(4.5),
-              color: titleColor ?? "black", // Optional: Add color for better readability
+              color: titleColor ?? textOnStrongPrimary,
             }}
           >
             {title}

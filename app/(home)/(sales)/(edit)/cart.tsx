@@ -4,7 +4,7 @@ import { useSelectedProductContext } from "@/contexts/SelectedProductContext";
 import { useProductContext } from "@/contexts/ProductContext";
 import SelectedProduct from "@/types/SelectedProduct";
 import Product from "@/types/Product";
-import { primary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -13,6 +13,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import CommonButton from "@/components/buttons/CommonButton";
 
 const EditCartScreen = () => {
+  const { primary, strongPrimary, textOnPrimary } = useTheme();
   const {
     selectedProducts,
     setSelectedProductList,
@@ -83,7 +84,7 @@ const EditCartScreen = () => {
         paddingHorizontal: wp(2),
       }}
     >
-      <Text style={{ fontFamily: "Gantari-Medium", fontSize: wp(4) }}>
+      <Text style={{ fontFamily: "Gantari-Medium", fontSize: wp(4), color: textOnPrimary }}>
         Order Details
       </Text>
 
@@ -243,6 +244,7 @@ const EditCartScreen = () => {
               style={{
                 fontFamily: "Gantari-SemiBold",
                 fontSize: wp(6.5),
+                color: textOnPrimary
               }}
             >
               Total
@@ -262,6 +264,7 @@ const EditCartScreen = () => {
             title="Cancel"
             onPress={() => setSelectedProductList(new Map())}
             backgroundColor={primary}
+            titleColor={textOnPrimary}
             marginTop={hp(3)}
           />
         </View>

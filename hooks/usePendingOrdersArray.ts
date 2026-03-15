@@ -8,6 +8,7 @@ const usePendingOrdersArray = (
     if (!pendingOrders) return [];
 
     return Object.entries(pendingOrders)
+      .filter(([, order]) => order != null)
       .map(([id, order]) => ({
         ...order,
         id

@@ -4,7 +4,7 @@ import React from "react";
 import { DrawerItem } from "@react-navigation/drawer";
 import * as Icons from "@expo/vector-icons";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import { secondary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import { DrawerLabel } from "./DrawerLabel";
 import PendingOrder from "@/types/PendingOrder";
 
@@ -31,12 +31,15 @@ export default function CustomDrawerItem({
   route,
   navigation,
   state,
-  activeColor = secondary,
-  activeBg = strongPrimary,
+  activeColor: activeColorProp,
+  activeBg: activeBgProp,
   role,
   restrict = false,
   pendingOrdersArray
 }: CustomDrawerItemProps) {
+  const { secondary, strongPrimary, textOnSecondary } = useTheme();
+  const activeColor = activeColorProp ?? secondary;
+  const activeBg = activeBgProp ?? strongPrimary;
   if (restrict && role !== "admin") return null;
   const isActive = state.routes[state.index].name === route;
   const IconComponent =
@@ -46,7 +49,7 @@ export default function CustomDrawerItem({
       label={({ color }) => (
         <DrawerLabel
           title={title}
-          color={color}
+          color={color ?? textOnSecondary}
           badgeCount={
             pendingOrdersArray?.filter((order) => order.status === "pending")
               .length
@@ -54,11 +57,12 @@ export default function CustomDrawerItem({
         />
       )}
       icon={({ color }) => (
-        <IconComponent name={icon.name} size={wp(4)} color={color} />
+        <IconComponent name={icon.name} size={wp(4)} color={color ?? textOnSecondary} />
       )}
       focused={isActive}
       onPress={() => navigation.navigate(route)}
       activeTintColor={activeColor}
+      inactiveTintColor={textOnSecondary}
       activeBackgroundColor={activeBg}
     />
   );

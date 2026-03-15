@@ -7,7 +7,7 @@ import {
   ScrollView,
 } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -32,7 +32,7 @@ import { format, isToday } from "date-fns";
 import { router } from "expo-router";
 import { useActivityContext } from "@/contexts/ActivityContext";
 import ModalTemplate from "@/components/modals/ModalTemplate";
-import {Checkbox} from "expo-checkbox";
+import { Checkbox } from "expo-checkbox";
 import Toast from "react-native-toast-message";
 
 type Section = {
@@ -41,6 +41,8 @@ type Section = {
 };
 
 const ActivityLogScreen = () => {
+  const { primary, secondary, strongPrimary, textOnPrimary, textOnSecondary, textOnStrongPrimary, textMuted } =
+    useTheme();
   const { activities, setActivities } = useActivityContext();
 
   // dependencies
@@ -189,7 +191,11 @@ const ActivityLogScreen = () => {
         }}
       >
         <Text
-          style={{ fontFamily: "Gantari-Regular", fontSize: wp(4) }}
+          style={{
+            fontFamily: "Gantari-Regular",
+            fontSize: wp(4),
+            color: textOnPrimary,
+          }}
           numberOfLines={1}
         >
           {item.displayName} {parseActions(item.action, item.entity)}
@@ -200,13 +206,13 @@ const ActivityLogScreen = () => {
           <FontAwesome6
             name="clock-four"
             size={wp(3.5)}
-            color="rgba(0,0,0,0.5)"
+            color={textMuted}
           />
           <Text
             style={{
               fontFamily: "Gantari-Regular",
               fontSize: wp(3.5),
-              color: "rgba(0,0,0,0.5)",
+              color: textMuted,
             }}
           >
             {new Date(item.date).toLocaleString("en-PH", {
@@ -216,7 +222,7 @@ const ActivityLogScreen = () => {
         </View>
       </TouchableOpacity>
     ),
-    []
+    [strongPrimary, textOnPrimary, textMuted]
   );
 
   // Memoize renderSectionHeader
@@ -227,14 +233,14 @@ const ActivityLogScreen = () => {
           style={{
             fontFamily: "Gantari-SemiBold",
             fontSize: wp(4.5),
-            color: "rgba(0,0,0,0.6)",
+            color: textMuted,
           }}
         >
           {title}
         </Text>
       </View>
     ),
-    []
+    [textMuted]
   );
 
   const renderSection = <T extends string>(
@@ -244,7 +250,7 @@ const ActivityLogScreen = () => {
     onChange: (value: T) => void
   ) => (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      <Text style={[styles.sectionTitle, { color: textOnPrimary }]}>{title}</Text>
       {options.map((opt) => (
         <TouchableOpacity
           key={opt}
@@ -256,7 +262,7 @@ const ActivityLogScreen = () => {
             onValueChange={() => onChange(opt)}
             style={styles.checkbox}
           />
-          <Text style={styles.optionText}>{opt}</Text>
+          <Text style={[styles.optionText, { color: textOnPrimary }]}>{opt}</Text>
         </TouchableOpacity>
       ))}
     </View>
@@ -279,18 +285,14 @@ const ActivityLogScreen = () => {
           row
         />
         <TouchableOpacity
+          onPress={() => setFilterModalVisible(true)}
           style={{
             padding: wp(2),
             borderRadius: wp(4),
             backgroundColor: secondary,
           }}
         >
-          <Ionicons
-            name="funnel"
-            size={24}
-            color={"black"}
-            onPress={() => setFilterModalVisible(true)}
-          />
+          <Ionicons name="funnel" size={24} color={textOnSecondary} />
         </TouchableOpacity>
       </View>
 
@@ -306,13 +308,13 @@ const ActivityLogScreen = () => {
                 ? `${format(startDate, "MMM d, yyyy")} – Present`
                 : "Select date range"
           }
-          backgroundColor={"#FFDABF"}
-          titleColor={"#9A3412"}
+          backgroundColor={secondary}
+          titleColor={textOnSecondary}
           marginTop={hp(1)}
           iconLeft={{
             family: "AntDesign",
             name: "calendar",
-            color: "#9A3412",
+            color: textOnSecondary,
             size: wp(5.5),
           }}
         />
@@ -365,7 +367,7 @@ const ActivityLogScreen = () => {
               style={{
                 fontFamily: "Gantari-Bold",
                 fontSize: wp(4.4),
-                color: "#111827",
+                color: textOnPrimary,
               }}
             >
               Filters
@@ -374,7 +376,7 @@ const ActivityLogScreen = () => {
               style={{
                 fontFamily: "Gantari-Regular",
                 fontSize: wp(3.4),
-                color: "#6B7280",
+                color: textMuted,
                 marginTop: hp(0.2),
               }}
             >
@@ -406,14 +408,14 @@ const ActivityLogScreen = () => {
             title="Cancel"
             onPress={() => setFilterModalVisible(false)}
             backgroundColor="#F3F4F6"
-            titleColor="#111827"
+            titleColor={textOnPrimary}
             marginTop={0}
           />
           <CommonButton
             title="Apply"
             onPress={() => setFilterModalVisible(false)}
             backgroundColor={strongPrimary}
-            titleColor={primary}
+            titleColor={textOnStrongPrimary}
             marginTop={0}
           />
         </View>

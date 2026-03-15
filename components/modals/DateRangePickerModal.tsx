@@ -32,7 +32,7 @@ import {
   setMonth,
   setYear,
 } from "date-fns";
-import { primary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 
 type DateRangePickerModalProps = {
   visible: boolean;
@@ -58,6 +58,25 @@ const DateRangePickerModal: React.FC<DateRangePickerModalProps> = ({
   initialStartDate = null,
   initialEndDate = null,
 }) => {
+  const {
+    primary,
+    secondary,
+    strongPrimary,
+    textOnPrimary,
+    textOnStrongPrimary,
+    textMuted,
+    themeMode,
+  } = useTheme();
+  const borderSubdued =
+    themeMode === "dark" ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.1)";
+  const borderLight =
+    themeMode === "dark" ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
+  const overlayBg =
+    themeMode === "dark" ? "rgba(0,0,0,0.6)" : "rgba(0,0,0,0.35)";
+  const rangeHighlight =
+    themeMode === "dark"
+      ? "rgba(255,145,73,0.2)"
+      : "rgba(255,145,73,0.12)";
   const [currentMonth, setCurrentMonth] = useState(
     initialStartDate ?? new Date()
   );
@@ -185,6 +204,286 @@ const DateRangePickerModal: React.FC<DateRangePickerModalProps> = ({
     onClose();
   }, [initialStartDate, initialEndDate, onClose]);
 
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        overlay: {
+          flex: 1,
+          backgroundColor: overlayBg,
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        container: {
+          backgroundColor: primary,
+          borderRadius: wp(4),
+          padding: wp(4),
+          width: wp(92),
+          ...Platform.select({
+            ios: {
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.25,
+              shadowRadius: 8,
+            },
+            android: { elevation: 10 },
+          }),
+        },
+        header: {
+          flexDirection: "row",
+          alignItems: "center",
+          marginBottom: hp(1.5),
+        },
+        headerTitle: {
+          fontFamily: "Gantari-Bold",
+          fontSize: wp(4.5),
+          color: textOnPrimary,
+        },
+        headerSubtitle: {
+          fontFamily: "Gantari-Regular",
+          fontSize: wp(3.2),
+          color: textMuted,
+          marginTop: hp(0.2),
+        },
+        dateLabelsRow: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: wp(4),
+          marginBottom: hp(1.5),
+          paddingHorizontal: wp(2),
+        },
+        dateLabelContainer: {
+          flex: 1,
+          alignItems: "center",
+        },
+        dateLabelTitle: {
+          fontFamily: "Gantari-Medium",
+          fontSize: wp(3),
+          color: textMuted,
+          marginBottom: hp(0.3),
+        },
+        dateLabelValue: {
+          fontFamily: "Gantari-SemiBold",
+          fontSize: wp(4),
+          color: textOnPrimary,
+          paddingVertical: hp(0.8),
+          paddingHorizontal: wp(4),
+          borderRadius: wp(2),
+          borderWidth: 1.5,
+          borderColor: borderSubdued,
+          textAlign: "center",
+          overflow: "hidden",
+        },
+        dateLabelActive: {
+          borderColor: strongPrimary,
+          color: strongPrimary,
+        },
+        monthNav: {
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: hp(1),
+          paddingHorizontal: wp(1),
+        },
+        monthTextButton: {
+          flexDirection: "row",
+          alignItems: "center",
+          paddingVertical: hp(0.5),
+          paddingHorizontal: wp(2),
+          borderRadius: wp(2),
+        },
+        monthText: {
+          fontFamily: "Gantari-Bold",
+          fontSize: wp(4.2),
+          color: textOnPrimary,
+        },
+        monthYearPickerContainer: {
+          paddingVertical: hp(1),
+        },
+        yearListContent: {
+          paddingHorizontal: wp(2),
+        },
+        yearItem: {
+          width: YEAR_ITEM_WIDTH,
+          paddingVertical: hp(1),
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: wp(2),
+          marginHorizontal: wp(0.5),
+        },
+        yearItemActive: {
+          backgroundColor: strongPrimary,
+        },
+        yearItemText: {
+          fontFamily: "Gantari-SemiBold",
+          fontSize: wp(3.8),
+          color: textMuted,
+        },
+        yearItemTextActive: {
+          color: textOnStrongPrimary,
+        },
+        monthGrid: {
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+          marginTop: hp(1.5),
+          paddingHorizontal: wp(1),
+        },
+        monthGridItem: {
+          width: "24%",
+          paddingVertical: hp(1.5),
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: wp(2.5),
+          marginBottom: hp(1),
+        },
+        monthGridItemActive: {
+          backgroundColor: rangeHighlight,
+          borderWidth: 1.5,
+          borderColor: strongPrimary,
+        },
+        monthGridText: {
+          fontFamily: "Gantari-SemiBold",
+          fontSize: wp(3.8),
+          color: textOnPrimary,
+        },
+        monthGridTextActive: {
+          color: strongPrimary,
+          fontFamily: "Gantari-Bold",
+        },
+        weekdayRow: {
+          flexDirection: "row",
+          justifyContent: "space-around",
+          marginBottom: hp(0.5),
+        },
+        weekdayText: {
+          width: CELL_SIZE,
+          textAlign: "center",
+          fontFamily: "Gantari-SemiBold",
+          fontSize: wp(3),
+          color: textMuted,
+        },
+        calendarGrid: {
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "space-around",
+        },
+        dayCell: {
+          width: CELL_SIZE,
+          height: CELL_SIZE,
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        dayCellInRange: {
+          backgroundColor: rangeHighlight,
+        },
+        dayCellRangeStart: {
+          backgroundColor: rangeHighlight,
+          borderTopLeftRadius: CELL_SIZE / 2,
+          borderBottomLeftRadius: CELL_SIZE / 2,
+        },
+        dayCellRangeEnd: {
+          backgroundColor: rangeHighlight,
+          borderTopRightRadius: CELL_SIZE / 2,
+          borderBottomRightRadius: CELL_SIZE / 2,
+        },
+        dayCellSelected: {
+          backgroundColor: "transparent",
+        },
+        dayInner: {
+          width: CELL_SIZE * 0.82,
+          height: CELL_SIZE * 0.82,
+          justifyContent: "center",
+          alignItems: "center",
+          borderRadius: CELL_SIZE * 0.41,
+        },
+        dayInnerSelected: {
+          backgroundColor: strongPrimary,
+        },
+        dayInnerToday: {
+          borderWidth: 1.5,
+          borderColor: strongPrimary,
+        },
+        dayText: {
+          fontFamily: "Gantari-Medium",
+          fontSize: wp(3.5),
+          color: textOnPrimary,
+        },
+        dayTextOutside: {
+          color: textMuted,
+        },
+        dayTextSelected: {
+          color: textOnStrongPrimary,
+          fontFamily: "Gantari-Bold",
+        },
+        dayTextToday: {
+          color: strongPrimary,
+          fontFamily: "Gantari-Bold",
+        },
+        footer: {
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: hp(1.5),
+          paddingTop: hp(1.5),
+          borderTopWidth: 1,
+          borderTopColor: borderLight,
+        },
+        clearButton: {
+          paddingVertical: hp(1),
+          paddingHorizontal: wp(4),
+        },
+        clearButtonText: {
+          fontFamily: "Gantari-SemiBold",
+          fontSize: wp(3.5),
+          color: "#EF4444",
+        },
+        footerRight: {
+          flexDirection: "row",
+          gap: wp(2),
+        },
+        cancelButton: {
+          paddingVertical: hp(1),
+          paddingHorizontal: wp(5),
+          borderRadius: wp(2),
+          borderWidth: 1,
+          borderColor: borderSubdued,
+          backgroundColor: secondary,
+        },
+        cancelButtonText: {
+          fontFamily: "Gantari-SemiBold",
+          fontSize: wp(3.5),
+          color: textOnPrimary,
+        },
+        applyButton: {
+          paddingVertical: hp(1),
+          paddingHorizontal: wp(5),
+          borderRadius: wp(2),
+          backgroundColor: strongPrimary,
+        },
+        applyButtonDisabled: {
+          opacity: 0.4,
+        },
+        applyButtonText: {
+          fontFamily: "Gantari-SemiBold",
+          fontSize: wp(3.5),
+          color: textOnStrongPrimary,
+        },
+      }),
+    [
+      primary,
+      secondary,
+      strongPrimary,
+      textOnPrimary,
+      textOnStrongPrimary,
+      textMuted,
+      overlayBg,
+      borderSubdued,
+      borderLight,
+      rangeHighlight,
+    ]
+  );
+
   return (
     <Modal
       transparent
@@ -229,7 +528,7 @@ const DateRangePickerModal: React.FC<DateRangePickerModalProps> = ({
                 <Ionicons
                   name="arrow-forward"
                   size={wp(5)}
-                  color="rgba(0,0,0,0.3)"
+                  color={textMuted}
                   style={{ marginTop: hp(2) }}
                 />
                 <View style={styles.dateLabelContainer}>
@@ -451,268 +750,3 @@ const DateRangePickerModal: React.FC<DateRangePickerModalProps> = ({
 export default DateRangePickerModal;
 
 const CELL_SIZE = wp(12.5);
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.35)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  container: {
-    backgroundColor: primary,
-    borderRadius: wp(4),
-    padding: wp(4),
-    width: wp(92),
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.25,
-        shadowRadius: 8,
-      },
-      android: { elevation: 10 },
-    }),
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: hp(1.5),
-  },
-  headerTitle: {
-    fontFamily: "Gantari-Bold",
-    fontSize: wp(4.5),
-    color: "#111827",
-  },
-  headerSubtitle: {
-    fontFamily: "Gantari-Regular",
-    fontSize: wp(3.2),
-    color: "#6B7280",
-    marginTop: hp(0.2),
-  },
-  dateLabelsRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: wp(4),
-    marginBottom: hp(1.5),
-    paddingHorizontal: wp(2),
-  },
-  dateLabelContainer: {
-    flex: 1,
-    alignItems: "center",
-  },
-  dateLabelTitle: {
-    fontFamily: "Gantari-Medium",
-    fontSize: wp(3),
-    color: "#6B7280",
-    marginBottom: hp(0.3),
-  },
-  dateLabelValue: {
-    fontFamily: "Gantari-SemiBold",
-    fontSize: wp(4),
-    color: "#111827",
-    paddingVertical: hp(0.8),
-    paddingHorizontal: wp(4),
-    borderRadius: wp(2),
-    borderWidth: 1.5,
-    borderColor: "rgba(0,0,0,0.1)",
-    textAlign: "center",
-    overflow: "hidden",
-  },
-  dateLabelActive: {
-    borderColor: strongPrimary,
-    color: strongPrimary,
-  },
-  monthNav: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: hp(1),
-    paddingHorizontal: wp(1),
-  },
-  monthTextButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: hp(0.5),
-    paddingHorizontal: wp(2),
-    borderRadius: wp(2),
-  },
-  monthText: {
-    fontFamily: "Gantari-Bold",
-    fontSize: wp(4.2),
-    color: "#111827",
-  },
-  monthYearPickerContainer: {
-    paddingVertical: hp(1),
-  },
-  yearListContent: {
-    paddingHorizontal: wp(2),
-  },
-  yearItem: {
-    width: YEAR_ITEM_WIDTH,
-    paddingVertical: hp(1),
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: wp(2),
-    marginHorizontal: wp(0.5),
-  },
-  yearItemActive: {
-    backgroundColor: strongPrimary,
-  },
-  yearItemText: {
-    fontFamily: "Gantari-SemiBold",
-    fontSize: wp(3.8),
-    color: "#6B7280",
-  },
-  yearItemTextActive: {
-    color: "#FFFFFF",
-  },
-  monthGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    marginTop: hp(1.5),
-    paddingHorizontal: wp(1),
-  },
-  monthGridItem: {
-    width: "24%",
-    paddingVertical: hp(1.5),
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: wp(2.5),
-    marginBottom: hp(1),
-  },
-  monthGridItemActive: {
-    backgroundColor: "rgba(255,145,73,0.15)",
-    borderWidth: 1.5,
-    borderColor: strongPrimary,
-  },
-  monthGridText: {
-    fontFamily: "Gantari-SemiBold",
-    fontSize: wp(3.8),
-    color: "#374151",
-  },
-  monthGridTextActive: {
-    color: strongPrimary,
-    fontFamily: "Gantari-Bold",
-  },
-  weekdayRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginBottom: hp(0.5),
-  },
-  weekdayText: {
-    width: CELL_SIZE,
-    textAlign: "center",
-    fontFamily: "Gantari-SemiBold",
-    fontSize: wp(3),
-    color: "#9CA3AF",
-  },
-  calendarGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-around",
-  },
-  dayCell: {
-    width: CELL_SIZE,
-    height: CELL_SIZE,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  dayCellInRange: {
-    backgroundColor: "rgba(255,145,73,0.12)",
-  },
-  dayCellRangeStart: {
-    backgroundColor: "rgba(255,145,73,0.12)",
-    borderTopLeftRadius: CELL_SIZE / 2,
-    borderBottomLeftRadius: CELL_SIZE / 2,
-  },
-  dayCellRangeEnd: {
-    backgroundColor: "rgba(255,145,73,0.12)",
-    borderTopRightRadius: CELL_SIZE / 2,
-    borderBottomRightRadius: CELL_SIZE / 2,
-  },
-  dayCellSelected: {
-    backgroundColor: "transparent",
-  },
-  dayInner: {
-    width: CELL_SIZE * 0.82,
-    height: CELL_SIZE * 0.82,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: CELL_SIZE * 0.41,
-  },
-  dayInnerSelected: {
-    backgroundColor: strongPrimary,
-  },
-  dayInnerToday: {
-    borderWidth: 1.5,
-    borderColor: strongPrimary,
-  },
-  dayText: {
-    fontFamily: "Gantari-Medium",
-    fontSize: wp(3.5),
-    color: "#111827",
-  },
-  dayTextOutside: {
-    color: "#D1D5DB",
-  },
-  dayTextSelected: {
-    color: "#FFFFFF",
-    fontFamily: "Gantari-Bold",
-  },
-  dayTextToday: {
-    color: strongPrimary,
-    fontFamily: "Gantari-Bold",
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: hp(1.5),
-    paddingTop: hp(1.5),
-    borderTopWidth: 1,
-    borderTopColor: "rgba(0,0,0,0.08)",
-  },
-  clearButton: {
-    paddingVertical: hp(1),
-    paddingHorizontal: wp(4),
-  },
-  clearButtonText: {
-    fontFamily: "Gantari-SemiBold",
-    fontSize: wp(3.5),
-    color: "#EF4444",
-  },
-  footerRight: {
-    flexDirection: "row",
-    gap: wp(2),
-  },
-  cancelButton: {
-    paddingVertical: hp(1),
-    paddingHorizontal: wp(5),
-    borderRadius: wp(2),
-    borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.15)",
-    backgroundColor: "#F3F4F6",
-  },
-  cancelButtonText: {
-    fontFamily: "Gantari-SemiBold",
-    fontSize: wp(3.5),
-    color: "#374151",
-  },
-  applyButton: {
-    paddingVertical: hp(1),
-    paddingHorizontal: wp(5),
-    borderRadius: wp(2),
-    backgroundColor: strongPrimary,
-  },
-  applyButtonDisabled: {
-    opacity: 0.4,
-  },
-  applyButtonText: {
-    fontFamily: "Gantari-SemiBold",
-    fontSize: wp(3.5),
-    color: "#FFFFFF",
-  },
-});

@@ -1,6 +1,6 @@
 import { FlatList, TouchableOpacity, View, Text, Image, ScrollView } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import SearchBar from "@/components/searchbars/SearchBar";
 import {
   widthPercentageToDP as wp,
@@ -25,6 +25,7 @@ import { firestoreDb } from "@/config/firebaseConfig";
 import searchProductsByName from "@/methods/search/searchProductsByName";
 
 const EditPosScreen = () => {
+  const { primary, secondary, strongPrimary, textOnPrimary, textMuted, textOnStrongPrimary } = useTheme();
   const { products } = useProductContext();
   const { productsArray } = useProductsArray(products);
   const { deleteSelectedProduct, addSelectedProduct, selectedProducts } =
@@ -295,7 +296,7 @@ const EditPosScreen = () => {
           <Ionicons
             name="funnel"
             size={wp(5.5)}
-            color={"black"}
+            color={textOnPrimary}
           />
         </TouchableOpacity>
       </View>
@@ -334,7 +335,7 @@ const EditPosScreen = () => {
               style={{
                 fontFamily: "Gantari-Bold",
                 fontSize: wp(4.4),
-                color: "#111827",
+                color: textOnPrimary,
               }}
             >
               Filter by Category
@@ -343,7 +344,7 @@ const EditPosScreen = () => {
               style={{
                 fontFamily: "Gantari-Regular",
                 fontSize: wp(3.4),
-                color: "#6B7280",
+                color: textMuted,
                 marginTop: hp(0.2),
               }}
             >
@@ -382,7 +383,7 @@ const EditPosScreen = () => {
               style={{
                 fontFamily: "Gantari-Regular",
                 fontSize: wp(4),
-                color: "#111827",
+                color: textOnPrimary,
                 marginLeft: wp(3),
               }}
             >
@@ -460,7 +461,7 @@ const EditPosScreen = () => {
                       style={{
                         fontFamily: "Gantari-Regular",
                         fontSize: wp(4),
-                        color: "#111827",
+                        color: textOnPrimary,
                       }}
                     >
                       {category.categoryName}
@@ -486,7 +487,7 @@ const EditPosScreen = () => {
               setIsCategoryFilterModalVisible(false);
             }}
             backgroundColor="#F3F4F6"
-            titleColor="#111827"
+            titleColor={textOnStrongPrimary}
             marginTop={0}
           />
           <CommonButton

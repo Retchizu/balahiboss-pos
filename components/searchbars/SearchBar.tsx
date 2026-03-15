@@ -1,7 +1,7 @@
 import { View, TextInput } from "react-native";
 import React from "react";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import { secondary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import Entypo from "@expo/vector-icons/Entypo";
 
 type SearchBarProp = {
@@ -17,6 +17,7 @@ const SearchBar = ({
   placeholder,
   row,
 }: SearchBarProp) => {
+  const { secondary, textOnSecondary, textMuted } = useTheme();
   return (
     <View
       style={{
@@ -31,21 +32,26 @@ const SearchBar = ({
       <Entypo
         name="magnifying-glass"
         size={wp(4)}
-        color="black"
+        color={textOnSecondary}
         style={{ paddingHorizontal: wp(2) }}
       />
       <TextInput
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder ?? ""}
-        placeholderTextColor={"rgba(0,0,0,0.5)"}
-        style={{ fontFamily: "Gantari-Regular", fontSize: wp(4),flex:1 }}
+        placeholderTextColor={textMuted}
+        style={{
+          fontFamily: "Gantari-Regular",
+          fontSize: wp(4),
+          flex: 1,
+          color: textOnSecondary,
+        }}
       />
       {value.trim() && (
         <Entypo
           name="cross"
           size={24}
-          color="#E6B794"
+          color={textMuted}
           onPress={() => (onChangeText(""))}
         />
       )}

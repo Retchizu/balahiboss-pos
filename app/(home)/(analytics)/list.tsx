@@ -13,7 +13,7 @@ import {
     heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { SegmentedButtons } from "react-native-paper";
-import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import SearchBar from "@/components/searchbars/SearchBar";
 import CommonButton from "@/components/buttons/CommonButton";
 import DateRangePickerModal from "@/components/modals/DateRangePickerModal";
@@ -39,7 +39,166 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 type AnalyticsSection = "topCustomers" | "inventory" | "busiestPeriod";
 
+type AnalyticsStyles = ReturnType<typeof createAnalyticsStyles>;
+
+function createAnalyticsStyles(theme: {
+    primary: string;
+    secondary: string;
+    strongPrimary: string;
+    textOnPrimary: string;
+    textOnStrongPrimary: string;
+    textMuted: string;
+}) {
+    const { primary, secondary, strongPrimary, textOnPrimary, textOnStrongPrimary, textMuted } = theme;
+    return StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: primary,
+            paddingHorizontal: wp(4),
+            paddingTop: hp(2),
+        },
+        title: {
+            fontFamily: "Gantari-SemiBold",
+            fontSize: wp(6),
+            color: textOnPrimary,
+            marginBottom: hp(1.5),
+        },
+        segmentWrap: {
+            backgroundColor: "rgba(255,255,255,0.55)",
+            padding: wp(2),
+            borderRadius: wp(3),
+            borderWidth: 1,
+            borderColor: textMuted,
+        },
+        segmented: {
+            backgroundColor: "transparent",
+        },
+        content: {
+            flex: 1,
+            marginTop: hp(2),
+        },
+        panel: {
+            flex: 1,
+            backgroundColor: "rgba(255,255,255,0.7)",
+            borderRadius: wp(3),
+            padding: wp(4),
+            borderWidth: 1,
+            borderColor: textMuted,
+        },
+        panelTitle: {
+            fontFamily: "Gantari-SemiBold",
+            fontSize: wp(5),
+            color: strongPrimary,
+            marginBottom: hp(0.8),
+        },
+        panelBody: {
+            fontFamily: "Gantari-Regular",
+            fontSize: wp(4),
+            color: textOnPrimary,
+            lineHeight: wp(6),
+        },
+        funnelButton: {
+            padding: wp(2),
+            borderRadius: wp(4),
+            backgroundColor: secondary,
+            borderWidth: 1,
+            borderColor: textMuted,
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        dateRow: {
+            flexDirection: "row",
+            justifyContent: "center",
+            gap: wp(6),
+            marginTop: hp(0.4),
+        },
+        center: {
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: hp(1),
+        },
+        emptyText: {
+            fontFamily: "Gantari-Regular",
+            fontSize: wp(4),
+            color: textMuted,
+        },
+        customerRow: {
+            flexDirection: "row",
+            padding: wp(4),
+            backgroundColor: "rgba(255,255,255,0.85)",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginVertical: hp(0.5),
+            borderRadius: wp(4),
+            borderWidth: 1,
+            borderColor: textMuted,
+        },
+        customerName: {
+            fontFamily: "Gantari-SemiBold",
+            fontSize: wp(4.3),
+            color: textOnStrongPrimary,
+        },
+        customerTotal: {
+            fontFamily: "Gantari-SemiBold",
+            fontSize: wp(4.3),
+            color: textOnStrongPrimary,
+        },
+        customerMeta: {
+            marginTop: hp(0.2),
+            fontFamily: "Gantari-Regular",
+            fontSize: wp(3.3),
+            color: textMuted,
+        },
+        filterHeader: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: wp(3),
+            marginBottom: hp(1),
+            paddingHorizontal: wp(1),
+        },
+        filterTitle: {
+            fontFamily: "Gantari-Bold",
+            fontSize: wp(4.4),
+            color: textOnPrimary,
+        },
+        filterSubtitle: {
+            fontFamily: "Gantari-Regular",
+            fontSize: wp(3.4),
+            color: textMuted,
+            marginTop: hp(0.2),
+        },
+        sectionTitle: {
+            fontFamily: "Gantari-Bold",
+            fontSize: wp(3.5),
+            marginBottom: hp(0.8),
+            color: textOnPrimary,
+        },
+        option: {
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: hp(0.8),
+        },
+        checkbox: {
+            marginRight: wp(2),
+        },
+        optionText: {
+            fontSize: wp(3.5),
+            fontFamily: "Gantari-Regular",
+            color: textOnPrimary,
+        },
+        filterActions: {
+            marginTop: hp(2),
+            flexDirection: "row",
+            justifyContent: "space-between",
+            gap: wp(3),
+        },
+    });
+}
+
 const AnalyticsScreen = () => {
+    const theme = useTheme();
+    const styles = useMemo(() => createAnalyticsStyles(theme), [theme]);
     const [section, setSection] = useState<AnalyticsSection>("inventory");
 
     const buttons = useMemo(
@@ -62,8 +221,8 @@ const AnalyticsScreen = () => {
                     style={styles.segmented}
                     theme={{
                         colors: {
-                            secondaryContainer: "#FF9149",
-                            onSecondaryContainer: "#FFFFFF",
+                            secondaryContainer: theme.strongPrimary,
+                            onSecondaryContainer: theme.textOnStrongPrimary,
                         },
                     }}
                 />
@@ -71,18 +230,19 @@ const AnalyticsScreen = () => {
 
             <View style={styles.content}>
                 {section === "topCustomers" ? (
-                    <TopCustomersPanel />
+                    <TopCustomersPanel styles={styles} />
                 ) : section === "busiestPeriod" ? (
-                    <BusiestPeriodPanel />
+                    <BusiestPeriodPanel styles={styles} />
                 ) : (
-                    <InventoryAnalyticsPanel />
+                    <InventoryAnalyticsPanel styles={styles} />
                 )}
             </View>
         </View>
     );
 };
 
-const TopCustomersPanel = () => {
+const TopCustomersPanel = ({ styles }: { styles: AnalyticsStyles }) => {
+    const { secondary, strongPrimary, textOnPrimary, textOnSecondary, textOnStrongPrimary } = useTheme();
     type SortBy = "totalPaid" | "purchaseCount";
 
     const [searchQuery, setSearchQuery] = useState("");
@@ -230,7 +390,7 @@ const TopCustomersPanel = () => {
                 </View>
             );
         },
-        [sortBy]
+        [sortBy, styles.customerMeta, styles.customerName, styles.customerRow, styles.customerTotal]
     );
 
     return (
@@ -249,7 +409,7 @@ const TopCustomersPanel = () => {
                     activeOpacity={0.7}
                     onPress={() => setFilterModalVisible(true)}
                 >
-                    <Ionicons name="funnel" size={24} color={"black"} />
+                    <Ionicons name="funnel" size={24} color={textOnPrimary} />
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.funnelButton}
@@ -259,7 +419,7 @@ const TopCustomersPanel = () => {
                     <MaterialCommunityIcons
                         name="microsoft-excel"
                         size={24}
-                        color="black"
+                        color={textOnPrimary}
                     />
                 </TouchableOpacity>
             </View>
@@ -272,13 +432,13 @@ const TopCustomersPanel = () => {
                             ? `${startDate.toLocaleString("en-PH", { dateStyle: "medium" })} – ${endDate.toLocaleString("en-PH", { dateStyle: "medium" })}`
                             : "Select date range"
                     }
-                    backgroundColor={"#FFDABF"}
-                    titleColor={"#9A3412"}
+                    backgroundColor={secondary}
+                    titleColor={textOnSecondary}
                     marginTop={hp(1)}
                     iconLeft={{
                         family: "AntDesign",
                         name: "calendar",
-                        color: "#9A3412",
+                        color: textOnSecondary,
                         size: wp(5.5),
                     }}
                 />
@@ -401,7 +561,7 @@ const TopCustomersPanel = () => {
                             setFilterModalVisible(false);
                         }}
                         backgroundColor="#F3F4F6"
-                        titleColor="#111827"
+                        titleColor={textOnStrongPrimary}
                         marginTop={0}
                     />
                     <CommonButton
@@ -416,7 +576,7 @@ const TopCustomersPanel = () => {
                             setFilterModalVisible(false);
                         }}
                         backgroundColor={strongPrimary}
-                        titleColor={primary}
+                        titleColor={textOnStrongPrimary}
                         marginTop={0}
                     />
                 </View>
@@ -425,7 +585,8 @@ const TopCustomersPanel = () => {
     );
 };
 
-const BusiestPeriodPanel = () => {
+const BusiestPeriodPanel = ({ styles }: { styles: AnalyticsStyles }) => {
+    const { secondary, strongPrimary, textOnPrimary, textOnSecondary, textMuted } = useTheme();
     type ViewFilter = "all" | "days" | "weeks" | "timePeriods";
 
     const [startDate, setStartDate] = useState<Date | null>(null);
@@ -610,7 +771,7 @@ const BusiestPeriodPanel = () => {
                 </View>
             );
         },
-        []
+        [styles.customerMeta, styles.customerName, styles.customerRow, styles.customerTotal]
     );
 
     const renderWeekRow = useCallback(
@@ -637,7 +798,7 @@ const BusiestPeriodPanel = () => {
                 </View>
             );
         },
-        []
+        [styles.customerMeta, styles.customerName, styles.customerRow, styles.customerTotal]
     );
 
     const renderTimePeriodRow = useCallback(
@@ -661,7 +822,7 @@ const BusiestPeriodPanel = () => {
                 </View>
             );
         },
-        []
+        [styles.customerMeta, styles.customerName, styles.customerRow, styles.customerTotal]
     );
 
     return (
@@ -677,7 +838,7 @@ const BusiestPeriodPanel = () => {
                         <MaterialCommunityIcons
                             name="microsoft-excel"
                             size={24}
-                            color="black"
+                            color={textOnPrimary}
                         />
                     </TouchableOpacity>
                 )}
@@ -691,13 +852,13 @@ const BusiestPeriodPanel = () => {
                             ? `${startDate.toLocaleString("en-PH", { dateStyle: "medium" })} – ${endDate.toLocaleString("en-PH", { dateStyle: "medium" })}`
                             : "Select date range"
                     }
-                    backgroundColor={"#FFDABF"}
-                    titleColor={"#9A3412"}
+                    backgroundColor={secondary}
+                    titleColor={textOnSecondary}
                     marginTop={hp(1)}
                     iconLeft={{
                         family: "AntDesign",
                         name: "calendar",
-                        color: "#9A3412",
+                        color: textOnSecondary,
                         size: wp(5.5),
                     }}
                 />
@@ -735,7 +896,7 @@ const BusiestPeriodPanel = () => {
                         style={styles.segmented}
                         theme={{
                             colors: {
-                                secondaryContainer: "#FF9149",
+                                secondaryContainer: strongPrimary,
                                 onSecondaryContainer: "#FFFFFF",
                             },
                         }}
@@ -746,7 +907,7 @@ const BusiestPeriodPanel = () => {
             <View style={{ flex: 1, marginTop: hp(1.5) }}>
                 {loading ? (
                     <View style={styles.center}>
-                        <ActivityIndicator size="large" color="#FF9149" />
+                        <ActivityIndicator size="large" color={strongPrimary} />
                     </View>
                 ) : !data ? (
                     <View style={styles.center}>
@@ -767,7 +928,7 @@ const BusiestPeriodPanel = () => {
                                 borderRadius: wp(4),
                                 marginBottom: hp(1.5),
                                 borderWidth: 1,
-                                borderColor: "rgba(0,0,0,0.06)",
+                                borderColor: textMuted,
                             }}
                         >
                             <Text
@@ -872,7 +1033,8 @@ const BusiestPeriodPanel = () => {
     );
 };
 
-const InventoryAnalyticsPanel = () => {
+const InventoryAnalyticsPanel = ({ styles }: { styles: AnalyticsStyles }) => {
+    const { secondary, strongPrimary, textOnPrimary, textOnSecondary, textOnStrongPrimary, textMuted } = useTheme();
     const [searchQuery, setSearchQuery] = useState("");
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = useState<Date | null>(null);
@@ -1027,8 +1189,8 @@ const InventoryAnalyticsPanel = () => {
                                 {
                                     color:
                                         suggested > 0
-                                            ? "rgba(0,0,0,0.9)"
-                                            : "rgba(0,0,0,0.55)",
+                                            ? textOnStrongPrimary
+                                            : textMuted,
                                 },
                             ]}
                         >
@@ -1041,7 +1203,7 @@ const InventoryAnalyticsPanel = () => {
                 </View>
             );
         },
-        []
+        [styles.customerRow, styles.customerName, styles.customerMeta, styles.customerTotal, textOnStrongPrimary, textMuted]
     );
 
     return (
@@ -1060,7 +1222,7 @@ const InventoryAnalyticsPanel = () => {
                     activeOpacity={0.7}
                     onPress={() => setFilterModalVisible(true)}
                 >
-                    <Ionicons name="funnel" size={24} color={"black"} />
+                    <Ionicons name="funnel" size={24} color={textOnPrimary} />
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.funnelButton}
@@ -1070,7 +1232,7 @@ const InventoryAnalyticsPanel = () => {
                     <MaterialCommunityIcons
                         name="microsoft-excel"
                         size={24}
-                        color="black"
+                        color={textOnPrimary}
                     />
                 </TouchableOpacity>
             </View>
@@ -1083,13 +1245,13 @@ const InventoryAnalyticsPanel = () => {
                             ? `${startDate.toLocaleString("en-PH", { dateStyle: "medium" })} – ${endDate.toLocaleString("en-PH", { dateStyle: "medium" })}`
                             : "Select date range"
                     }
-                    backgroundColor={"#FFDABF"}
-                    titleColor={"#9A3412"}
+                    backgroundColor={secondary}
+                    titleColor={textOnSecondary}
                     marginTop={hp(1)}
                     iconLeft={{
                         family: "AntDesign",
                         name: "calendar",
-                        color: "#9A3412",
+                        color: textOnSecondary,
                         size: wp(5.5),
                     }}
                 />
@@ -1183,7 +1345,7 @@ const InventoryAnalyticsPanel = () => {
                             setFilterModalVisible(false);
                         }}
                         backgroundColor="#F3F4F6"
-                        titleColor="#111827"
+                        titleColor={textOnStrongPrimary}
                         marginTop={0}
                     />
                     <CommonButton
@@ -1199,7 +1361,7 @@ const InventoryAnalyticsPanel = () => {
                             setFilterModalVisible(false);
                         }}
                         backgroundColor={strongPrimary}
-                        titleColor={primary}
+                        titleColor={textOnStrongPrimary}
                         marginTop={0}
                     />
                 </View>
@@ -1209,146 +1371,3 @@ const InventoryAnalyticsPanel = () => {
 };
 
 export default AnalyticsScreen;
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: primary,
-        paddingHorizontal: wp(4),
-        paddingTop: hp(2),
-    },
-    title: {
-        fontFamily: "Gantari-SemiBold",
-        fontSize: wp(6),
-        color: "rgba(0,0,0,0.85)",
-        marginBottom: hp(1.5),
-    },
-    segmentWrap: {
-        backgroundColor: "rgba(255,255,255,0.55)",
-        padding: wp(2),
-        borderRadius: wp(3),
-        borderWidth: 1,
-        borderColor: "rgba(0,0,0,0.06)",
-    },
-    segmented: {
-        backgroundColor: "transparent",
-    },
-    content: {
-        flex: 1,
-        marginTop: hp(2),
-    },
-    panel: {
-        flex: 1,
-        backgroundColor: "rgba(255,255,255,0.7)",
-        borderRadius: wp(3),
-        padding: wp(4),
-        borderWidth: 1,
-        borderColor: "rgba(0,0,0,0.06)",
-    },
-    panelTitle: {
-        fontFamily: "Gantari-SemiBold",
-        fontSize: wp(5),
-        color: strongPrimary,
-        marginBottom: hp(0.8),
-    },
-    panelBody: {
-        fontFamily: "Gantari-Regular",
-        fontSize: wp(4),
-        color: "rgba(0,0,0,0.75)",
-        lineHeight: wp(6),
-    },
-    funnelButton: {
-        padding: wp(2),
-        borderRadius: wp(4),
-        backgroundColor: secondary,
-        borderWidth: 1,
-        borderColor: "rgba(0,0,0,0.06)",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    dateRow: {
-        flexDirection: "row",
-        justifyContent: "center",
-        gap: wp(6),
-        marginTop: hp(0.4),
-    },
-    center: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: hp(1),
-    },
-    emptyText: {
-        fontFamily: "Gantari-Regular",
-        fontSize: wp(4),
-        color: "#6B7280",
-    },
-    customerRow: {
-        flexDirection: "row",
-        padding: wp(4),
-        backgroundColor: "rgba(255,255,255,0.85)",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginVertical: hp(0.5),
-        borderRadius: wp(4),
-        borderWidth: 1,
-        borderColor: "rgba(0,0,0,0.06)",
-    },
-    customerName: {
-        fontFamily: "Gantari-SemiBold",
-        fontSize: wp(4.3),
-        color: "rgba(0,0,0,0.85)",
-    },
-    customerTotal: {
-        fontFamily: "Gantari-SemiBold",
-        fontSize: wp(4.3),
-        color: "rgba(0,0,0,0.9)",
-    },
-    customerMeta: {
-        marginTop: hp(0.2),
-        fontFamily: "Gantari-Regular",
-        fontSize: wp(3.3),
-        color: "rgba(0,0,0,0.55)",
-    },
-    filterHeader: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: wp(3),
-        marginBottom: hp(1),
-        paddingHorizontal: wp(1),
-    },
-    filterTitle: {
-        fontFamily: "Gantari-Bold",
-        fontSize: wp(4.4),
-        color: "#111827",
-    },
-    filterSubtitle: {
-        fontFamily: "Gantari-Regular",
-        fontSize: wp(3.4),
-        color: "#6B7280",
-        marginTop: hp(0.2),
-    },
-    sectionTitle: {
-        fontFamily: "Gantari-Bold",
-        fontSize: wp(3.5),
-        marginBottom: hp(0.8),
-    },
-    option: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: hp(0.8),
-    },
-    checkbox: {
-        marginRight: wp(2),
-    },
-    optionText: {
-        fontSize: wp(3.5),
-        fontFamily: "Gantari-Regular",
-    },
-    filterActions: {
-        marginTop: hp(2),
-        flexDirection: "row",
-        justifyContent: "space-between",
-        gap: wp(3),
-    },
-});

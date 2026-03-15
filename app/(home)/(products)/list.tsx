@@ -4,7 +4,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import SearchBar from "@/components/searchbars/SearchBar";
 import useProductsArray from "@/hooks/useProductsArray";
 import { useProductContext } from "@/contexts/ProductContext";
@@ -24,8 +24,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { Checkbox } from "expo-checkbox";
 import ModalTemplate from "@/components/modals/ModalTemplate";
 import CommonButton from "@/components/buttons/CommonButton";
+import { getContrastTextColor } from "@/theme/contrast";
 
 const ProductListScreen = () => {
+  const { primary, secondary, strongPrimary, textOnPrimary, textMuted, textOnStrongPrimary } =
+    useTheme();
   const [searchBarValue, setSearchBarValue] = React.useState("");
   const { products } = useProductContext();
   const { productsArray } = useProductsArray(products);
@@ -151,7 +154,7 @@ const ProductListScreen = () => {
               borderRadius: wp(2),
               backgroundColor: item.stock <= 0 ? "rgba(80,109,132,0.3)" : "rgba(255,255,255,0.85)",
               borderWidth: 1,
-              borderColor: "rgba(0,0,0,0.6)",
+              borderColor: textMuted,
             }}
             activeOpacity={0.7}
             onPress={() => {
@@ -160,7 +163,7 @@ const ProductListScreen = () => {
           >
             <View
               style={{
-                borderColor: "#FF9149",
+                borderColor: strongPrimary,
                 borderWidth: wp(0.2),
                 borderRadius: wp(3),
               }}
@@ -222,7 +225,7 @@ const ProductListScreen = () => {
                         style={{
                           fontFamily: "Gantari-Regular",
                           fontSize: wp(3.2),
-                          color: "rgba(0,0,0,0.7)",
+                          color: getContrastTextColor(category.color || primary),
                         }}
                       >
                         {category.categoryName}
@@ -282,7 +285,7 @@ const ProductListScreen = () => {
               style={{
                 fontFamily: "Gantari-Bold",
                 fontSize: wp(4.4),
-                color: "#111827",
+                color: textOnPrimary,
               }}
             >
               Filter by Category
@@ -291,7 +294,7 @@ const ProductListScreen = () => {
               style={{
                 fontFamily: "Gantari-Regular",
                 fontSize: wp(3.4),
-                color: "#6B7280",
+                color: textMuted,
                 marginTop: hp(0.2),
               }}
             >
@@ -330,7 +333,7 @@ const ProductListScreen = () => {
               style={{
                 fontFamily: "Gantari-Regular",
                 fontSize: wp(4),
-                color: "#111827",
+                color: textOnPrimary,
                 marginLeft: wp(3),
               }}
             >
@@ -408,7 +411,7 @@ const ProductListScreen = () => {
                       style={{
                         fontFamily: "Gantari-Regular",
                         fontSize: wp(4),
-                        color: "#111827",
+                        color: textOnPrimary,
                       }}
                     >
                       {category.categoryName}
@@ -434,14 +437,13 @@ const ProductListScreen = () => {
               setIsCategoryFilterModalVisible(false);
             }}
             backgroundColor="#F3F4F6"
-            titleColor="#111827"
+            titleColor={textOnPrimary}
             marginTop={0}
           />
           <CommonButton
             title="Apply"
             onPress={() => setIsCategoryFilterModalVisible(false)}
             backgroundColor={strongPrimary}
-            titleColor="white"
             marginTop={0}
           />
         </View>
@@ -451,7 +453,7 @@ const ProductListScreen = () => {
         onPress={() => {
           router.navigate("../add");
         }}
-        icon={{ name: "plus", family: "Entypo", color: "white", size: wp(6) }}
+        icon={{ name: "plus", family: "Entypo", color: textOnStrongPrimary, size: wp(6) }}
         backgroundColor={strongPrimary}
       />
     </View>

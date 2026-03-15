@@ -6,6 +6,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import * as Icons from "@expo/vector-icons";
+import { useTheme } from "@/contexts/ThemeContext";
 
 type FloatingButtonProp = {
   onPress: () => void;
@@ -27,6 +28,7 @@ const FloatingButton = ({
   loading,
   zIndex
 }: FloatingButtonProp) => {
+  const { textOnStrongPrimary } = useTheme();
   const IconComponent = Icons[icon.family] ? (Icons[icon.family] as any) : null;
 
   return (
@@ -37,7 +39,7 @@ const FloatingButton = ({
       disabled={loading}
     >
       {loading ? (
-        <ActivityIndicator size="large" color="white" />
+        <ActivityIndicator size="large" color={textOnStrongPrimary} />
       ) : (
         <IconComponent name={icon.name} size={icon.size} color={icon.color} />
       )}

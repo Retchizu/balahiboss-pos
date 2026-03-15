@@ -8,8 +8,8 @@ import {
   TouchableOpacity,
   BackHandler,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
-import { primary, strongPrimary } from "@/theme/backgroundTheme";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -30,6 +30,7 @@ import { Entypo } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
 
 const OrderDetailsScreen = () => {
+  const { primary, strongPrimary, textOnPrimary, textMuted, textOnStrongPrimary } = useTheme();
   const { id, status } = useLocalSearchParams<{
     id: string;
     status: string;
@@ -45,6 +46,7 @@ const OrderDetailsScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
+      if (!pendingOrder) return;
       const backFn = () => {
         switch (pendingOrder.status) {
           case "pending":
@@ -66,12 +68,14 @@ const OrderDetailsScreen = () => {
       );
 
       return () => backHandler.remove();
-    }, [pendingOrder.status])
+    }, [pendingOrder])
   );
 
-  // customer detail
+  // customer detail (guard: pendingOrder may be undefined until router.back())
   const { customers } = useCustomerContext();
-  const customer = customers[pendingOrder.transaction.customerId];
+  const customer = pendingOrder
+    ? customers[pendingOrder.transaction.customerId]
+    : undefined;
 
   // products for items bought
   const { products } = useProductContext();
@@ -79,6 +83,7 @@ const OrderDetailsScreen = () => {
 
   const convertTransactionItemsToSelectedProductArray =
     (): SelectedProduct[] => {
+      if (!pendingOrder) return [];
       return pendingOrder.transaction.items.map((item) => {
         const product = products[item.productId];
 
@@ -139,6 +144,45 @@ const OrderDetailsScreen = () => {
     }
   };
 
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        label: {
+          fontSize: wp(5),
+          fontFamily: "Gantari-SemiBold",
+        },
+        value: {
+          fontSize: wp(5),
+          fontFamily: "Gantari-Regular",
+        },
+        informationContainer: {
+          backgroundColor: "rgba(255,255,255,0.85)",
+          padding: wp(2),
+          borderRadius: wp(4),
+          borderWidth: 1,
+          borderColor: textMuted,
+        },
+        totalView: {
+          flexDirection: "row",
+          justifyContent: "space-between",
+        },
+        totalValue: {
+          fontFamily: "Gantari-Bold",
+          fontSize: wp(5),
+          color: strongPrimary,
+        },
+        totalLabel: {
+          fontSize: wp(5),
+          fontFamily: "Gantari-Regular",
+        },
+      }),
+    [strongPrimary]
+  );
+
+  if (!pendingOrder) {
+    return null;
+  }
+
   return (
     <View
       style={{
@@ -151,7 +195,7 @@ const OrderDetailsScreen = () => {
     >
       <View style={styles.informationContainer}>
         <Text style={styles.label}>Customer: </Text>
-        <Text style={styles.value}>{customer.customerName}</Text>
+        <Text style={styles.value}>{customer?.customerName ?? "—"}</Text>
       </View>
       <ScrollView
         style={styles.informationContainer}
@@ -188,7 +232,7 @@ const OrderDetailsScreen = () => {
                 borderRadius: wp(2),
                 backgroundColor: "rgba(255,255,255,0.85)",
                 borderWidth: 1,
-                borderColor: "rgba(0,0,0,0.6)",
+                borderColor: textMuted,
                 alignItems: "center",
                 padding: wp(1),
               }}
@@ -248,7 +292,7 @@ const OrderDetailsScreen = () => {
                     style={{
                       fontFamily: "Gantari-Medium",
                       fontSize: wp(4),
-                      color: "#ff6347",
+                      color: strongPrimary,
                     }}
                   >
                     {item.quantity}
@@ -336,6 +380,7 @@ const OrderDetailsScreen = () => {
             style={{
               fontFamily: "Gantari-Bold",
               fontSize: wp(5),
+              color: textOnPrimary,
               textAlign: "center",
             }}
           >
@@ -345,7 +390,7 @@ const OrderDetailsScreen = () => {
             style={{
               fontFamily: "Gantari-Regular",
               fontSize: wp(3.8),
-              color: "#6B7280",
+              color: textMuted,
               textAlign: "center",
               marginTop: hp(0.8),
               lineHeight: hp(2),
@@ -393,7 +438,7 @@ const OrderDetailsScreen = () => {
                     fontFamily: isSelected
                       ? "Gantari-SemiBold"
                       : "Gantari-Regular",
-                    color: isSelected ? strongPrimary : "#111827",
+                    color: isSelected ? strongPrimary : textOnPrimary,
                   }}
                 >
                   {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -415,7 +460,7 @@ const OrderDetailsScreen = () => {
             title="Cancel"
             onPress={() => setOrderStatusModalVisible(false)}
             backgroundColor="#F3F4F6"
-            titleColor="#111827"
+            titleColor={textOnStrongPrimary}
             marginTop={0}
           />
           <CommonButton
@@ -426,7 +471,6 @@ const OrderDetailsScreen = () => {
               }
             }}
             backgroundColor={strongPrimary}
-            titleColor={primary}
             marginTop={0}
             loading={markOrderLoading}
           />
@@ -437,34 +481,3 @@ const OrderDetailsScreen = () => {
 };
 
 export default OrderDetailsScreen;
-
-const styles = StyleSheet.create({
-  label: {
-    fontSize: wp(5),
-    fontFamily: "Gantari-SemiBold",
-  },
-  value: {
-    fontSize: wp(5),
-    fontFamily: "Gantari-Regular",
-  },
-  informationContainer: {
-    backgroundColor: "rgba(255,255,255,0.85)",
-    padding: wp(2),
-    borderRadius: wp(4),
-    borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.6)",
-  },
-  totalView: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  totalValue: {
-    fontFamily: "Gantari-Bold",
-    fontSize: wp(5),
-    color: strongPrimary,
-  },
-  totalLabel: {
-    fontSize: wp(5),
-    fontFamily: "Gantari-Regular",
-  },
-});

@@ -2,15 +2,16 @@ import { Feather, FontAwesome6, MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { Tabs } from "expo-router";
-import { primary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const PendingLayout = () => {
+  const { primary, strongPrimary, textOnPrimary } = useTheme();
   return (
       <Tabs
         screenOptions={{
           headerShown: false,
           tabBarActiveTintColor: strongPrimary,
-          tabBarInactiveTintColor: "rgba(0,0,0,0.8)",
+          tabBarInactiveTintColor: textOnPrimary,
           tabBarStyle: { backgroundColor: primary },
         }}
       >

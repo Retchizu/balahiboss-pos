@@ -1,12 +1,11 @@
 import {
   View,
   Text,
-  StyleSheet,
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import React, { useRef, useState } from "react";
-import { primary, strongPrimary } from "@/theme/backgroundTheme";
+import React, { useRef, useState, useMemo } from "react";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -23,6 +22,19 @@ import CommonButton from "@/components/buttons/CommonButton";
 import FloatingButton from "@/components/buttons/FloatingButton";
 
 const UpdateCustomerScreen = () => {
+  const { primary, strongPrimary, textOnPrimary, textMuted, textOnStrongPrimary } =
+    useTheme();
+  const styles = useMemo(
+    () => ({
+      label: {
+        fontSize: wp(4.5),
+        fontFamily: "Gantari-Medium",
+        marginBottom: hp(0.5),
+        color: textOnPrimary,
+      },
+    }),
+    [textOnPrimary]
+  );
   // customer params
   const { id }: { id: string } = useLocalSearchParams();
   const { customers } = useCustomerContext();
@@ -114,8 +126,9 @@ const UpdateCustomerScreen = () => {
           value={customerForm.customerInfo}
           onChangeText={(text) => handleInputChange("customerInfo", text)}
           placeholder="Enter Customer Information"
+          placeholderTextColor={textMuted}
           multiline
-          style={{ fontFamily: "Gantari-Regular", fontSize: wp(4.5) }}
+          style={{ fontFamily: "Gantari-Regular", fontSize: wp(4.5), color: textOnPrimary }}
         />
       </TouchableOpacity>
 
@@ -124,7 +137,8 @@ const UpdateCustomerScreen = () => {
           await updateCustomer();
         }}
         title="Update Customer"
-        titleColor={"white"}
+        backgroundColor={strongPrimary}
+        titleColor={textOnStrongPrimary}
         marginTop={hp(3)}
         loading={isUpdatingCustomer}
       />
@@ -133,6 +147,7 @@ const UpdateCustomerScreen = () => {
           router.back();
         }}
         title="Cancel"
+        titleColor={textOnPrimary}
         backgroundColor={primary}
         marginTop={hp(3)}
       />
@@ -142,7 +157,7 @@ const UpdateCustomerScreen = () => {
         onPress={() => {
           setIsDeleteModalVisible(true);
         }}
-        icon={{ color: "white", family: "Entypo", name: "trash", size: wp(7) }}
+        icon={{ color: textOnStrongPrimary, family: "Entypo", name: "trash", size: wp(7) }}
       />
       <ModalTemplate
         visible={isDeleteModalVisible}
@@ -161,6 +176,7 @@ const UpdateCustomerScreen = () => {
             style={{
               fontFamily: "Gantari-Bold",
               fontSize: wp(5),
+              color: textOnPrimary,
               textAlign: "center",
             }}
           >
@@ -170,7 +186,7 @@ const UpdateCustomerScreen = () => {
             style={{
               fontFamily: "Gantari-Regular",
               fontSize: wp(3.8),
-              color: "#6B7280",
+              color: textMuted,
               textAlign: "center",
               marginTop: hp(1),
               lineHeight: hp(2.4),
@@ -193,7 +209,7 @@ const UpdateCustomerScreen = () => {
             title="Cancel"
             onPress={() => setIsDeleteModalVisible(false)}
             backgroundColor="#F3F4F6"
-            titleColor="#111827"
+            titleColor={textOnStrongPrimary}
             marginTop={0}
           />
           <CommonButton
@@ -210,11 +226,3 @@ const UpdateCustomerScreen = () => {
 };
 
 export default UpdateCustomerScreen;
-
-const styles = StyleSheet.create({
-  label: {
-    fontSize: wp(4.5),
-    fontFamily: "Gantari-Medium",
-    marginBottom: hp(0.5),
-  },
-});

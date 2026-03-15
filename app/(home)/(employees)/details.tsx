@@ -9,7 +9,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import CommonButton from "@/components/buttons/CommonButton";
 import DateRangePickerModal from "@/components/modals/DateRangePickerModal";
-import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -26,6 +26,8 @@ import formatMillisecondsToHours from "@/methods/date/formatMilisecondsToHours";
 import { useTimesheetContext } from "@/contexts/TimesheetContext";
 
 const EmployeeDetails = () => {
+  const { primary, secondary, strongPrimary, textOnPrimary, textOnSecondary, textMuted, textOnStrongPrimary } =
+    useTheme();
   const { selectedEmployee } = useSelectedEmployeeContext();
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -88,7 +90,7 @@ const EmployeeDetails = () => {
         paddingHorizontal: wp(2),
       }}
     >
-      <Text style={{ fontFamily: "Gantari-Medium", fontSize: wp(5) }}>
+      <Text style={{ fontFamily: "Gantari-Medium", fontSize: wp(5), color: textOnPrimary }}>
         Employee:
       </Text>
       <View
@@ -99,7 +101,7 @@ const EmployeeDetails = () => {
           padding: wp(2),
         }}
       >
-        <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(4.5) }}>
+        <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(4.5), color: textOnSecondary }}>
           {selectedEmployee?.displayName}
         </Text>
       </View>
@@ -116,13 +118,13 @@ const EmployeeDetails = () => {
                 ? format(startDate, "MMM d, yyyy") + " – ..."
                 : "Select date range"
           }
-          backgroundColor={"#FFDABF"}
-          titleColor={"#9A3412"}
+          backgroundColor={secondary}
+          titleColor={textOnSecondary}
           marginTop={hp(1)}
           iconLeft={{
             family: "AntDesign",
             name: "calendar",
-            color: "#9A3412",
+            color: textOnSecondary,
             size: wp(5.5),
           }}
         />
@@ -149,10 +151,10 @@ const EmployeeDetails = () => {
           justifyContent: "space-between",
         }}
       >
-        <Text style={{ fontFamily: "Gantari-Regular", fontSize: wp(4) }}>
+        <Text style={{ fontFamily: "Gantari-Regular", fontSize: wp(4), color: textOnPrimary }}>
           Hourly Rate
         </Text>
-        <Text style={{ fontFamily: "Gantari-Regular", fontSize: wp(4) }}>
+        <Text style={{ fontFamily: "Gantari-Regular", fontSize: wp(4), color: textOnPrimary }}>
           ₱ {(timesheetInfo?.rate ?? 0).toFixed(2)}
         </Text>
       </View>
@@ -181,19 +183,19 @@ const EmployeeDetails = () => {
               }}
             >
               <View>
-                <Text style={{ fontFamily: "Gantari-Medium", fontSize: wp(4) }}>
+                <Text style={{ fontFamily: "Gantari-Medium", fontSize: wp(4), color: textOnPrimary }}>
                   {format(new Date(item.date), "MMM d, yyyy")} at{" "}
                   {format(new Date(item.loginTime), "h:mm a")}
                 </Text>
                 <View style={{ flexDirection: "row" }}>
                   <Text
-                    style={{ fontFamily: "Gantari-Regular", fontSize: wp(3.5) }}
+                    style={{ fontFamily: "Gantari-Regular", fontSize: wp(3.5), color: textMuted }}
                   >
                     {format(new Date(item.loginTime), "h:mm a")}
                   </Text>
-                  <Text style={{ fontFamily: "Gantari-Regular" }}> – </Text>
+                  <Text style={{ fontFamily: "Gantari-Regular", color: textMuted }}> – </Text>
                   <Text
-                    style={{ fontFamily: "Gantari-Regular", fontSize: wp(3.5) }}
+                    style={{ fontFamily: "Gantari-Regular", fontSize: wp(3.5), color: textMuted }}
                   >
                     {item.logoutTime
                       ? format(new Date(item.logoutTime), "h:mm a")
@@ -202,7 +204,7 @@ const EmployeeDetails = () => {
                 </View>
               </View>
 
-              <Entypo name="chevron-right" size={24} color="black" />
+              <Entypo name="chevron-right" size={24} color={textOnPrimary} />
             </View>
           </TouchableOpacity>
         )}
@@ -213,7 +215,7 @@ const EmployeeDetails = () => {
         icon={{
           family: "FontAwesome6",
           name: "pencil",
-          color: "white",
+          color: textOnStrongPrimary,
           size: wp(6),
         }}
         zIndex={1}
@@ -224,14 +226,14 @@ const EmployeeDetails = () => {
           padding: wp(4),
           borderRadius: wp(6),
           borderWidth: wp(0.4),
-          borderColor: "black",
+          borderColor: textMuted,
         }}
       >
-        <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(5.5) }}>
+        <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(5.5), color: textOnPrimary }}>
           Total Hours:{" "}
           {formatMillisecondsToHours(computeTotalHoursWorked.totalHours)}
         </Text>
-        <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(5.5) }}>
+        <Text style={{ fontFamily: "Gantari-SemiBold", fontSize: wp(5.5), color: textOnPrimary }}>
           Total Rate: ₱{computeTotalHoursWorked.totalRate.toFixed(2)}
         </Text>
       </View>
@@ -254,6 +256,7 @@ const EmployeeDetails = () => {
               fontFamily: "Gantari-Bold",
               fontSize: wp(5),
               textAlign: "center",
+              color: textOnPrimary,
             }}
           >
             Set Hourly Rate
@@ -262,7 +265,7 @@ const EmployeeDetails = () => {
             style={{
               fontFamily: "Gantari-Regular",
               fontSize: wp(3.8),
-              color: "#6B7280",
+              color: textMuted,
               textAlign: "center",
               marginTop: hp(0.8),
             }}
@@ -303,7 +306,7 @@ const EmployeeDetails = () => {
             title="Cancel"
             onPress={() => setRateModalVisible(false)}
             backgroundColor="#F3F4F6"
-            titleColor="#111827"
+            titleColor={textOnPrimary}
             marginTop={0}
           />
           <CommonButton
@@ -332,7 +335,7 @@ const EmployeeDetails = () => {
               }
             }}
             backgroundColor={strongPrimary}
-            titleColor="#ffffff"
+            titleColor={textOnStrongPrimary}
             marginTop={0}
           />
         </View>

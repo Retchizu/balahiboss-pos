@@ -11,7 +11,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { primary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import Input from "@/components/inputs/Input";
 import * as ImagePicker from "expo-image-picker";
 import CommonButton from "@/components/buttons/CommonButton";
@@ -35,6 +35,7 @@ import ColorPicker, {
 import SearchBar from "@/components/searchbars/SearchBar";
 
 const AddProductScreen = () => {
+  const { primary, strongPrimary, textOnPrimary } = useTheme();
   // image state
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -578,7 +579,7 @@ const AddProductScreen = () => {
                 setCategorySearchQuery("");
               }}
               backgroundColor="#F3F4F6"
-              titleColor="#111827"
+              titleColor={textOnPrimary}
               marginTop={0}
             />
             <CommonButton
@@ -699,7 +700,7 @@ const AddProductScreen = () => {
                 });
               }}
               backgroundColor="#F3F4F6"
-              titleColor="#111827"
+              titleColor={textOnPrimary}
               marginTop={0}
             />
             <CommonButton

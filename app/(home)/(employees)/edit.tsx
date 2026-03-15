@@ -4,7 +4,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import { useSelectedEmployeeContext } from "@/contexts/SelectedEmployee";
 import CommonButton from "@/components/buttons/CommonButton";
 import DatePicker from "react-native-date-picker";
@@ -16,6 +16,7 @@ import formatMillisecondsToHours from "@/methods/date/formatMilisecondsToHours";
 import { useTimesheetContext } from "@/contexts/TimesheetContext";
 
 const EditTimesheet = () => {
+  const { primary, secondary, strongPrimary, textOnPrimary, textOnStrongPrimary } = useTheme();
   const params = useLocalSearchParams();
   const id = params.id as string | undefined;
 
@@ -120,7 +121,7 @@ const EditTimesheet = () => {
       }}
     >
       <View>
-        <Text style={styles.inputLabel}>Employee:</Text>
+        <Text style={[styles.inputLabel, { color: textOnPrimary }]}>Employee:</Text>
         <Text
           style={{
             padding: wp(2),
@@ -128,6 +129,7 @@ const EditTimesheet = () => {
             fontFamily: "Gantari-Regular",
             fontSize: wp(4),
             backgroundColor: secondary,
+            color: textOnPrimary,
           }}
         >
           {selectedEmployee?.displayName}
@@ -136,7 +138,7 @@ const EditTimesheet = () => {
 
       <View style={{ flexDirection: "row", gap: wp(2), alignItems: "center" }}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.inputLabel}>Date:</Text>
+          <Text style={[styles.inputLabel, { color: textOnPrimary }]}>Date:</Text>
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => setIsDatePickerVisible(true)}
@@ -149,6 +151,7 @@ const EditTimesheet = () => {
                 borderColor: strongPrimary,
                 fontFamily: "Gantari-Regular",
                 fontSize: wp(4),
+                color: textOnPrimary,
               }}
             >
               {date
@@ -161,7 +164,7 @@ const EditTimesheet = () => {
         </View>
 
         <View style={{ flex: 1 }}>
-          <Text style={styles.inputLabel}>Total Hours Worked</Text>
+          <Text style={[styles.inputLabel, { color: textOnPrimary }]}>Total Hours Worked</Text>
           <Text
             style={{
               borderWidth: wp(0.3),
@@ -170,6 +173,7 @@ const EditTimesheet = () => {
               borderColor: strongPrimary,
               fontFamily: "Gantari-Regular",
               fontSize: wp(4),
+              color: textOnPrimary,
             }}
           >
             {formatMillisecondsToHours(totalHoursWorked)}
@@ -178,7 +182,7 @@ const EditTimesheet = () => {
       </View>
       <View style={{ flexDirection: "row", gap: wp(2), alignItems: "center" }}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.inputLabel}>Time in:</Text>
+          <Text style={[styles.inputLabel, { color: textOnPrimary }]}>Time in:</Text>
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => setIsLoginTimePickerVisible(true)}
@@ -191,6 +195,7 @@ const EditTimesheet = () => {
                 borderColor: strongPrimary,
                 fontFamily: "Gantari-Regular",
                 fontSize: wp(4),
+                color: textOnPrimary,
               }}
             >
               {loginTime
@@ -203,7 +208,7 @@ const EditTimesheet = () => {
         </View>
 
         <View style={{ flex: 1 }}>
-          <Text style={styles.inputLabel}>Time out:</Text>
+          <Text style={[styles.inputLabel, { color: textOnPrimary }]}>Time out:</Text>
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => {
@@ -218,6 +223,7 @@ const EditTimesheet = () => {
                 borderColor: strongPrimary,
                 fontFamily: "Gantari-Regular",
                 fontSize: wp(4),
+                color: textOnPrimary,
               }}
             >
               {logoutTime
@@ -236,7 +242,7 @@ const EditTimesheet = () => {
           }}
           title="Save Changes"
           backgroundColor={strongPrimary}
-          titleColor={primary}
+          titleColor={textOnStrongPrimary}
           loading={isUpdatingTimesheet}
         />
         <CommonButton
@@ -245,7 +251,7 @@ const EditTimesheet = () => {
           }}
           title="Cancel"
           backgroundColor={primary}
-          titleColor={"black"}
+          titleColor={textOnPrimary}
         />
       </View>
 

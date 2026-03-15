@@ -12,7 +12,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { primary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import SearchBar from "@/components/searchbars/SearchBar";
 import { router } from "expo-router";
 import { useCustomerContext } from "@/contexts/CustomerContext";
@@ -25,6 +25,7 @@ import { isAxiosError } from "axios";
 import Toast from "react-native-toast-message";
 
 const PendingScreen = () => {
+  const { primary, strongPrimary, textOnPrimary, textMuted } = useTheme();
   const { orders } = usePendingOrderContext();
   // rename pendingOrders to Orders in the futre
   const { pendingOrdersArray } = usePendingOrdersArray(orders);
@@ -73,6 +74,7 @@ const PendingScreen = () => {
           fontSize: wp(5),
           textAlign: "center",
           marginVertical: hp(1),
+          color: textOnPrimary,
         }}
       >
         Pending
@@ -91,7 +93,7 @@ const PendingScreen = () => {
             style={{
               fontFamily: "Gantari-Regular",
               fontSize: wp(4),
-              color: "#6B7280",
+              color: textMuted,
             }}
           >
             No Pending Orders found.
@@ -109,7 +111,7 @@ const PendingScreen = () => {
                   marginVertical: hp(0.5),
                   padding: wp(3),
                   borderWidth: 1,
-                  borderColor: "rgba(0,0,0,0.6)",
+                  borderColor: textMuted,
                   borderRadius: wp(4),
                   flexDirection: "row",
                   alignItems: "center",
@@ -165,8 +167,8 @@ const PendingScreen = () => {
                     gap: wp(1),
                   }}
                 >
-                  <FontAwesome6 name="clock-four" size={wp(4)} color="black" />
-                  <Text>
+                  <FontAwesome6 name="clock-four" size={wp(4)} color={textMuted} />
+                  <Text style={{ color: textOnPrimary }}>
                     {new Date(item.date)
                       ?.toLocaleString("en-US", {
                         hour: "numeric",

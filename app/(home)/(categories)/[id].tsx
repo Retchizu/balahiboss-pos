@@ -8,7 +8,7 @@ import {
     Modal,
 } from "react-native";
 import React, { useCallback, useEffect, useState, useRef, useMemo } from "react";
-import { primary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
     heightPercentageToDP as hp,
     widthPercentageToDP as wp,
@@ -46,6 +46,7 @@ import {
 import { firestoreDb } from "@/config/firebaseConfig";
 
 const CategoryDetailScreen = () => {
+    const { primary, strongPrimary, textOnPrimary, textOnStrongPrimary, textMuted } = useTheme();
     const { id } = useLocalSearchParams<{ id: string }>();
 
     console.log(id)
@@ -392,6 +393,64 @@ const CategoryDetailScreen = () => {
         }));
     };
 
+    const styles = useMemo(
+        () =>
+            StyleSheet.create({
+                productItem: {
+                    flexDirection: "row",
+                    alignItems: "center",
+                    backgroundColor: "rgba(255,255,255,0.85)",
+                    borderWidth: 1,
+                    borderColor: "rgba(0,0,0,0.2)",
+                    borderRadius: wp(2),
+                    padding: wp(3),
+                    marginVertical: hp(0.5),
+                },
+                selectedProductItem: {
+                    backgroundColor: "#AFDDFF",
+                    borderColor: strongPrimary,
+                    borderWidth: wp(0.5),
+                },
+                label: {
+                    fontSize: wp(4.5),
+                    fontFamily: "Gantari-Medium",
+                    marginBottom: hp(0.5),
+                    color: textOnPrimary,
+                },
+                colorPickerButton: {
+                    flexDirection: "row",
+                    alignItems: "center",
+                    borderColor: strongPrimary,
+                    borderWidth: wp(0.3),
+                    borderRadius: wp(2),
+                    padding: wp(1),
+                    backgroundColor: "white",
+                },
+                colorPreview: {
+                    width: wp(8),
+                    height: wp(8),
+                    borderRadius: wp(1),
+                    borderWidth: wp(0.2),
+                    borderColor: "rgba(0,0,0,0.2)",
+                },
+                modalOverlay: {
+                    flex: 1,
+                    backgroundColor: "rgba(0,0,0,0.5)",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: wp(5),
+                },
+                colorPickerContainer: {
+                    backgroundColor: primary,
+                    borderRadius: wp(4),
+                    padding: wp(5),
+                    width: "90%",
+                    maxHeight: "80%",
+                },
+            }),
+        [primary, strongPrimary, textOnPrimary]
+    );
+
     return (
         <View
             style={{
@@ -405,7 +464,7 @@ const CategoryDetailScreen = () => {
                 style={{
                     fontSize: wp(5),
                     fontFamily: "Gantari-SemiBold",
-                    color: "black",
+                    color: textOnPrimary,
                     marginBottom: hp(2),
                 }}
             >
@@ -445,7 +504,7 @@ const CategoryDetailScreen = () => {
                             style={{
                                 fontSize: wp(5),
                                 fontFamily: "Gantari-SemiBold",
-                                color: "black",
+                                color: textOnPrimary,
                                 flex: 1,
                             }}
                         >
@@ -492,7 +551,7 @@ const CategoryDetailScreen = () => {
                 style={{
                     fontSize: wp(4.5),
                     fontFamily: "Gantari-SemiBold",
-                    color: "black",
+                    color: textOnPrimary,
                     marginBottom: hp(1),
                 }}
             >
@@ -552,7 +611,6 @@ const CategoryDetailScreen = () => {
                                     style={{
                                         fontSize: wp(4),
                                         fontFamily: "Gantari-SemiBold",
-                                        color: "black",
                                     }}
                                 >
                                     {item.productName}
@@ -595,7 +653,7 @@ const CategoryDetailScreen = () => {
                                                     style={{
                                                         fontFamily: "Gantari-Regular",
                                                         fontSize: wp(3.2),
-                                                        color: "rgba(0,0,0,0.7)",
+                                                        color: textOnStrongPrimary,
                                                     }}
                                                 >
                                                     {category.categoryName}
@@ -608,7 +666,7 @@ const CategoryDetailScreen = () => {
                                     style={{
                                         fontSize: wp(3.5),
                                         fontFamily: "Gantari-Regular",
-                                        color: "rgba(0,0,0,0.6)",
+                                        color: textOnStrongPrimary,
                                     }}
                                 >
                                     Stock: {item.stock} | Price: ₱
@@ -630,7 +688,7 @@ const CategoryDetailScreen = () => {
                             style={{
                                 fontSize: wp(4),
                                 fontFamily: "Gantari-Regular",
-                                color: "rgba(0,0,0,0.6)",
+                                color: textMuted,
                             }}
                         >
                             No products found
@@ -646,7 +704,8 @@ const CategoryDetailScreen = () => {
                     selectedProductIds.size !== 1 ? "s" : ""
                 }`}
                 onPress={assignCategoryToProducts}
-                titleColor="white"
+                titleColor={textOnStrongPrimary}
+                backgroundColor={strongPrimary}
                 loading={assigning}
                 disabled={selectedProductIds.size === 0 || assigning}
                 marginTop={hp(2)}
@@ -664,7 +723,7 @@ const CategoryDetailScreen = () => {
                         style={{
                             fontSize: wp(5),
                             fontFamily: "Gantari-SemiBold",
-                            color: "black",
+                            color: textOnPrimary,
                             marginBottom: hp(2),
                             textAlign: "center",
                         }}
@@ -711,7 +770,7 @@ const CategoryDetailScreen = () => {
                             style={{
                                 fontFamily: "Gantari-Regular",
                                 fontSize: wp(4.5),
-                                color: "black",
+                                color: textOnPrimary,
                                 marginLeft: wp(2),
                             }}
                         >
@@ -731,13 +790,14 @@ const CategoryDetailScreen = () => {
                             title="Cancel"
                             onPress={() => setIsEditModalVisible(false)}
                             backgroundColor="#F3F4F6"
-                            titleColor="#111827"
+                            titleColor={textOnPrimary}
                             marginTop={0}
                         />
                         <CommonButton
                             title="Update"
                             onPress={updateCategory}
-                            titleColor="white"
+                            backgroundColor={strongPrimary}
+                            titleColor={textOnStrongPrimary}
                             loading={isUpdating}
                             disabled={isUpdating}
                             marginTop={0}
@@ -759,7 +819,7 @@ const CategoryDetailScreen = () => {
                             style={{
                                 fontSize: wp(5),
                                 fontFamily: "Gantari-SemiBold",
-                                color: "black",
+                                color: textOnPrimary,
                                 marginBottom: hp(2),
                                 textAlign: "center",
                             }}
@@ -780,7 +840,8 @@ const CategoryDetailScreen = () => {
                         <CommonButton
                             title="Done"
                             onPress={() => setShowColorPicker(false)}
-                            titleColor="white"
+                            backgroundColor={strongPrimary}
+                            titleColor={textOnStrongPrimary}
                             marginTop={hp(2)}
                         />
                     </View>
@@ -805,6 +866,7 @@ const CategoryDetailScreen = () => {
                         style={{
                             fontFamily: "Gantari-Bold",
                             fontSize: wp(5),
+                            color: textOnPrimary,
                             textAlign: "center",
                         }}
                     >
@@ -814,7 +876,7 @@ const CategoryDetailScreen = () => {
                         style={{
                             fontFamily: "Gantari-Regular",
                             fontSize: wp(3.8),
-                            color: "#6B7280",
+                            color: textMuted,
                             textAlign: "center",
                             marginTop: hp(1),
                             lineHeight: hp(2.4),
@@ -837,7 +899,7 @@ const CategoryDetailScreen = () => {
                         title="Cancel"
                         onPress={() => setIsDeleteModalVisible(false)}
                         backgroundColor="#F3F4F6"
-                        titleColor="#111827"
+                        titleColor={textOnPrimary}
                         marginTop={0}
                     />
                     <CommonButton
@@ -856,56 +918,3 @@ const CategoryDetailScreen = () => {
 };
 
 export default CategoryDetailScreen;
-
-const styles = StyleSheet.create({
-    productItem: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "rgba(255,255,255,0.85)",
-        borderWidth: 1,
-        borderColor: "rgba(0,0,0,0.2)",
-        borderRadius: wp(2),
-        padding: wp(3),
-        marginVertical: hp(0.5),
-    },
-    selectedProductItem: {
-        backgroundColor: "#AFDDFF",
-        borderColor: strongPrimary,
-        borderWidth: wp(0.5),
-    },
-    label: {
-        fontSize: wp(4.5),
-        fontFamily: "Gantari-Medium",
-        marginBottom: hp(0.5),
-    },
-    colorPickerButton: {
-        flexDirection: "row",
-        alignItems: "center",
-        borderColor: strongPrimary,
-        borderWidth: wp(0.3),
-        borderRadius: wp(2),
-        padding: wp(1),
-        backgroundColor: "white",
-    },
-    colorPreview: {
-        width: wp(8),
-        height: wp(8),
-        borderRadius: wp(1),
-        borderWidth: wp(0.2),
-        borderColor: "rgba(0,0,0,0.2)",
-    },
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: "rgba(0,0,0,0.5)",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: wp(5),
-    },
-    colorPickerContainer: {
-        backgroundColor: primary,
-        borderRadius: wp(4),
-        padding: wp(5),
-        width: "90%",
-        maxHeight: "80%",
-    },
-});

@@ -7,7 +7,7 @@ import {
   Modal,
 } from "react-native";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { primary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -38,6 +38,19 @@ import ColorPicker, {
 import SearchBar from "@/components/searchbars/SearchBar";
 
 const UpdateScreen = () => {
+  const { primary, strongPrimary, textOnPrimary, textMuted, textOnStrongPrimary } =
+    useTheme();
+  const styles = useMemo(
+    () => ({
+      label: {
+        fontSize: wp(4.5),
+        fontFamily: "Gantari-Medium",
+        marginBottom: hp(0.5),
+        color: textOnPrimary,
+      },
+    }),
+    [textOnPrimary]
+  );
   // product params
   const { id }: { id: string } = useLocalSearchParams();
   const { products } = useProductContext();
@@ -488,7 +501,7 @@ const UpdateScreen = () => {
               >
                 {category.categoryName}
               </Text>
-              <Entypo name="cross" size={wp(3.5)} color="rgba(0,0,0,0.6)" />
+              <Entypo name="cross" size={wp(3.5)} color={textMuted} />
             </TouchableOpacity>
           ))}
         </View>
@@ -571,6 +584,7 @@ const UpdateScreen = () => {
           router.back();
         }}
         title="Cancel"
+        titleColor={textOnPrimary}
         backgroundColor={primary}
         marginTop={hp(3)}
       />
@@ -582,7 +596,7 @@ const UpdateScreen = () => {
         onPress={async () => {
           setIsDeleteModalVisible(true);
         }}
-        icon={{ color: "white", family: "Entypo", name: "trash", size: wp(7) }}
+        icon={{ color: textOnStrongPrimary, family: "Entypo", name: "trash", size: wp(7) }}
       />
       <ModalTemplate
         visible={isDeleteModalVisible}
@@ -610,7 +624,7 @@ const UpdateScreen = () => {
             style={{
               fontFamily: "Gantari-Regular",
               fontSize: wp(3.8),
-              color: "#6B7280",
+              color: textMuted,
               textAlign: "center",
               marginTop: hp(1),
               lineHeight: hp(2.4),
@@ -633,7 +647,7 @@ const UpdateScreen = () => {
             title="Cancel"
             onPress={() => setIsDeleteModalVisible(false)}
             backgroundColor="#F3F4F6"
-            titleColor="#111827"
+            titleColor={textOnStrongPrimary}
             marginTop={0}
           />
           <CommonButton
@@ -688,7 +702,7 @@ const UpdateScreen = () => {
               setAdditionalStock("0");
             }}
             backgroundColor="#F3F4F6"
-            titleColor="#111827"
+            titleColor={textOnStrongPrimary}
             marginTop={0}
           />
           <CommonButton
@@ -821,7 +835,7 @@ const UpdateScreen = () => {
                 setCategorySearchQuery("");
               }}
               backgroundColor="#F3F4F6"
-              titleColor="#111827"
+              titleColor={textOnStrongPrimary}
               marginTop={0}
             />
             <CommonButton
@@ -942,7 +956,7 @@ const UpdateScreen = () => {
                 });
               }}
               backgroundColor="#F3F4F6"
-              titleColor="#111827"
+              titleColor={textOnPrimary}
               marginTop={0}
             />
             <CommonButton
@@ -1018,11 +1032,3 @@ const UpdateScreen = () => {
 };
 
 export default UpdateScreen;
-
-const styles = {
-  label: {
-    fontSize: wp(4.5),
-    fontFamily: "Gantari-Medium",
-    marginBottom: hp(0.5),
-  },
-};

@@ -1,6 +1,6 @@
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import React, { useMemo, useState } from "react";
-import { primary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -14,6 +14,7 @@ import { FontAwesome6 } from "@expo/vector-icons";
 import searchOrderByCustomerName from "@/methods/search/searchOrderByCustomerName";
 
 const CompleteScreen = () => {
+  const { primary, textOnPrimary, textMuted } = useTheme();
   const { orders } = usePendingOrderContext();
 
   const { pendingOrdersArray } = usePendingOrdersArray(orders);
@@ -49,6 +50,7 @@ const CompleteScreen = () => {
           fontSize: wp(5),
           textAlign: "center",
           marginVertical: hp(1),
+          color: textOnPrimary,
         }}
       >
         Complete
@@ -67,7 +69,7 @@ const CompleteScreen = () => {
             style={{
               fontFamily: "Gantari-Regular",
               fontSize: wp(4),
-              color: "#6B7280",
+              color: textMuted,
             }}
           >
             No Complete Orders found.
@@ -86,7 +88,7 @@ const CompleteScreen = () => {
                   padding: wp(3),
                   borderRadius: wp(4),
                   borderWidth: 1,
-                  borderColor: "rgba(0,0,0,0.6)",
+                  borderColor: textMuted,
                   flexDirection: "row",
                   alignItems: "center",
                 }}
@@ -120,8 +122,8 @@ const CompleteScreen = () => {
                     gap: wp(1),
                   }}
                 >
-                  <FontAwesome6 name="clock-four" size={wp(4)} color="black" />
-                  <Text>
+                  <FontAwesome6 name="clock-four" size={wp(4)} color={textMuted} />
+                  <Text style={{ color: textOnPrimary }}>
                     {new Date(item.date)
                       ?.toLocaleString("en-US", {
                         hour: "numeric",

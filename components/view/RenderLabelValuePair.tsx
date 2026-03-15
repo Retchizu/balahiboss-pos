@@ -3,6 +3,7 @@ import { View, Text } from "react-native";
 import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import { useTheme } from "@/contexts/ThemeContext";
 
 type RenderLabelValuePairProps = {
   label: string;
@@ -15,6 +16,7 @@ const RenderLabelValuePair: FC<RenderLabelValuePairProps> = ({
 
   value,
 }) => {
+  const { textOnPrimary, textMuted } = useTheme();
   return (
     <View
       style={{
@@ -26,7 +28,7 @@ const RenderLabelValuePair: FC<RenderLabelValuePairProps> = ({
         style={{
           fontFamily: "Gantari-SemiBold",
           fontSize: wp(4),
-          color: "rgba(0,0,0,0.6)",
+          color: textMuted,
           flex:1
         }}
       >
@@ -39,6 +41,7 @@ const RenderLabelValuePair: FC<RenderLabelValuePairProps> = ({
           fontSize: wp(4),
           textAlign: "right",
           flex: 2,
+          color: textOnPrimary,
         }}
       >
         {value}

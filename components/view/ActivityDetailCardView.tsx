@@ -1,4 +1,4 @@
-import { primary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import { DimensionValue, View } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 type ActivityDetailCardViewProp = {
@@ -12,6 +12,7 @@ const ActivityDetailCardView = ({
   width,
   height,
 }: ActivityDetailCardViewProp) => {
+  const { primary } = useTheme();
   return (
     <View
       style={{

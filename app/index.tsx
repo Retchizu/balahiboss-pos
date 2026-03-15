@@ -105,10 +105,11 @@ const handleGoogleSignIn = async (
     await signInUser();
   } catch (error) {
     if (isAxiosError(error) && error.response) {
-      if (error.response.status === 403 || error.response.status) {
+      const status = error.response?.status;
+      if (status === 403 || status) {
         await auth.signOut();
       } else {
-        Toast.show({ type: "error", text1: `${error.response.status} ${error.response.data.error}` });
+        Toast.show({ type: "error", text1: `${status} ${error.response?.data?.error ?? "Unknown error"}` });
       }
     }
     console.error("Google Sign-In Error:", (error as Error).message);

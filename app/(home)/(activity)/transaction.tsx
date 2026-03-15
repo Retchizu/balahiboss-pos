@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, ScrollView } from "react-native";
 import React, { useMemo } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { useActivityContext } from "@/contexts/ActivityContext";
-import { primary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -16,6 +16,7 @@ import { useCustomerContext } from "@/contexts/CustomerContext";
 import { useTransactionContext } from "@/contexts/TransactionContext";
 
 const TransactionActivityDetailScreen = () => {
+  const { primary, strongPrimary, textMuted, textOnPrimary } = useTheme();
   const { id }: { id: string } = useLocalSearchParams();
 
   const { activities } = useActivityContext();
@@ -52,8 +53,8 @@ const TransactionActivityDetailScreen = () => {
           {value.map((item: { productId: string; quantity: number }, i) => {
             const productName =
               products[item.productId]?.productName ?? "Product might deleted";
-            return (
-              <Text key={i} style={styles.value}>
+              return (
+              <Text key={i} style={[styles.value, { color: textOnPrimary }]}>
                 {productName} — {item.quantity}
               </Text>
             );
@@ -65,11 +66,11 @@ const TransactionActivityDetailScreen = () => {
     if (field === "customerId" && value !== null) {
       const customerName =
         customers[value as string].customerName ?? "Customer might be deleted";
-      return <Text style={styles.value}>{customerName}</Text>;
+      return <Text style={[styles.value, { color: textOnPrimary }]}>{customerName}</Text>;
     }
     if (field === "date" && value !== null) {
       return (
-        <Text style={styles.value}>
+        <Text style={[styles.value, { color: textOnPrimary }]}>
           {new Date(value as string).toLocaleString("en-PH", {
             dateStyle: "medium",
             timeStyle: "short",
@@ -78,7 +79,7 @@ const TransactionActivityDetailScreen = () => {
       );
     }
 
-    return <Text style={styles.value}>{String(value ?? "—")}</Text>;
+    return <Text style={[styles.value, { color: textOnPrimary }]}>{String(value ?? "—")}</Text>;
   };
 
   const renderTransactionChanges = (
@@ -88,13 +89,13 @@ const TransactionActivityDetailScreen = () => {
 
     return Object.entries(changes).map(([field, { before, after }]) => (
       <View key={field} style={{ marginBottom: hp(2) }}>
-        <Text style={{ fontFamily: "Gantari-Medium", fontSize: wp(4) }}>
+        <Text style={{ fontFamily: "Gantari-Medium", fontSize: wp(4), color: textOnPrimary }}>
           {transactionFieldLabels[field]}
         </Text>
         <View style={{ marginLeft: wp(2) }}>
           <Text
             style={{
-              color: "#FF9149",
+              color: strongPrimary,
               fontFamily: "Gantari-Regular",
               fontSize: wp(4),
             }}
@@ -104,7 +105,7 @@ const TransactionActivityDetailScreen = () => {
           {renderChangeValue(field, before)}
           <Text
             style={{
-              color: "#60B5FF",
+              color: textMuted,
               fontFamily: "Gantari-Regular",
               fontSize: wp(4),
             }}
@@ -129,7 +130,7 @@ const TransactionActivityDetailScreen = () => {
     >
       <ActivityDetailCardView>
         <View style={{ gap: hp(0.5) }}>
-          <Text style={styles.header}>Details</Text>
+          <Text style={[styles.header, { color: textOnPrimary }]}>Details</Text>
           <RenderLabelValuePair label="Actor" value={activity!.displayName} />
           <RenderLabelValuePair label="Type" value={activity!.entity} />
           <RenderLabelValuePair
@@ -151,7 +152,7 @@ const TransactionActivityDetailScreen = () => {
 
       <ActivityDetailCardView height={hp(65)}>
         <ScrollView>
-          <Text style={styles.header}>Changes</Text>
+          <Text style={[styles.header, { color: textOnPrimary }]}>Changes</Text>
           {renderTransactionChanges(activity!.changes)}
         </ScrollView>
       </ActivityDetailCardView>
@@ -173,6 +174,5 @@ const styles = StyleSheet.create({
   value: {
     fontFamily: "Gantari-Regular",
     fontSize: wp(4),
-    color: "rgba(0,0,0,0.6)",
   },
 });

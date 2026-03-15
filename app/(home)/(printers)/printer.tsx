@@ -8,8 +8,8 @@ import {
     RefreshControl,
     Alert,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
+import React, { useEffect, useMemo, useState } from "react";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -24,6 +24,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 const PrinterConfigScreen = () => {
+    const { primary, secondary, strongPrimary, textOnPrimary, textMuted } = useTheme();
     const { foundDevices, pairedDevices, scanDevices, pairDevice } =
         useBluetoothPrinter();
     const [initialLoading, setInitialLoading] = useState(false);
@@ -145,6 +146,233 @@ const PrinterConfigScreen = () => {
         );
     };
 
+    const styles = useMemo(
+        () =>
+            StyleSheet.create({
+                currentPrinterContainer: {
+                    backgroundColor: primary,
+                    paddingHorizontal: wp(4),
+                    paddingTop: hp(2),
+                    paddingBottom: hp(1.5),
+                    borderBottomWidth: wp(0.3),
+                    borderBottomColor: secondary,
+                },
+                currentPrinterHeader: {
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginBottom: hp(1),
+                },
+                headerIcon: {
+                    marginRight: wp(2),
+                },
+                currentPrinterTitle: {
+                    fontFamily: "Gantari-SemiBold",
+                    fontSize: wp(5),
+                    color: textOnPrimary,
+                },
+                currentPrinterCard: {
+                    backgroundColor: secondary,
+                    borderRadius: wp(3),
+                    padding: wp(4),
+                    borderWidth: wp(0.3),
+                    borderColor: "#ddd",
+                },
+                currentPrinterCardActive: {
+                    borderColor: strongPrimary,
+                    borderWidth: wp(0.5),
+                    backgroundColor: "#FFF8F0",
+                },
+                currentPrinterContent: {
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: wp(3),
+                },
+                currentPrinterInfo: {
+                    flex: 1,
+                },
+                currentPrinterName: {
+                    fontFamily: "Gantari-SemiBold",
+                    fontSize: wp(4.5),
+                    color: textOnPrimary,
+                    marginBottom: hp(0.3),
+                },
+                currentPrinterAddress: {
+                    fontFamily: "Gantari-Regular",
+                    fontSize: wp(3.5),
+                    color: textMuted,
+                },
+                noPrinterText: {
+                    fontFamily: "Gantari-Regular",
+                    fontSize: wp(4),
+                    color: textMuted,
+                    flex: 1,
+                },
+                refreshContainer: {
+                    paddingHorizontal: wp(4),
+                    paddingVertical: hp(1),
+                    backgroundColor: primary,
+                },
+                refreshButton: {
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: secondary,
+                    paddingVertical: hp(1.5),
+                    paddingHorizontal: wp(4),
+                    borderRadius: wp(2.5),
+                    borderWidth: wp(0.3),
+                    borderColor: strongPrimary,
+                    gap: wp(2),
+                },
+                refreshIcon: {
+                    transform: [{ rotate: "0deg" }],
+                },
+                refreshIconSpinning: {
+                    transform: [{ rotate: "360deg" }],
+                },
+                refreshButtonText: {
+                    fontFamily: "Gantari-SemiBold",
+                    fontSize: wp(4),
+                    color: strongPrimary,
+                },
+                scrollView: {
+                    flex: 1,
+                },
+                scrollContent: {
+                    paddingHorizontal: wp(4),
+                    paddingBottom: hp(4),
+                },
+                sectionContainer: {
+                    marginTop: hp(2),
+                },
+                sectionHeader: {
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginBottom: hp(1.5),
+                    gap: wp(2),
+                },
+                sectionTitle: {
+                    fontFamily: "Gantari-SemiBold",
+                    fontSize: wp(4.5),
+                    color: textOnPrimary,
+                },
+                devicesList: {
+                    gap: hp(1),
+                },
+                deviceCard: {
+                    backgroundColor: secondary,
+                    borderRadius: wp(3),
+                    padding: wp(4),
+                    borderWidth: wp(0.3),
+                    borderColor: "#ddd",
+                    marginBottom: hp(1),
+                },
+                deviceCardSelected: {
+                    borderColor: strongPrimary,
+                    borderWidth: wp(0.5),
+                    backgroundColor: "#FFF8F0",
+                },
+                deviceCardContent: {
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginBottom: hp(1.5),
+                    gap: wp(3),
+                },
+                deviceIconContainer: {
+                    width: wp(12),
+                    height: wp(12),
+                    borderRadius: wp(2),
+                    backgroundColor: primary,
+                    alignItems: "center",
+                    justifyContent: "center",
+                },
+                deviceInfo: {
+                    flex: 1,
+                },
+                deviceName: {
+                    fontFamily: "Gantari-SemiBold",
+                    fontSize: wp(4.5),
+                    color: textOnPrimary,
+                    marginBottom: hp(0.3),
+                },
+                deviceNameSelected: {
+                    color: strongPrimary,
+                },
+                deviceAddress: {
+                    fontFamily: "Gantari-Regular",
+                    fontSize: wp(3.5),
+                    color: textMuted,
+                    marginTop: hp(0.2),
+                },
+                currentBadge: {
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginTop: hp(0.5),
+                    gap: wp(1.5),
+                },
+                currentBadgeText: {
+                    fontFamily: "Gantari-Medium",
+                    fontSize: wp(3.5),
+                    color: strongPrimary,
+                },
+                emptyState: {
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingVertical: hp(5),
+                    paddingHorizontal: wp(5),
+                },
+                emptyStateText: {
+                    fontFamily: "Gantari-SemiBold",
+                    fontSize: wp(4.5),
+                    color: textMuted,
+                    marginTop: hp(2),
+                    marginBottom: hp(0.5),
+                },
+                emptyStateSubtext: {
+                    fontFamily: "Gantari-Regular",
+                    fontSize: wp(3.8),
+                    color: textMuted,
+                    textAlign: "center",
+                },
+                loadingContainer: {
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingVertical: hp(3),
+                    gap: hp(1),
+                },
+                loadingText: {
+                    fontFamily: "Gantari-Regular",
+                    fontSize: wp(4),
+                    color: textMuted,
+                },
+                loadingOverlay: {
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: "rgba(255, 253, 240, 0.9)",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 999,
+                },
+                loadingOverlayContent: {
+                    alignItems: "center",
+                    gap: hp(2),
+                },
+                loadingOverlayText: {
+                    fontFamily: "Gantari-SemiBold",
+                    fontSize: wp(4.5),
+                    color: strongPrimary,
+                },
+                currentPrinterActions: {
+                    marginTop: hp(1.2),
+                    paddingHorizontal: wp(1),
+                },
+            }),
+        [primary, secondary, strongPrimary, textOnPrimary, textMuted]
+    );
+
     return (
         <View
             style={{
@@ -197,7 +425,7 @@ const PrinterConfigScreen = () => {
                             <MaterialCommunityIcons
                                 name="printer-off"
                                 size={wp(7)}
-                                color="#999"
+                                color={textMuted}
                             />
                             <Text style={styles.noPrinterText}>
                                 No printer selected
@@ -531,226 +759,3 @@ const PrinterConfigScreen = () => {
 };
 
 export default PrinterConfigScreen;
-
-const styles = StyleSheet.create({
-    currentPrinterContainer: {
-        backgroundColor: primary,
-        paddingHorizontal: wp(4),
-        paddingTop: hp(2),
-        paddingBottom: hp(1.5),
-        borderBottomWidth: wp(0.3),
-        borderBottomColor: secondary,
-    },
-    currentPrinterHeader: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: hp(1),
-    },
-    headerIcon: {
-        marginRight: wp(2),
-    },
-    currentPrinterTitle: {
-        fontFamily: "Gantari-SemiBold",
-        fontSize: wp(5),
-        color: "#333",
-    },
-    currentPrinterCard: {
-        backgroundColor: secondary,
-        borderRadius: wp(3),
-        padding: wp(4),
-        borderWidth: wp(0.3),
-        borderColor: "#ddd",
-    },
-    currentPrinterCardActive: {
-        borderColor: strongPrimary,
-        borderWidth: wp(0.5),
-        backgroundColor: "#FFF8F0",
-    },
-    currentPrinterContent: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: wp(3),
-    },
-    currentPrinterInfo: {
-        flex: 1,
-    },
-    currentPrinterName: {
-        fontFamily: "Gantari-SemiBold",
-        fontSize: wp(4.5),
-        color: "#333",
-        marginBottom: hp(0.3),
-    },
-    currentPrinterAddress: {
-        fontFamily: "Gantari-Regular",
-        fontSize: wp(3.5),
-        color: "#666",
-    },
-    noPrinterText: {
-        fontFamily: "Gantari-Regular",
-        fontSize: wp(4),
-        color: "#999",
-        flex: 1,
-    },
-    refreshContainer: {
-        paddingHorizontal: wp(4),
-        paddingVertical: hp(1),
-        backgroundColor: primary,
-    },
-    refreshButton: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: secondary,
-        paddingVertical: hp(1.5),
-        paddingHorizontal: wp(4),
-        borderRadius: wp(2.5),
-        borderWidth: wp(0.3),
-        borderColor: strongPrimary,
-        gap: wp(2),
-    },
-    refreshIcon: {
-        transform: [{ rotate: "0deg" }],
-    },
-    refreshIconSpinning: {
-        transform: [{ rotate: "360deg" }],
-    },
-    refreshButtonText: {
-        fontFamily: "Gantari-SemiBold",
-        fontSize: wp(4),
-        color: strongPrimary,
-    },
-    scrollView: {
-        flex: 1,
-    },
-    scrollContent: {
-        paddingHorizontal: wp(4),
-        paddingBottom: hp(4),
-    },
-    sectionContainer: {
-        marginTop: hp(2),
-    },
-    sectionHeader: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: hp(1.5),
-        gap: wp(2),
-    },
-    sectionTitle: {
-        fontFamily: "Gantari-SemiBold",
-        fontSize: wp(4.5),
-        color: "#333",
-    },
-    devicesList: {
-        gap: hp(1),
-    },
-    deviceCard: {
-        backgroundColor: secondary,
-        borderRadius: wp(3),
-        padding: wp(4),
-        borderWidth: wp(0.3),
-        borderColor: "#ddd",
-        marginBottom: hp(1),
-    },
-    deviceCardSelected: {
-        borderColor: strongPrimary,
-        borderWidth: wp(0.5),
-        backgroundColor: "#FFF8F0",
-    },
-    deviceCardContent: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: hp(1.5),
-        gap: wp(3),
-    },
-    deviceIconContainer: {
-        width: wp(12),
-        height: wp(12),
-        borderRadius: wp(2),
-        backgroundColor: primary,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    deviceInfo: {
-        flex: 1,
-    },
-    deviceName: {
-        fontFamily: "Gantari-SemiBold",
-        fontSize: wp(4.5),
-        color: "#333",
-        marginBottom: hp(0.3),
-    },
-    deviceNameSelected: {
-        color: strongPrimary,
-    },
-    deviceAddress: {
-        fontFamily: "Gantari-Regular",
-        fontSize: wp(3.5),
-        color: "#666",
-        marginTop: hp(0.2),
-    },
-    currentBadge: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginTop: hp(0.5),
-        gap: wp(1.5),
-    },
-    currentBadgeText: {
-        fontFamily: "Gantari-Medium",
-        fontSize: wp(3.5),
-        color: strongPrimary,
-    },
-    emptyState: {
-        alignItems: "center",
-        justifyContent: "center",
-        paddingVertical: hp(5),
-        paddingHorizontal: wp(5),
-    },
-    emptyStateText: {
-        fontFamily: "Gantari-SemiBold",
-        fontSize: wp(4.5),
-        color: "#666",
-        marginTop: hp(2),
-        marginBottom: hp(0.5),
-    },
-    emptyStateSubtext: {
-        fontFamily: "Gantari-Regular",
-        fontSize: wp(3.8),
-        color: "#999",
-        textAlign: "center",
-    },
-    loadingContainer: {
-        alignItems: "center",
-        justifyContent: "center",
-        paddingVertical: hp(3),
-        gap: hp(1),
-    },
-    loadingText: {
-        fontFamily: "Gantari-Regular",
-        fontSize: wp(4),
-        color: "#666",
-    },
-    loadingOverlay: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: "rgba(255, 253, 240, 0.9)",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 999,
-    },
-    loadingOverlayContent: {
-        alignItems: "center",
-        gap: hp(2),
-    },
-    loadingOverlayText: {
-        fontFamily: "Gantari-SemiBold",
-        fontSize: wp(4.5),
-        color: strongPrimary,
-    },
-    currentPrinterActions: {
-        marginTop: hp(1.2),
-        paddingHorizontal: wp(1),
-    },
-});

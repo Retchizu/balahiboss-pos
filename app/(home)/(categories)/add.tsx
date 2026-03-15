@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
-import { primary, strongPrimary } from "@/theme/backgroundTheme";
+import React, { useMemo, useState } from "react";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -20,6 +20,7 @@ import ColorPicker, {
 } from "reanimated-color-picker";
 
 const AddCategoryScreen = () => {
+  const { primary, strongPrimary, textOnPrimary, textOnStrongPrimary } = useTheme();
   const [categoryForm, setCategoryForm] = useState({
     categoryName: "",
     displayOrder: "",
@@ -92,6 +93,48 @@ const AddCategoryScreen = () => {
     }
   };
 
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        label: {
+          fontSize: wp(4.5),
+          fontFamily: "Gantari-Medium",
+          marginBottom: hp(0.5),
+        },
+        colorPickerButton: {
+          flexDirection: "row",
+          alignItems: "center",
+          borderColor: strongPrimary,
+          borderWidth: wp(0.3),
+          borderRadius: wp(2),
+          padding: wp(1),
+          backgroundColor: "white",
+        },
+        colorPreview: {
+          width: wp(8),
+          height: wp(8),
+          borderRadius: wp(1),
+          borderWidth: wp(0.2),
+          borderColor: "rgba(0,0,0,0.2)",
+        },
+        modalOverlay: {
+          flex: 1,
+          backgroundColor: "rgba(0,0,0,0.5)",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: wp(5),
+        },
+        colorPickerContainer: {
+          backgroundColor: primary,
+          borderRadius: wp(4),
+          padding: wp(5),
+          width: "90%",
+          maxHeight: "80%",
+        },
+      }),
+    [primary, strongPrimary]
+  );
+
   return (
     <View
       style={{
@@ -105,7 +148,7 @@ const AddCategoryScreen = () => {
         style={{
           fontSize: wp(5),
           fontFamily: "Gantari-SemiBold",
-          color: "black",
+          color: textOnPrimary,
           marginBottom: hp(2),
         }}
       >
@@ -147,7 +190,7 @@ const AddCategoryScreen = () => {
           style={{
             fontFamily: "Gantari-Regular",
             fontSize: wp(4.5),
-            color: "black",
+            color: textOnPrimary,
             marginLeft: wp(2),
           }}
         >
@@ -167,7 +210,7 @@ const AddCategoryScreen = () => {
               style={{
                 fontSize: wp(5),
                 fontFamily: "Gantari-SemiBold",
-                color: "black",
+                color: textOnPrimary,
                 marginBottom: hp(2),
                 textAlign: "center",
               }}
@@ -188,7 +231,8 @@ const AddCategoryScreen = () => {
             <CommonButton
               title="Done"
               onPress={() => setShowColorPicker(false)}
-              titleColor="white"
+              backgroundColor={strongPrimary}
+              titleColor={textOnStrongPrimary}
               marginTop={hp(2)}
             />
           </View>
@@ -200,7 +244,8 @@ const AddCategoryScreen = () => {
           await addCategory();
         }}
         title="Add Category"
-        titleColor={"white"}
+        backgroundColor={strongPrimary}
+        titleColor={textOnStrongPrimary}
         loading={isAddingCategory}
         marginTop={hp(3)}
       />
@@ -217,42 +262,4 @@ const AddCategoryScreen = () => {
 };
 
 export default AddCategoryScreen;
-
-const styles = StyleSheet.create({
-  label: {
-    fontSize: wp(4.5),
-    fontFamily: "Gantari-Medium",
-    marginBottom: hp(0.5),
-  },
-  colorPickerButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderColor: strongPrimary,
-    borderWidth: wp(0.3),
-    borderRadius: wp(2),
-    padding: wp(1),
-    backgroundColor: "white",
-  },
-  colorPreview: {
-    width: wp(8),
-    height: wp(8),
-    borderRadius: wp(1),
-    borderWidth: wp(0.2),
-    borderColor: "rgba(0,0,0,0.2)",
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: wp(5),
-  },
-  colorPickerContainer: {
-    backgroundColor: primary,
-    borderRadius: wp(4),
-    padding: wp(5),
-    width: "90%",
-    maxHeight: "80%",
-  },
-});
 

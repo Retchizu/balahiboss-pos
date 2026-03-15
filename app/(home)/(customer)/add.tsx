@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useRef, useState } from "react";
-import { primary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -19,6 +19,7 @@ import { api } from "@/config/axios-api";
 import Toast from "react-native-toast-message";
 
 const AddCustomerScreen = () => {
+  const { primary, strongPrimary, textOnPrimary, textOnStrongPrimary } = useTheme();
   const [customerForm, setCustomerForm] = useState({
     customerName: "",
     customerInfo: "",
@@ -95,7 +96,8 @@ const AddCustomerScreen = () => {
           await addCustomer();
         }}
         title="Add Customer"
-        titleColor={"white"}
+        backgroundColor={strongPrimary}
+        titleColor={textOnStrongPrimary}
         loading={isAddingCustomer}
         marginTop={hp(3)}
       />

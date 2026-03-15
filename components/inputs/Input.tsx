@@ -1,7 +1,7 @@
 /* eslint-disable import/namespace */
 import { View, TextInput, InputModeOptions } from "react-native";
 import React from "react";
-import { strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import * as Icons from "@expo/vector-icons";
 
@@ -20,6 +20,7 @@ type InputProp = {
 };
 
 const Input = ({ placeholder, value, onChangeText, icon, row, inputType}: InputProp) => {
+    const { strongPrimary, textOnPrimary, textMuted } = useTheme();
     const IconComponent =
         icon?.family && Icons[icon.family] ? (Icons[icon.family] as any) : null;
 
@@ -37,10 +38,15 @@ const Input = ({ placeholder, value, onChangeText, icon, row, inputType}: InputP
         >
             <TextInput
                 placeholder={placeholder}
-                placeholderTextColor={"rgba(0,0,0,0.5)"}
+                placeholderTextColor={textMuted}
                 value={value}
                 onChangeText={onChangeText}
-                style={{ fontFamily: "Gantari-Regular", fontSize: wp(4.5), flex:1 }}
+                style={{
+                  fontFamily: "Gantari-Regular",
+                  fontSize: wp(4.5),
+                  flex: 1,
+                  color: textOnPrimary,
+                }}
                 inputMode={inputType ?? "text"}
             />
             {IconComponent && icon?.name && (

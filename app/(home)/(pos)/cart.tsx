@@ -1,6 +1,6 @@
 import { FlatList, Text, View, Image, TouchableOpacity } from "react-native";
 import React from "react";
-import { strongPrimary, primary, secondary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -13,6 +13,7 @@ import { useProductContext } from "@/contexts/ProductContext";
 import CommonButton from "@/components/buttons/CommonButton";
 
 const CartScreen = () => {
+  const { primary, strongPrimary, textOnPrimary, textOnSecondary, textOnStrongPrimary, textMuted } = useTheme();
   const {
     selectedProducts,
     setSelectedProductList,
@@ -57,7 +58,7 @@ const CartScreen = () => {
         paddingHorizontal: wp(2),
       }}
     >
-      <Text style={{ fontFamily: "Gantari-Medium", fontSize: wp(4) }}>
+      <Text style={{ fontFamily: "Gantari-Medium", fontSize: wp(4), color: textOnPrimary }}>
         Order Details
       </Text>
 
@@ -68,7 +69,7 @@ const CartScreen = () => {
             style={{
               flexDirection: "row",
               backgroundColor: "rgba(255,255,255,0.85)",
-              borderColor: "rgba(0,0,0,0.6)",
+              borderColor: textMuted,
               borderWidth: 1,
               alignItems: "center",
               borderRadius: wp(2),
@@ -88,7 +89,7 @@ const CartScreen = () => {
             >
               <View
                 style={{
-                  borderColor: "#FF9149",
+                  borderColor: strongPrimary,
                   borderWidth: wp(0.2),
                   height: hp(8),
                   width: wp(16),
@@ -122,7 +123,7 @@ const CartScreen = () => {
                 <Text
                   style={{
                     fontFamily: "Gantari-Regular",
-                    color: "black",
+                    color: "#FF9149",
                     fontSize: wp(4),
                   }}
                 >
@@ -149,7 +150,7 @@ const CartScreen = () => {
                 activeOpacity={0.7}
                 onPress={() => reduceQuantity(item.id)}
               >
-                <FontAwesome5 name="minus" size={wp(6)} color="white" />
+                <FontAwesome5 name="minus" size={wp(6)} color={textOnSecondary} />
               </TouchableOpacity>
               <Text
                 style={{
@@ -158,6 +159,7 @@ const CartScreen = () => {
                   width: wp(15),
                   paddingHorizontal: wp(2),
                   textAlign: "center",
+                  color: textOnStrongPrimary,
                 }}
               >
                 {item.quantity}
@@ -171,7 +173,7 @@ const CartScreen = () => {
                 activeOpacity={0.7}
                 onPress={() => increaseQuantity(item.id, products[item.id])}
               >
-                <FontAwesome5 name="plus" size={wp(6)} color="white" />
+                <FontAwesome5 name="plus" size={wp(6)} color={textOnPrimary} />
               </TouchableOpacity>
             </View>
           </View>
@@ -215,13 +217,14 @@ const CartScreen = () => {
               style={{
                 fontFamily: "Gantari-SemiBold",
                 fontSize: wp(6.5),
+                color: textOnPrimary,
               }}
             >
               Total
             </Text>
             <Text
               style={{
-                color: "black",
+                color: textOnPrimary,
                 fontFamily: "Gantari-Bold",
                 fontSize: wp(6.5),
                 maxWidth: wp(50),
@@ -233,6 +236,7 @@ const CartScreen = () => {
           <CommonButton
             title="Cancel"
             onPress={() => setSelectedProductList(new Map())}
+            titleColor={textOnPrimary}
             backgroundColor={primary}
             marginTop={hp(3)}
           />

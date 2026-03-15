@@ -1,6 +1,7 @@
 import { View, Text } from "react-native";
-import { Badge } from "react-native-paper"; // or whatever badge you're using
+import { Badge } from "react-native-paper";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { useTheme } from "@/contexts/ThemeContext";
 
 type DrawerLabelProps = {
   title: string;
@@ -9,9 +10,11 @@ type DrawerLabelProps = {
 };
 
 export function DrawerLabel({ title, badgeCount, color }: DrawerLabelProps) {
+  const { textOnSecondary } = useTheme();
+  const textColor = color ?? textOnSecondary;
   return (
     <View style={{ flexDirection: "row", alignItems: "center" }}>
-      <Text style={{color, fontFamily:"Gantari-SemiBold", fontSize:wp(4)}}>{title}</Text>
+      <Text style={{ color: textColor, fontFamily: "Gantari-SemiBold", fontSize: wp(4) }}>{title}</Text>
       {badgeCount !== undefined && badgeCount > 0 && (
         <Badge
           style={{

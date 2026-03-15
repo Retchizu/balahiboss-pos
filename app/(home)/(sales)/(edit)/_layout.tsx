@@ -1,17 +1,18 @@
 import React from "react";
 import { Tabs } from "expo-router";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import { strongPrimary, primary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { StyleSheet } from "react-native";
 
 const EditBottomTabLayout = () => {
+  const { primary, strongPrimary, textOnPrimary } = useTheme();
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: strongPrimary,
-        tabBarInactiveTintColor: "rgba(0,0,0,0.8)",
+        tabBarInactiveTintColor: textOnPrimary,
         tabBarStyle: { backgroundColor: primary },
       }}
       initialRouteName="invoice"

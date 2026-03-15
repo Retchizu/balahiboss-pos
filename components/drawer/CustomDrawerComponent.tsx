@@ -1,62 +1,34 @@
 import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
-  DrawerItem,
 } from "@react-navigation/drawer";
-import { View, Image, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Image, Text, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { auth } from "@/config/firebaseConfig";
-import { router } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import CustomDrawerItem from "./CustomDrawerItem";
 import { useUserContext } from "@/contexts/UserContext";
 import usePendingOrdersArray from "@/hooks/usePendingOrdersArray";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { usePendingOrderContext } from "@/contexts/PendingOrderContext";
-import { signOutUser } from "@/methods/auth/signOutUser";
-import Toast from "react-native-toast-message";
-import { isAxiosError } from "axios";
-import { strongPrimary } from "@/theme/backgroundTheme";
-
-const STORAGE_KEY = "CHECKED_ORDERS";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
   const { navigation, state } = props; // state contains current route info
   const { role } = useUserContext();
   const { orders } = usePendingOrderContext();
   const { pendingOrdersArray } = usePendingOrdersArray(orders);
+  const { primary, textOnPrimary, textMuted } = useTheme();
   const pendingOrders = useMemo(() => {
-    return pendingOrdersArray.filter((order) => order.status === "pending");
+    return pendingOrdersArray.filter((order) => order?.status === "pending");
   }, [pendingOrdersArray]);
 
-  const [isSigningOut, setIsSigningOut] = useState(false);
-
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#AFDDFF" }}>
-      {isSigningOut && (
-        <View
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0,0,0,0.3)",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 999,
-          }}
-        >
-          <ActivityIndicator size="large" color={strongPrimary} />
-          <Text style={{ color: "#fff", marginTop: 10 }}>Signing out...</Text>
-        </View>
-      )}
+    <SafeAreaView style={{ flex: 1, backgroundColor: primary }}>
       <Image
         source={require("../../assets/balahiboss.png")}
         style={{
@@ -65,12 +37,14 @@ const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
           alignSelf: "center",
         }}
       />
-      <Text style={styles.drawerHeaderTitle}>Advanced POS</Text>
-      <Text style={styles.displayNameStyle}>
+      <Text style={[styles.drawerHeaderTitle, { color: textOnPrimary }]}>
+        Advanced POS
+      </Text>
+      <Text style={[styles.displayNameStyle, { color: textOnPrimary }]}>
         {auth.currentUser?.displayName}
       </Text>
       <DrawerContentScrollView scrollEnabled={true}>
-        <Section title="Main" />
+        <Section title="Main" textColor={textMuted} />
         <CustomDrawerItem
           title="POS"
           icon={{ family: "Ionicons", name: "keypad-sharp" }}
@@ -94,7 +68,7 @@ const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
           route="(printers)"
           state={state}
         />
-        <Section title="Inventory & Clients" restrict role={role} />
+        <Section title="Inventory & Clients" restrict role={role} textColor={textMuted} />
         <CustomDrawerItem
           title="Products"
           icon={{ family: "Feather", name: "package" }}
@@ -125,7 +99,7 @@ const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
           role={role}
         />
 
-        <Section title="Reports" restrict role={role} />
+        <Section title="Reports" restrict role={role} textColor={textMuted} />
         <CustomDrawerItem
           title="Sales"
           icon={{ family: "MaterialCommunityIcons", name: "google-analytics" }}
@@ -173,49 +147,12 @@ const CustomDrawerComponent = (props: DrawerContentComponentProps) => {
         />
 
         <Divider />
-        <DrawerItem
-          label={({ color }) => (
-            <Text style={[styles.drawerLabelStyle, { color }]}>About Us</Text>
-          )}
-          onPress={() => {
-            router.navigate("/about");
-          }}
-          icon={({ color }) => (
-            <MaterialIcons name="info-outline" size={wp(4.5)} color={color} />
-          )}
-        />
-
-        <DrawerItem
-          label={({ color }) => (
-            <Text style={[styles.drawerLabelStyle, { color }]}>Sign out</Text>
-          )}
-          onPress={async () => {
-            try {
-              setIsSigningOut(true);
-              await signOutUser();
-              await auth.signOut();
-              AsyncStorage.removeItem(STORAGE_KEY);
-              router.replace("/");
-            } catch (error) {
-              if (isAxiosError(error)) {
-                Toast.show({
-                  type: "error",
-                  text1: `${error.response?.data.error}`,
-                });
-              }
-              console.log(error);
-            } finally {
-              setIsSigningOut(false);
-            }
-          }}
-          icon={({ color }) => (
-            <Ionicons
-              name="exit-outline"
-              size={wp(4.5)}
-              color={color}
-              style={{ alignSelf: "center", top: hp(0.2) }}
-            />
-          )}
+        <CustomDrawerItem
+          title="Settings"
+          icon={{ family: "Ionicons", name: "settings-outline" }}
+          navigation={navigation}
+          route="(settings)"
+          state={state}
         />
       </DrawerContentScrollView>
     </SafeAreaView>
@@ -227,7 +164,6 @@ export default CustomDrawerComponent;
 const styles = StyleSheet.create({
   drawerHeaderTitle: {
     fontFamily: "Gantari-SemiBold",
-    color: "#634F40",
     fontSize: wp(6),
     textAlign: "center",
   },
@@ -265,15 +201,19 @@ const Section = ({
   title,
   role,
   restrict = false,
+  textColor,
 }: {
   title: string;
   role?: string;
   restrict?: boolean;
+  textColor?: string;
 }) => {
   if (restrict && role !== "admin") return null;
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionHeader}>{title}</Text>
+      <Text style={[styles.sectionHeader, textColor ? { color: textColor } : undefined]}>
+        {title}
+      </Text>
     </View>
   );
 };

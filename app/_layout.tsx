@@ -1,6 +1,7 @@
 import { UserProvider } from "@/contexts/UserContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { useFonts } from "expo-font";
-import { router, SplashScreen, Stack } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
 import { PendingOrderProvider } from "@/contexts/PendingOrderContext";
 import { TransactionProvider } from "@/contexts/TransactionContext";
@@ -15,9 +16,6 @@ import Toast, {
 } from "react-native-toast-message";
 import { ImageBackground, View, StyleSheet } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/config/firebaseConfig";
-
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -39,21 +37,17 @@ export default function RootLayout() {
     }
   }, [loaded, error]);
 
+  // Auth redirect is handled by app/index.tsx when it mounts, so we never
+  // navigate from root before the Stack is ready.
+
   if (!loaded && !error) {
     return null;
   }
 
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      router.replace("/(home)/(pos)/pos");
-    } else {
-      // router.replace("/");
-    }
-  });
-
   return (
-    <UserProvider>
-      <PendingOrderProvider>
+    <ThemeProvider>
+      <UserProvider>
+        <PendingOrderProvider>
         <ProductProvider>
           <TransactionProvider>
             <RecentTransactionProvider>
@@ -64,7 +58,6 @@ export default function RootLayout() {
                     options={{ headerShown: false }}
                   />
                   <Stack.Screen name="index" options={{ headerShown: false }} />
-                  <Stack.Screen name="about" options={{ headerShown: false }} />
                 </Stack>
                 <Toast config={toastConfig} position="bottom" />
               </CustomerProvider>
@@ -73,6 +66,7 @@ export default function RootLayout() {
         </ProductProvider>
       </PendingOrderProvider>
     </UserProvider>
+    </ThemeProvider>
   );
 }
 

@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import React from "react";
 import { useLocalSearchParams } from "expo-router";
 import { useActivityContext } from "@/contexts/ActivityContext";
-import { primary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -14,6 +14,7 @@ import ActivityDetailCardView from "@/components/view/ActivityDetailCardView";
 import { useProductContext } from "@/contexts/ProductContext";
 
 const ProductActivityDetailScreen = () => {
+  const { primary, strongPrimary, textMuted, textOnPrimary } = useTheme();
   const { id }: { id: string } = useLocalSearchParams();
 
   const { activities } = useActivityContext();
@@ -38,7 +39,7 @@ const ProductActivityDetailScreen = () => {
         />
       );
     }
-    return <Text>{String(value ?? "—")}</Text>;
+    return <Text style={{ color: textOnPrimary }}>{String(value ?? "—")}</Text>;
   };
 
   const renderTransactionChanges = (
@@ -48,13 +49,13 @@ const ProductActivityDetailScreen = () => {
 
     return Object.entries(changes).map(([field, { before, after }]) => (
       <View key={field} style={{ marginBottom: hp(2) }}>
-        <Text style={{ fontFamily: "Gantari-Medium", fontSize: wp(4) }}>
+        <Text style={{ fontFamily: "Gantari-Medium", fontSize: wp(4), color: textOnPrimary }}>
           {productFieldLabels[field]}
         </Text>
         <View style={{ marginLeft: wp(2) }}>
           <Text
             style={{
-              color: "#FF9149",
+              color: strongPrimary,
               fontFamily: "Gantari-Regular",
               fontSize: wp(4),
             }}
@@ -64,7 +65,7 @@ const ProductActivityDetailScreen = () => {
           {renderChangeValue(field, before)}
           <Text
             style={{
-              color: "#60B5FF",
+              color: textMuted,
               fontFamily: "Gantari-Regular",
               fontSize: wp(4),
             }}
@@ -89,7 +90,7 @@ const ProductActivityDetailScreen = () => {
     >
       <ActivityDetailCardView>
         <View style={{ gap: hp(0.5) }}>
-          <Text style={styles.header}>Details</Text>
+          <Text style={[styles.header, { color: textOnPrimary }]}>Details</Text>
           <RenderLabelValuePair label="Actor" value={activity!.displayName} />
           <RenderLabelValuePair label="Type" value={activity!.entity} />
           <RenderLabelValuePair label="Name" value={products[activity!.entityId].productName} />
@@ -106,7 +107,7 @@ const ProductActivityDetailScreen = () => {
 
       <ActivityDetailCardView height={hp(65)}>
         <ScrollView>
-          <Text style={styles.header}>Changes</Text>
+          <Text style={[styles.header, { color: textOnPrimary }]}>Changes</Text>
           {renderTransactionChanges(activity!.changes)}
         </ScrollView>
       </ActivityDetailCardView>

@@ -1,7 +1,7 @@
 import { View, Text, DimensionValue, StyleSheet } from "react-native";
 import React from "react";
 import { useLocalSearchParams } from "expo-router";
-import { primary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -19,6 +19,7 @@ import calculateInvoiceTotalPrice from "@/methods/invoice/calculateInvoiceTotalP
 import { useUserContext } from "@/contexts/UserContext";
 
 const RecentTransactionDetailScreen = () => {
+  const { primary, strongPrimary, textOnPrimary, textMuted } = useTheme();
   // params
   const { recentId } = useLocalSearchParams();
   const parsedId = recentId as string;
@@ -84,9 +85,9 @@ const RecentTransactionDetailScreen = () => {
         <View
           style={{ flexDirection: "row", gap: wp(1), alignItems: "center" }}
         >
-          <AntDesign name="user" size={wp(4)} color="black" />
+          <AntDesign name="user" size={wp(4)} color={textOnPrimary} />
 
-          <Text style={{ fontFamily: "Gantari-Medium", fontSize: wp(4) }}>
+          <Text style={{ fontFamily: "Gantari-Medium", fontSize: wp(4), color: textOnPrimary }}>
             Customer Information
           </Text>
         </View>
@@ -113,7 +114,7 @@ const RecentTransactionDetailScreen = () => {
         <View
           style={{ flexDirection: "row", gap: wp(1), alignItems: "center" }}
         >
-          <AntDesign name="shoppingcart" size={wp(4)} color="black" />
+          <AntDesign name="shoppingcart" size={wp(4)} color={textOnPrimary} />
 
           <Text style={{ fontFamily: "Gantari-Medium", fontSize: wp(4) }}>
             Products Bought
@@ -143,7 +144,7 @@ const RecentTransactionDetailScreen = () => {
                     style={[
                       styles.paymentDetailsValue,
 
-                      { color: "#ff6347", fontFamily: "Gantari-SemiBold" },
+                      { color: strongPrimary, fontFamily: "Gantari-SemiBold" },
                     ]}
                   >
                     {item.quantity}{" "}
@@ -177,7 +178,7 @@ const RecentTransactionDetailScreen = () => {
         <View
           style={{ flexDirection: "row", gap: wp(1), alignItems: "center" }}
         >
-          <FontAwesome5 name="money-bill" size={wp(4)} color="black" />
+          <FontAwesome5 name="money-bill" size={wp(4)} color={textOnPrimary} />
 
           <Text style={{ fontFamily: "Gantari-Medium", fontSize: wp(4) }}>
             Payment Information
@@ -229,7 +230,7 @@ const RecentTransactionDetailScreen = () => {
 
               fontSize: wp(4),
 
-              color: labelColor,
+              color: textMuted,
 
               textAlign: "center",
             }}
@@ -261,7 +262,7 @@ const RecentTransactionDetailScreen = () => {
               style={{
                 fontFamily: "Gantari-Regular",
                 fontSize: wp(4),
-                color: labelColor,
+                color: textMuted,
                 textAlign: "center",
               }}
             >
@@ -291,8 +292,6 @@ const RecentTransactionDetailScreen = () => {
 
 export default RecentTransactionDetailScreen;
 
-const labelColor = "rgba(0,0,0,0.6)";
-
 const styles = StyleSheet.create({
   paymentDetailsLabel: {
     fontFamily: "Gantari-SemiBold",
@@ -320,6 +319,7 @@ const RenderLabelValuePair: React.FC<RenderLabelValuePairProps> = ({
 
   value,
 }) => {
+  const { textOnPrimary, textMuted } = useTheme();
   return (
     <View
       style={{
@@ -332,7 +332,7 @@ const RenderLabelValuePair: React.FC<RenderLabelValuePairProps> = ({
         style={{
           fontFamily: "Gantari-Regular",
 
-          color: labelColor,
+          color: textMuted,
 
           fontSize: wp(4),
 
@@ -351,6 +351,7 @@ const RenderLabelValuePair: React.FC<RenderLabelValuePairProps> = ({
           textAlign: "right",
 
           flex: 2,
+          color: textOnPrimary,
         }}
       >
         {value}
@@ -373,11 +374,12 @@ const TransactionDetailCardView = ({
   width,
   height,
 }: TransactionDetailCardViewProp) => {
+  const { textMuted } = useTheme();
   return (
     <View
       style={{
         backgroundColor: "rgba(255,255,255,0.85)",
-        borderColor:"rgba(0,0,0,0.6)",
+        borderColor: textMuted,
         borderWidth:wp(0.3),
         padding: wp(1),
         borderRadius: wp(5),

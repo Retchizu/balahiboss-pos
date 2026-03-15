@@ -1,12 +1,12 @@
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
-import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { TouchableOpacity, View} from "react-native";
+import { TouchableOpacity, View, Text } from "react-native";
 import { usePendingOrderContext } from "@/contexts/PendingOrderContext";
 import { Badge } from "react-native-paper";
 import { useEffect, useMemo } from "react";
@@ -27,11 +27,16 @@ import Foundation from '@expo/vector-icons/Foundation';
 
 const pendingOrderRingtone = require("@/assets/alert/pending.mp3");
 
+const ThemedHeaderTitle = ({ title, color }: { title: string; color: string }) => (
+  <Text style={{ fontFamily: "Gantari-SemiBold", color, fontSize: wp(5) }}>{title}</Text>
+);
+
 const DrawerLayout = () => {
+  const { primary, secondary, strongPrimary, textOnPrimary, textOnSecondary } = useTheme();
   const { orders } = usePendingOrderContext();
   const { pendingOrdersArray } = usePendingOrdersArray(orders);
   const pendingOrders = useMemo(() => {
-    return pendingOrdersArray.filter((order) => order.status === "pending");
+    return pendingOrdersArray.filter((order) => order?.status === "pending");
   }, [pendingOrdersArray]);
 
   const { role } = useUserContext();
@@ -41,13 +46,13 @@ const DrawerLayout = () => {
   useEffect(() => {
     if (role === "admin") return;
     if (
-      pendingOrders.filter((order) => order.status === "pending").length === 0
+      pendingOrders.filter((order) => order?.status === "pending").length === 0
     )
       return;
 
     const currentUser = auth.currentUser;
     const uncheckedPendingOrder = pendingOrdersArray
-      .filter((order) => order.status === "pending" && order.checkedBy !== undefined)
+      .filter((order) => order?.status === "pending" && order.checkedBy !== undefined)
       .some((order) => !order.checkedBy.includes(currentUser?.uid!));
 
     const loopPlayer = setInterval(() => {
@@ -68,7 +73,9 @@ const DrawerLayout = () => {
         screenOptions={({ navigation }) => ({
           headerTitleStyle: {
             fontFamily: "Gantari-SemiBold",
+            color: textOnPrimary,
           },
+          headerTintColor: textOnPrimary,
           headerStyle: { backgroundColor: primary },
           headerLeft: () => {
             return (
@@ -88,7 +95,7 @@ const DrawerLayout = () => {
                     borderRadius: wp(3),
                   }}
                 >
-                  <FontAwesome name="reorder" size={wp(5)} color="black" />
+                  <FontAwesome name="reorder" size={wp(5)} color={textOnSecondary} />
                 </TouchableOpacity>
                 {pendingOrders.length > 0 && (
                   <Badge
@@ -106,6 +113,7 @@ const DrawerLayout = () => {
           },
           drawerActiveTintColor: secondary,
           drawerActiveBackgroundColor: strongPrimary,
+          drawerInactiveTintColor: textOnSecondary,
         })}
         drawerContent={(props) => <CustomDrawerComponent {...props} />}
       >
@@ -113,9 +121,10 @@ const DrawerLayout = () => {
           name="(pos)"
           options={{
             drawerLabel: ({ color }) => (
-              <DrawerLabel title="POS" color={color} />
+              <DrawerLabel title="POS" color={color ?? textOnSecondary} />
             ),
             title: "POS",
+            headerTitle: () => <ThemedHeaderTitle title="POS" color={textOnPrimary} />,
             drawerIcon: ({ color }) => (
               <Ionicons name="keypad-sharp" size={wp(5)} color={color} />
             ),
@@ -126,9 +135,10 @@ const DrawerLayout = () => {
           name="(customer)"
           options={{
             drawerLabel: ({ color }) => (
-              <DrawerLabel title="Customers" color={color} />
+              <DrawerLabel title="Customers" color={color ?? textOnSecondary} />
             ),
             title: "Customers",
+            headerTitle: () => <ThemedHeaderTitle title="Customers" color={textOnPrimary} />,
             drawerIcon: ({ color }) => (
               <Feather name="users" size={wp(5)} color={color} />
             ),
@@ -140,9 +150,10 @@ const DrawerLayout = () => {
           name="(products)"
           options={{
             drawerLabel: ({ color }) => (
-              <DrawerLabel title="Products" color={color} />
+              <DrawerLabel title="Products" color={color ?? textOnSecondary} />
             ),
             title: "Products",
+            headerTitle: () => <ThemedHeaderTitle title="Products" color={textOnPrimary} />,
             drawerIcon: ({ color }) => (
               <Feather name="package" size={wp(5)} color={color} />
             ),
@@ -154,9 +165,10 @@ const DrawerLayout = () => {
           name="(categories)"
           options={{
             drawerLabel: ({ color }) => (
-              <DrawerLabel title="Categories" color={color} />
+              <DrawerLabel title="Categories" color={color ?? textOnSecondary} />
             ),
             title: "Categories",
+            headerTitle: () => <ThemedHeaderTitle title="Categories" color={textOnPrimary} />,
             drawerIcon: ({ color }) => (
               <MaterialCommunityIcons name="tag" size={wp(5)} color={color} />
             ),
@@ -168,9 +180,10 @@ const DrawerLayout = () => {
           name="(sales)"
           options={{
             drawerLabel: ({ color }) => (
-              <DrawerLabel title="Sales Report" color={color} />
+              <DrawerLabel title="Sales Report" color={color ?? textOnSecondary} />
             ),
             title: "Sales Report",
+            headerTitle: () => <ThemedHeaderTitle title="Sales Report" color={textOnPrimary} />,
             drawerIcon: ({ color }) => (
               <MaterialCommunityIcons
                 name="google-analytics"
@@ -185,9 +198,10 @@ const DrawerLayout = () => {
           name="(analytics)"
           options={{
             drawerLabel: ({ color }) => (
-              <DrawerLabel title="Analytics" color={color} />
+              <DrawerLabel title="Analytics" color={color ?? textOnSecondary} />
             ),
             title: "Analytics",
+            headerTitle: () => <ThemedHeaderTitle title="Analytics" color={textOnPrimary} />,
             drawerIcon: ({ color }) => (
               <MaterialCommunityIcons name="chart-line" size={wp(5)} color={color} />
             ),
@@ -198,9 +212,10 @@ const DrawerLayout = () => {
           name="(stocks)"
           options={{
             drawerLabel: ({ color }) => (
-              <DrawerLabel title="Stocks Report" color={color} />
+              <DrawerLabel title="Stocks Report" color={color ?? textOnSecondary} />
             ),
             title: "Stocks Report",
+            headerTitle: () => <ThemedHeaderTitle title="Stocks Report" color={textOnPrimary} />,
             drawerIcon: ({ color }) => (
               <Entypo name="line-graph" size={24} color={color} />
             ),
@@ -212,9 +227,10 @@ const DrawerLayout = () => {
           name="(employees)"
           options={{
             drawerLabel: ({ color }) => (
-              <DrawerLabel title="Employees" color={color} />
+              <DrawerLabel title="Employees" color={color ?? textOnSecondary} />
             ),
             title: "Employees",
+            headerTitle: () => <ThemedHeaderTitle title="Employees" color={textOnPrimary} />,
             drawerIcon: ({ color }) => (
               <Foundation name="torso-business" size={24} color={color} />
             ),
@@ -230,13 +246,14 @@ const DrawerLayout = () => {
                 title="Orders"
                 badgeCount={
                   pendingOrdersArray.filter(
-                    (order) => order.status === "pending"
+                    (order) => order?.status === "pending"
                   ).length
                 }
-                color={color}
+                color={color ?? textOnSecondary}
               />
             ),
             title: "Orders",
+            headerTitle: () => <ThemedHeaderTitle title="Orders" color={textOnPrimary} />,
             drawerIcon: ({ color }) => (
               <MaterialIcons
                 name="pending-actions"
@@ -251,9 +268,10 @@ const DrawerLayout = () => {
           name="(activity)"
           options={{
             drawerLabel: ({ color }) => (
-              <DrawerLabel title="Activity Log" color={color} />
+              <DrawerLabel title="Activity Log" color={color ?? textOnSecondary} />
             ),
             title: "Activity Log",
+            headerTitle: () => <ThemedHeaderTitle title="Activity Log" color={textOnPrimary} />,
             drawerIcon: ({ color }) => (
               <FontAwesome name="history" size={wp(5)} color={color} />
             ),
@@ -265,11 +283,26 @@ const DrawerLayout = () => {
           name="(printers)"
           options={{
             drawerLabel: ({ color }) => (
-              <DrawerLabel title="Printers" color={color} />
+              <DrawerLabel title="Printers" color={color ?? textOnSecondary} />
             ),
             title: "Printers",
+            headerTitle: () => <ThemedHeaderTitle title="Printers" color={textOnPrimary} />,
             drawerIcon: ({ color }) => (
               <Entypo name="print" size={wp(5)} color={color} />
+            ),
+          }}
+        />
+
+        <Drawer.Screen
+          name="(settings)"
+          options={{
+            drawerLabel: ({ color }) => (
+              <DrawerLabel title="Settings" color={color ?? textOnSecondary} />
+            ),
+            title: "Settings",
+            headerTitle: () => <ThemedHeaderTitle title="Settings" color={textOnPrimary} />,
+            drawerIcon: ({ color }) => (
+              <Ionicons name="settings-outline" size={wp(5)} color={color} />
             ),
           }}
         />

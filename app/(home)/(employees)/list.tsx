@@ -5,7 +5,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { primary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import { router } from "expo-router";
 import { User } from "@/types/User";
 import SearchBar from "@/components/searchbars/SearchBar";
@@ -15,6 +15,7 @@ import { useSelectedEmployeeContext } from "@/contexts/SelectedEmployee";
 
 
 const Employees = () => {
+  const { primary, textOnStrongPrimary, textMuted } = useTheme();
   const [employees, setEmployees] = useState<User[]>([]);
   const {setSelectedEmployee} = useSelectedEmployeeContext()
   useEffect(() => {
@@ -56,7 +57,7 @@ const Employees = () => {
                 marginVertical: hp(0.5),
                 borderRadius: wp(2),
                 backgroundColor: "rgba(255,255,255,0.85)",
-                borderColor: "rgba(0,0,0,0.6)",
+                borderColor: textMuted,
                 borderWidth: 1,
                 padding: wp(2),
                 justifyContent: "space-between",
@@ -71,6 +72,7 @@ const Employees = () => {
                 style={{
                   fontFamily: "Gantari-SemiBold",
                   fontSize: wp(4.5),
+                  color: textOnStrongPrimary,
                 }}
               >
                 {item.displayName}
@@ -79,7 +81,7 @@ const Employees = () => {
                 style={{
                   fontFamily: "Gantari-Medium",
                   fontSize: wp(4),
-                  color: "#ff6347",
+                  color: textMuted,
                 }}
               >
                 Rate: ₱ {item.rate.toFixed(2)}

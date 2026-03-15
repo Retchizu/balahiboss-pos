@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Checkbox } from "expo-checkbox";
 import ModalTemplate from "@/components/modals/ModalTemplate";
@@ -46,6 +46,8 @@ import { api } from "@/config/axios-api";
 import { useRecentTransactionContext } from "@/contexts/RecentTransactionContext";
 
 const PosScreen = () => {
+  const { primary, secondary, strongPrimary, textOnPrimary, textMuted, textOnStrongPrimary } =
+    useTheme();
   const { products, setProducts } = useProductContext();
   const { setCustomers } = useCustomerContext();
   const { productsArray } = useProductsArray(products);
@@ -318,7 +320,7 @@ const PosScreen = () => {
             borderRadius: wp(2),
             backgroundColor: productCardViewBackgroundColor(item),
             borderWidth: 1,
-            borderColor: "rgba(0,0,0,0.6)",
+            borderColor: textMuted,
             alignItems: "center",
             position: "relative", // allow absolute positioned quantity controls
           }}
@@ -412,7 +414,7 @@ const PosScreen = () => {
                       style={{
                         fontFamily: "Gantari-Regular",
                         fontSize: wp(3.2),
-                        color: "rgba(0,0,0,0.7)",
+                        color: textOnStrongPrimary,
                       }}
                     >
                       {category.categoryName}
@@ -424,7 +426,7 @@ const PosScreen = () => {
             <Text
               style={{
                 fontFamily: "Gantari-Regular",
-                color: "black",
+                color: "#FF9149",
                 fontSize: wp(4),
               }}
             >
@@ -433,7 +435,7 @@ const PosScreen = () => {
             <Text
               style={{
                 fontFamily: "Gantari-Regular",
-                color: "black",
+                color: textOnStrongPrimary,
                 fontSize: wp(4),
               }}
             >
@@ -521,14 +523,7 @@ const PosScreen = () => {
         </TouchableOpacity>
       );
     },
-    [
-      addSelectedProduct,
-      deleteSelectedProduct,
-      selectedProducts,
-      updateSelectedProduct,
-      getProductCategories,
-      getCategoryBackgroundColor,
-    ]
+    [selectedProducts, textMuted, getProductCategories, textOnStrongPrimary, strongPrimary, deleteSelectedProduct, addSelectedProduct, getCategoryBackgroundColor, updateSelectedProduct]
   );
 
   // get the pending orders
@@ -624,7 +619,7 @@ const PosScreen = () => {
             <Ionicons
               name="funnel"
               size={wp(5.5)}
-              color={"black"}
+              color={textOnPrimary}
             />
           </TouchableOpacity>
         </View>
@@ -663,7 +658,7 @@ const PosScreen = () => {
                 style={{
                   fontFamily: "Gantari-Bold",
                   fontSize: wp(4.4),
-                  color: "#111827",
+                  color: textOnPrimary,
                 }}
               >
                 Filter by Category
@@ -672,7 +667,7 @@ const PosScreen = () => {
                 style={{
                   fontFamily: "Gantari-Regular",
                   fontSize: wp(3.4),
-                  color: "#6B7280",
+                  color: textMuted,
                   marginTop: hp(0.2),
                 }}
               >
@@ -711,7 +706,7 @@ const PosScreen = () => {
                 style={{
                   fontFamily: "Gantari-Regular",
                   fontSize: wp(4),
-                  color: "#111827",
+                  color: textOnPrimary,
                   marginLeft: wp(3),
                 }}
               >
@@ -789,7 +784,7 @@ const PosScreen = () => {
                         style={{
                           fontFamily: "Gantari-Regular",
                           fontSize: wp(4),
-                          color: "#111827",
+                          color: textOnPrimary,
                         }}
                       >
                         {category.categoryName}
@@ -815,7 +810,7 @@ const PosScreen = () => {
                 setIsCategoryFilterModalVisible(false);
               }}
               backgroundColor="#F3F4F6"
-              titleColor="#111827"
+              titleColor={textOnStrongPrimary}
               marginTop={0}
             />
             <CommonButton

@@ -13,7 +13,7 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import { primary, secondary, strongPrimary } from "@/theme/backgroundTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import SearchBar from "@/components/searchbars/SearchBar";
 import CommonButton from "@/components/buttons/CommonButton";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
@@ -36,6 +36,7 @@ import InvoiceForm from "@/types/InvoiceForm";
 import Summary from "@/types/metrics/Summary";
 
 const TransactionListScreen = () => {
+  const { primary, secondary, strongPrimary, textOnPrimary, textMuted, textOnSecondary, textOnStrongPrimary } = useTheme();
   const [isDateRangePickerVisible, setIsDateRangePickerVisible] =
     useState(false);
 
@@ -485,13 +486,7 @@ const TransactionListScreen = () => {
         </View>
       );
     },
-    [
-      customers,
-      expandedTransactions,
-      convertTransactionItemsToSelectedProductArray,
-      convertTransactionToInvoiceForm,
-      toggleTransactionExpansion,
-    ]
+    [customers, expandedTransactions, convertTransactionItemsToSelectedProductArray, convertTransactionToInvoiceForm, strongPrimary, primary, toggleTransactionExpansion]
   );
 
   //hide the report summary when searching
@@ -551,6 +546,50 @@ const TransactionListScreen = () => {
     products,
   ]);
 
+  const filterModalStyles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          padding: wp(3),
+        },
+        section: {
+          marginBottom: hp(1.5),
+        },
+        sectionTitle: {
+          fontFamily: "Gantari-Bold",
+          fontSize: wp(3.5),
+          marginBottom: hp(0.8),
+          color: textOnPrimary,
+        },
+        option: {
+          flexDirection: "row",
+          alignItems: "center",
+          marginBottom: hp(0.8),
+        },
+        checkbox: {
+          marginRight: wp(2),
+        },
+        optionText: {
+          fontSize: wp(3.5),
+          fontFamily: "Gantari-Regular",
+          color: textOnPrimary,
+        },
+        applyButton: {
+          backgroundColor: strongPrimary,
+          paddingVertical: hp(1.2),
+          paddingHorizontal: wp(3),
+          borderRadius: wp(2),
+          alignItems: "center",
+          marginTop: hp(1.5),
+        },
+        applyText: {
+          color: textOnStrongPrimary,
+          fontWeight: "600",
+        },
+      }),
+    [textOnPrimary, strongPrimary, textOnStrongPrimary]
+  );
+
   // render the options
   const renderSection = <T extends string>(
     title: string,
@@ -558,20 +597,20 @@ const TransactionListScreen = () => {
     selected: T,
     onChange: (value: T) => void
   ) => (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+    <View style={filterModalStyles.section}>
+      <Text style={filterModalStyles.sectionTitle}>{title}</Text>
       {options.map((opt) => (
         <TouchableOpacity
           key={opt}
-          style={styles.option}
+          style={filterModalStyles.option}
           onPress={() => onChange(opt)}
         >
           <Checkbox
             value={selected === opt}
             onValueChange={() => onChange(opt)}
-            style={styles.checkbox}
+            style={filterModalStyles.checkbox}
           />
-          <Text style={styles.optionText}>{opt}</Text>
+          <Text style={filterModalStyles.optionText}>{opt}</Text>
         </TouchableOpacity>
       ))}
     </View>
@@ -607,7 +646,7 @@ const TransactionListScreen = () => {
           <Ionicons
             name="funnel"
             size={24}
-            color={"black"}
+            color={textOnPrimary}
             onPress={() => setFilterModalVisible(true)}
           />
         </TouchableOpacity>
@@ -622,13 +661,13 @@ const TransactionListScreen = () => {
               ? `${startDate.toLocaleString("en-PH", { dateStyle: "medium" })}  →  Present`
               : "Select Date Range"
         }
-        backgroundColor={"#FFDABF"}
-        titleColor={"#9A3412"}
+        backgroundColor={secondary}
+        titleColor={textOnSecondary}
         marginTop={hp(1)}
         iconLeft={{
           family: "AntDesign",
           name: "calendar",
-          color: "#9A3412",
+          color: textOnPrimary,
           size: wp(5.5),
         }}
       />
@@ -669,7 +708,7 @@ const TransactionListScreen = () => {
             style={{
               fontFamily: "Gantari-Regular",
               fontSize: wp(4),
-              color: "#6B7280",
+              color: textMuted,
             }}
           >
             No transactions found.
@@ -789,13 +828,13 @@ const TransactionListScreen = () => {
             paddingHorizontal: wp(1),
           }}
         >
-          <Ionicons name="funnel" size={wp(7)} color={strongPrimary} />
+          <Ionicons name="funnel" size={wp(7)} color={textOnPrimary} />
           <View style={{ flex: 1 }}>
             <Text
               style={{
                 fontFamily: "Gantari-Bold",
                 fontSize: wp(4.4),
-                color: "#111827",
+                color: textOnPrimary,
               }}
             >
               Filters
@@ -804,7 +843,7 @@ const TransactionListScreen = () => {
               style={{
                 fontFamily: "Gantari-Regular",
                 fontSize: wp(3.4),
-                color: "#6B7280",
+                color: textMuted,
                 marginTop: hp(0.2),
               }}
             >
@@ -843,7 +882,7 @@ const TransactionListScreen = () => {
             title="Cancel"
             onPress={() => setFilterModalVisible(false)}
             backgroundColor="#F3F4F6"
-            titleColor="#111827"
+            titleColor={textOnStrongPrimary}
             marginTop={0}
           />
           <CommonButton
@@ -862,41 +901,3 @@ const TransactionListScreen = () => {
 };
 
 export default TransactionListScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    padding: wp(3), // previously 12
-  },
-  section: {
-    marginBottom: hp(1.5), // previously 12
-  },
-  sectionTitle: {
-    fontFamily: "Gantari-Bold",
-    fontSize: wp(3.5), // previously 14
-    marginBottom: hp(0.8), // previously 6
-  },
-  option: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: hp(0.8), // previously 6
-  },
-  checkbox: {
-    marginRight: wp(2), // previously 8
-  },
-  optionText: {
-    fontSize: wp(3.5), // previously
-    fontFamily: "Gantari-Regular",
-  },
-  applyButton: {
-    backgroundColor: "#007AFF",
-    paddingVertical: hp(1.2), // previously 8
-    paddingHorizontal: wp(3), // previously 12
-    borderRadius: wp(2), // previously 6
-    alignItems: "center",
-    marginTop: hp(1.5), // previously 10
-  },
-  applyText: {
-    color: "white",
-    fontWeight: "600",
-  },
-});
